@@ -1,103 +1,199 @@
-import Image from "next/image";
+"use client"
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Clock, Play, Plus, Users } from 'lucide-react';
+import { useState } from 'react';
+
+type Status = 'completed' | 'in-progress' | 'new'
+type List = {
+    id: number,
+    name: string,
+    description: string,
+    itemCount: number,
+    lastPlayed: string,
+    status: Status
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    const [lists, setLists] = useState<List[]>([
+        {
+            id: 1,
+            name: "Favorite Movies",
+            description: "My top movie picks for 2024",
+            itemCount: 12,
+            lastPlayed: "2 days ago",
+            status: "completed"
+        },
+        {
+            id: 2,
+            name: "Best Restaurants",
+            description: "Local dining spots to rank",
+            itemCount: 8,
+            lastPlayed: "1 week ago",
+            status: "in-progress"
+        },
+        {
+            id: 3,
+            name: "Travel Destinations",
+            description: "Places I want to visit",
+            itemCount: 15,
+            lastPlayed: "3 days ago",
+            status: "completed"
+        }
+    ]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    const [newListName, setNewListName] = useState('');
+    const [newListDescription, setNewListDescription] = useState('');
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const handleCreateList = () => {
+        if (newListName.trim()) {
+            const newList = {
+                id: lists.length + 1,
+                name: newListName,
+                description: newListDescription || "New ranking list",
+                itemCount: 0,
+                lastPlayed: "Never",
+                status: "new"
+            } satisfies List;
+            setLists([newList, ...lists]);
+            setNewListName('');
+            setNewListDescription('');
+            setIsDialogOpen(false);
+        }
+    };
+
+    const getStatusColor = (status: Status) => {
+        switch (status) {
+            case 'completed': return 'text-green-600';
+            case 'in-progress': return 'text-yellow-600';
+            case 'new': return 'text-blue-600';
+            default: return 'text-gray-600';
+        }
+    };
+
+    const getStatusText = (status: Status) => {
+        switch (status) {
+            case 'completed': return 'Finished ranking';
+            case 'in-progress': return 'In progress';
+            case 'new': return 'Ready to start';
+            default: return 'Unknown';
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+            <div className="max-w-4xl mx-auto">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Swipey</h1>
+                    <p className="text-lg text-gray-600">Swipe to rank your favorite things</p>
+                </div>
+
+                {/* Create New List Button */}
+                <div className="mb-8">
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button size="lg" className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700">
+                                <Plus className="w-5 h-5 mr-2" />
+                                Create New List
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Create New Ranking List</DialogTitle>
+                                <DialogDescription>
+                                    Start a new list to rank your favorite items by swiping.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="list-name">List Name</Label>
+                                    <Input
+                                        id="list-name"
+                                        placeholder="e.g., Favorite Movies"
+                                        value={newListName}
+                                        onChange={(e) => setNewListName(e.target.value)}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="list-description">Description (Optional)</Label>
+                                    <Input
+                                        id="list-description"
+                                        placeholder="Brief description of your list"
+                                        value={newListDescription}
+                                        onChange={(e) => setNewListDescription(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button onClick={handleCreateList} className="bg-purple-600 hover:bg-purple-700">
+                                    Create List
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+
+                {/* Your Lists Section */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-2xl font-semibold text-gray-900">Your Lists</h2>
+                        <Button variant="ghost" className="text-purple-600 hover:text-purple-700">
+                            View more...
+                        </Button>
+                    </div>
+                    {lists.length === 0 ? (
+                        <Card className="text-center py-12">
+                            <CardContent>
+                                <div className="text-gray-500 mb-4">
+                                    <Users className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                                    <p className="text-lg">No lists created yet</p>
+                                    <p className="text-sm">Create your first ranking list to get started!</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            {lists.slice(0, 6).map((list) => (
+                                <Card key={list.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                                    <CardHeader>
+                                        <CardTitle className="text-lg">{list.name}</CardTitle>
+                                        <CardDescription>{list.description}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                                            <span className="flex items-center">
+                                                <Users className="w-4 h-4 mr-1" />
+                                                {list.itemCount} items
+                                            </span>
+                                            <span className="flex items-center">
+                                                <Clock className="w-4 h-4 mr-1" />
+                                                {list.lastPlayed}
+                                            </span>
+                                        </div>
+                                        <div className={`text-sm font-medium ${getStatusColor(list.status)}`}>
+                                            {getStatusText(list.status)}
+                                        </div>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                                            <Play className="w-4 h-4 mr-2" />
+                                            {list.status === 'new' ? 'Start Ranking' : 'Continue'}
+                                        </Button>
+                                    </CardFooter>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+
+            </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
 }
