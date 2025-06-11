@@ -2,11 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Clock, Play, Plus, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { v4 } from "uuid";
 
 type Status = 'completed' | 'in-progress' | 'new'
 type List = {
@@ -46,27 +45,6 @@ export default function Home() {
         }
     ]);
 
-    const [newListName, setNewListName] = useState('');
-    const [newListDescription, setNewListDescription] = useState('');
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-    const handleCreateList = () => {
-        if (newListName.trim()) {
-            const newList = {
-                id: lists.length + 1,
-                name: newListName,
-                description: newListDescription || "New ranking list",
-                itemCount: 0,
-                lastPlayed: "Never",
-                status: "new"
-            } satisfies List;
-            setLists([newList, ...lists]);
-            setNewListName('');
-            setNewListDescription('');
-            setIsDialogOpen(false);
-        }
-    };
-
     const getStatusColor = (status: Status) => {
         switch (status) {
             case 'completed': return 'text-green-600';
@@ -85,6 +63,8 @@ export default function Home() {
         }
     };
 
+    const router = useRouter();
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
             <div className="max-w-4xl mx-auto">
@@ -96,47 +76,10 @@ export default function Home() {
 
                 {/* Create New List Button */}
                 <div className="mb-8">
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button size="lg" className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700">
-                                <Plus className="w-5 h-5 mr-2" />
-                                Create New List
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle>Create New Ranking List</DialogTitle>
-                                <DialogDescription>
-                                    Start a new list to rank your favorite items by swiping.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="list-name">List Name</Label>
-                                    <Input
-                                        id="list-name"
-                                        placeholder="e.g., Favorite Movies"
-                                        value={newListName}
-                                        onChange={(e) => setNewListName(e.target.value)}
-                                    />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="list-description">Description (Optional)</Label>
-                                    <Input
-                                        id="list-description"
-                                        placeholder="Brief description of your list"
-                                        value={newListDescription}
-                                        onChange={(e) => setNewListDescription(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <DialogFooter>
-                                <Button onClick={handleCreateList} className="bg-purple-600 hover:bg-purple-700">
-                                    Create List
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                    <Button size="lg" className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700" onClick={() => router.push(`/edit/${v4()}`)}>
+                        <Plus className="w-5 h-5 mr-2" />
+                        Create New List
+                    </Button>
                 </div>
 
                 {/* Your Lists Section */}
