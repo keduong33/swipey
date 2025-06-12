@@ -2,10 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, Play, Plus, Users } from 'lucide-react';
+import { ArrowLeft, Clock, Play, Plus, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { v4 } from "uuid";
+import { v4 } from 'uuid';
 
 type Status = 'completed' | 'in-progress' | 'new'
 type List = {
@@ -69,33 +69,23 @@ export default function Home() {
         <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Swipey</h1>
-                    <p className="text-lg text-gray-600">Swipe to rank your favorite things</p>
-                </div>
-
-                <div className="mb-8 gap-4 flex justify-center">
-                    {/* Create New List Button */}
-                    <Button size="lg" className="sm:w-auto bg-purple-600 hover:bg-purple-700" onClick={() => router.push(`/edit/${v4()}`)}>
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <Button variant="ghost" size="sm" className="p-2" onClick={() => router.push(`/`)}>
+                            <ArrowLeft className="w-5 h-5" />
+                        </Button>
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            All Your Lists
+                        </h1>
+                    </div>
+                     <Button size="lg" className="sm:w-auto bg-purple-600 hover:bg-purple-700" onClick={() => router.push(`/edit/${v4()}`)}>
                         <Plus className="w-5 h-5 mr-2" />
                         Create New List
-                    </Button>
-
-                    {/* Join session Button */}
-                     <Button size="lg" className="sm:w-auto bg-purple-600 hover:bg-purple-700" onClick={() => router.push(`/session/`)}>
-                        <Play className="w-5 h-5 mr-2" />
-                        Join session
                     </Button>
                 </div>
 
                 {/* Your Lists Section */}
                 <div className="mb-8">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-2xl font-semibold text-gray-900">Your Lists</h2>
-                        <Button variant="ghost" className="text-purple-600 hover:text-purple-700" onClick={() => router.push(`/all-lists`)}>
-                            View all lists
-                        </Button>
-                    </div>
                     {lists.length === 0 ? (
                         <Card className="text-center py-12">
                             <CardContent>
@@ -140,8 +130,6 @@ export default function Home() {
                         </div>
                     )}
                 </div>
-
-
             </div>
         </div>
     );
