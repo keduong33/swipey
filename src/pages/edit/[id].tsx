@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ImageIcon, Plus, Upload, X } from "lucide-react";
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/router";
+import { ChangeEvent, useEffect, useState } from "react";
 
 type Item = {
     id: number;
@@ -17,6 +18,7 @@ type Item = {
 }
 
 export default function EditingList() {
+    const router = useRouter();
     const [isEditMode, setIsEditMode] = useState(false);
     const [listName, setListName] = useState('');
     const [description, setDescription] = useState('');
@@ -74,6 +76,10 @@ export default function EditingList() {
             items: items.filter(item => item.name.trim() !== '')
         });
     };
+
+    useEffect(() => {
+        console.log(router.query.id)
+    }, [router])
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
