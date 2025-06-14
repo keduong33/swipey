@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -8,13 +8,13 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Clock, Play, Plus, Users } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { v4 } from "uuid";
+} from '@/components/ui/card';
+import { Clock, Play, Plus, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { v4 } from 'uuid';
 
-type Status = "completed" | "in-progress" | "new";
+type Status = 'completed' | 'in-progress' | 'new';
 type List = {
     id: number;
     name: string;
@@ -28,53 +28,53 @@ export default function Home() {
     const [lists, setLists] = useState<List[]>([
         {
             id: 1,
-            name: "Favorite Movies",
-            description: "My top movie picks for 2024",
+            name: 'Favorite Movies',
+            description: 'My top movie picks for 2024',
             itemCount: 12,
-            lastPlayed: "2 days ago",
-            status: "completed",
+            lastPlayed: '2 days ago',
+            status: 'completed',
         },
         {
             id: 2,
-            name: "Best Restaurants",
-            description: "Local dining spots to rank",
+            name: 'Best Restaurants',
+            description: 'Local dining spots to rank',
             itemCount: 8,
-            lastPlayed: "1 week ago",
-            status: "in-progress",
+            lastPlayed: '1 week ago',
+            status: 'in-progress',
         },
         {
             id: 3,
-            name: "Travel Destinations",
-            description: "Places I want to visit",
+            name: 'Travel Destinations',
+            description: 'Places I want to visit',
             itemCount: 15,
-            lastPlayed: "3 days ago",
-            status: "new",
+            lastPlayed: '3 days ago',
+            status: 'new',
         },
     ]);
 
     const getStatusColor = (status: Status) => {
         switch (status) {
-            case "completed":
-                return "text-green-600";
-            case "in-progress":
-                return "text-yellow-600";
-            case "new":
-                return "text-blue-600";
+            case 'completed':
+                return 'text-green-600';
+            case 'in-progress':
+                return 'text-yellow-600';
+            case 'new':
+                return 'text-blue-600';
             default:
-                return "text-gray-600";
+                return 'text-gray-600';
         }
     };
 
     const getStatusText = (status: Status) => {
         switch (status) {
-            case "completed":
-                return "Finished ranking";
-            case "in-progress":
-                return "In progress";
-            case "new":
-                return "Ready to start";
+            case 'completed':
+                return 'Finished ranking';
+            case 'in-progress':
+                return 'In progress';
+            case 'new':
+                return 'Ready to start';
             default:
-                return "Unknown";
+                return 'Unknown';
         }
     };
 
@@ -181,9 +181,9 @@ export default function Home() {
                                     <CardFooter>
                                         <Button className="w-full bg-blue-600 hover:bg-blue-700">
                                             <Play className="w-4 h-4 mr-2" />
-                                            {list.status === "new"
-                                                ? "Start Ranking"
-                                                : "Continue"}
+                                            {list.status === 'new'
+                                                ? 'Start Ranking'
+                                                : 'Continue'}
                                         </Button>
                                     </CardFooter>
                                 </Card>

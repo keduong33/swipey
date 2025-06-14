@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ImageIcon, Plus, Upload, X } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, ImageIcon, Plus, Upload, X } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 type Item = {
     id: number;
@@ -26,21 +26,21 @@ type Item = {
 export default function EditingList() {
     const router = useRouter();
     const [isEditMode, setIsEditMode] = useState(false);
-    const [listName, setListName] = useState("");
-    const [description, setDescription] = useState("");
-    const [visibility, setVisibility] = useState("public");
-    const [category, setCategory] = useState("");
+    const [listName, setListName] = useState('');
+    const [description, setDescription] = useState('');
+    const [visibility, setVisibility] = useState('public');
+    const [category, setCategory] = useState('');
     const [items, setItems] = useState<Item[]>([
-        { id: 1, name: "", image: null },
-        { id: 2, name: "", image: null },
-        { id: 3, name: "", image: null },
-        { id: 4, name: "", image: null },
+        { id: 1, name: '', image: null },
+        { id: 2, name: '', image: null },
+        { id: 3, name: '', image: null },
+        { id: 4, name: '', image: null },
     ]);
 
     const addNewItem = () => {
         const newItem = {
             id: items.length + 1,
-            name: "",
+            name: '',
             image: null,
         };
         setItems([...items, newItem]);
@@ -79,12 +79,12 @@ export default function EditingList() {
 
     const handleSave = () => {
         // Handle save logic here
-        console.log("Saving list:", {
+        console.log('Saving list:', {
             listName,
             description,
             visibility,
             category,
-            items: items.filter((item) => item.name.trim() !== ""),
+            items: items.filter((item) => item.name.trim() !== ''),
         });
         router.push(`/`);
     };
@@ -108,7 +108,7 @@ export default function EditingList() {
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
                         <h1 className="text-2xl font-bold text-gray-900">
-                            {isEditMode ? "Edit List" : "Create New List"}
+                            {isEditMode ? 'Edit List' : 'Create New List'}
                         </h1>
                     </div>
                     <Button
@@ -116,7 +116,7 @@ export default function EditingList() {
                         onClick={toggleMode}
                         className="text-sm"
                     >
-                        {isEditMode ? "Switch to Create" : "Switch to Edit"}
+                        {isEditMode ? 'Switch to Create' : 'Switch to Edit'}
                     </Button>
                 </div>
 
@@ -131,7 +131,7 @@ export default function EditingList() {
                                 htmlFor="list-name"
                                 className="text-sm font-medium"
                             >
-                                Name of list:{" "}
+                                Name of list:{' '}
                                 {isEditMode && (
                                     <span className="text-blue-600 text-xs cursor-pointer">
                                         edit
@@ -144,7 +144,7 @@ export default function EditingList() {
                                 value={listName}
                                 onChange={(e) => setListName(e.target.value)}
                                 disabled={isEditMode}
-                                className={isEditMode ? "bg-gray-50" : ""}
+                                className={isEditMode ? 'bg-gray-50' : ''}
                             />
                         </div>
 
@@ -154,7 +154,7 @@ export default function EditingList() {
                                 htmlFor="description"
                                 className="text-sm font-medium"
                             >
-                                Description{" "}
+                                Description{' '}
                                 {isEditMode && (
                                     <span className="text-blue-600 text-xs cursor-pointer">
                                         edit
@@ -168,7 +168,7 @@ export default function EditingList() {
                                 onChange={(e) => setDescription(e.target.value)}
                                 disabled={isEditMode}
                                 className={`min-h-[80px] ${
-                                    isEditMode ? "bg-gray-50" : ""
+                                    isEditMode ? 'bg-gray-50' : ''
                                 }`}
                             />
                         </div>
@@ -176,7 +176,7 @@ export default function EditingList() {
                         {/* List Items */}
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">
-                                # List Items{" "}
+                                # List Items{' '}
                                 {isEditMode && (
                                     <span className="text-blue-600 text-xs cursor-pointer">
                                         edit
@@ -198,8 +198,8 @@ export default function EditingList() {
                                                     htmlFor={`image-upload-${item.id}`}
                                                     className={`text-center p-2 cursor-pointer ${
                                                         isEditMode
-                                                            ? "cursor-not-allowed"
-                                                            : ""
+                                                            ? 'cursor-not-allowed'
+                                                            : ''
                                                     }`}
                                                 >
                                                     <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
@@ -235,7 +235,7 @@ export default function EditingList() {
                                             }
                                             disabled={isEditMode}
                                             className={`mt-2 text-xs ${
-                                                isEditMode ? "bg-gray-50" : ""
+                                                isEditMode ? 'bg-gray-50' : ''
                                             }`}
                                         />
                                         {items.length > 1 && !isEditMode && (
@@ -292,7 +292,7 @@ export default function EditingList() {
                             {/* Visibility */}
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">
-                                    Visibility{" "}
+                                    Visibility{' '}
                                     {isEditMode && (
                                         <span className="text-blue-600 text-xs cursor-pointer">
                                             edit
@@ -306,7 +306,7 @@ export default function EditingList() {
                                 >
                                     <SelectTrigger
                                         className={
-                                            isEditMode ? "bg-gray-50" : ""
+                                            isEditMode ? 'bg-gray-50' : ''
                                         }
                                     >
                                         <SelectValue />
@@ -328,7 +328,7 @@ export default function EditingList() {
                             {/* Category */}
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">
-                                    Category{" "}
+                                    Category{' '}
                                     {isEditMode && (
                                         <span className="text-blue-600 text-xs cursor-pointer">
                                             edit
@@ -342,7 +342,7 @@ export default function EditingList() {
                                 >
                                     <SelectTrigger
                                         className={
-                                            isEditMode ? "bg-gray-50" : ""
+                                            isEditMode ? 'bg-gray-50' : ''
                                         }
                                     >
                                         <SelectValue placeholder="Select category" />
@@ -378,7 +378,7 @@ export default function EditingList() {
                                 className="w-full bg-purple-600 hover:bg-purple-700"
                                 size="lg"
                             >
-                                {isEditMode ? "Done" : "Create"}
+                                {isEditMode ? 'Done' : 'Create'}
                             </Button>
                         </div>
                     </CardContent>

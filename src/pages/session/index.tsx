@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import Router from "next/router";
-import { FormEvent } from "react";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import Router from 'next/router';
+import { FormEvent } from 'react';
 
-const formSessionCode = "session-code";
+const formSessionCode = 'session-code';
 
 function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
