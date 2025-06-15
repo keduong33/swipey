@@ -1,21 +1,27 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ImageIcon, Plus, Upload, X } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, ImageIcon, Plus, Upload, X } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 type Item = {
     id: number;
     name: string;
     image: string | null;
-}
+};
 
 export default function EditingList() {
     const router = useRouter();
@@ -28,37 +34,42 @@ export default function EditingList() {
         { id: 1, name: '', image: null },
         { id: 2, name: '', image: null },
         { id: 3, name: '', image: null },
-        { id: 4, name: '', image: null }
+        { id: 4, name: '', image: null },
     ]);
 
     const addNewItem = () => {
         const newItem = {
             id: items.length + 1,
             name: '',
-            image: null
+            image: null,
         };
         setItems([...items, newItem]);
     };
 
     const removeItem = (id: number) => {
         if (items.length > 1) {
-            setItems(items.filter(item => item.id !== id));
+            setItems(items.filter((item) => item.id !== id));
         }
     };
 
     const updateItemName = (id: number, name: string) => {
-        setItems(items.map(item =>
-            item.id === id ? { ...item, name } : item
-        ));
+        setItems(
+            items.map((item) => (item.id === id ? { ...item, name } : item))
+        );
     };
 
-    const handleImageUpload = (id: number, event: ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = (
+        id: number,
+        event: ChangeEvent<HTMLInputElement>
+    ) => {
         const file = event.target.files?.[0];
         if (file) {
             const imageUrl = URL.createObjectURL(file);
-            setItems(items.map(item =>
-                item.id === id ? { ...item, image: imageUrl } : item
-            ));
+            setItems(
+                items.map((item) =>
+                    item.id === id ? { ...item, image: imageUrl } : item
+                )
+            );
         }
     };
 
@@ -73,14 +84,14 @@ export default function EditingList() {
             description,
             visibility,
             category,
-            items: items.filter(item => item.name.trim() !== '')
+            items: items.filter((item) => item.name.trim() !== ''),
         });
-        router.push(`/`)
+        router.push(`/`);
     };
 
     useEffect(() => {
-        console.log(router.query.id)
-    }, [router])
+        console.log(router.query.id);
+    }, [router]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
@@ -88,7 +99,12 @@ export default function EditingList() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                        <Button variant="ghost" size="sm" className="p-2" onClick={() => router.push(`/`)}>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-2"
+                            onClick={() => router.push(`/`)}
+                        >
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
                         <h1 className="text-2xl font-bold text-gray-900">
@@ -111,8 +127,16 @@ export default function EditingList() {
                     <CardContent className="space-y-6">
                         {/* List Name */}
                         <div className="space-y-2">
-                            <Label htmlFor="list-name" className="text-sm font-medium">
-                                Name of list: {isEditMode && <span className="text-blue-600 text-xs cursor-pointer">edit</span>}
+                            <Label
+                                htmlFor="list-name"
+                                className="text-sm font-medium"
+                            >
+                                Name of list:{' '}
+                                {isEditMode && (
+                                    <span className="text-blue-600 text-xs cursor-pointer">
+                                        edit
+                                    </span>
+                                )}
                             </Label>
                             <Input
                                 id="list-name"
@@ -120,14 +144,22 @@ export default function EditingList() {
                                 value={listName}
                                 onChange={(e) => setListName(e.target.value)}
                                 disabled={isEditMode}
-                                className={isEditMode ? "bg-gray-50" : ""}
+                                className={isEditMode ? 'bg-gray-50' : ''}
                             />
                         </div>
 
                         {/* Description */}
                         <div className="space-y-2">
-                            <Label htmlFor="description" className="text-sm font-medium">
-                                Description {isEditMode && <span className="text-blue-600 text-xs cursor-pointer">edit</span>}
+                            <Label
+                                htmlFor="description"
+                                className="text-sm font-medium"
+                            >
+                                Description{' '}
+                                {isEditMode && (
+                                    <span className="text-blue-600 text-xs cursor-pointer">
+                                        edit
+                                    </span>
+                                )}
                             </Label>
                             <Textarea
                                 id="description"
@@ -135,14 +167,21 @@ export default function EditingList() {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 disabled={isEditMode}
-                                className={`min-h-[80px] ${isEditMode ? "bg-gray-50" : ""}`}
+                                className={`min-h-[80px] ${
+                                    isEditMode ? 'bg-gray-50' : ''
+                                }`}
                             />
                         </div>
 
                         {/* List Items */}
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">
-                                # List Items {isEditMode && <span className="text-blue-600 text-xs cursor-pointer">edit</span>}
+                                # List Items{' '}
+                                {isEditMode && (
+                                    <span className="text-blue-600 text-xs cursor-pointer">
+                                        edit
+                                    </span>
+                                )}
                             </Label>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {items.map((item) => (
@@ -155,18 +194,29 @@ export default function EditingList() {
                                                     className="w-full h-full object-cover rounded-lg"
                                                 />
                                             ) : (
-                                                <label htmlFor={`image-upload-${item.id}`} className={`text-center p-2 cursor-pointer ${isEditMode ? 'cursor-not-allowed' : ''}`}>
+                                                <label
+                                                    htmlFor={`image-upload-${item.id}`}
+                                                    className={`text-center p-2 cursor-pointer ${
+                                                        isEditMode
+                                                            ? 'cursor-not-allowed'
+                                                            : ''
+                                                    }`}
+                                                >
                                                     <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                                                     <Input
                                                         type="file"
                                                         accept="image/*"
-                                                        onChange={(e) => handleImageUpload(item.id, e)}
+                                                        onChange={(e) =>
+                                                            handleImageUpload(
+                                                                item.id,
+                                                                e
+                                                            )
+                                                        }
                                                         className="hidden"
                                                         id={`image-upload-${item.id}`}
                                                         disabled={isEditMode}
                                                     />
                                                     <p
-
                                                         className={`text-xs text-gray-500`}
                                                     >
                                                         Upload
@@ -177,15 +227,24 @@ export default function EditingList() {
                                         <Input
                                             placeholder="Item name"
                                             value={item.name}
-                                            onChange={(e) => updateItemName(item.id, e.target.value)}
+                                            onChange={(e) =>
+                                                updateItemName(
+                                                    item.id,
+                                                    e.target.value
+                                                )
+                                            }
                                             disabled={isEditMode}
-                                            className={`mt-2 text-xs ${isEditMode ? "bg-gray-50" : ""}`}
+                                            className={`mt-2 text-xs ${
+                                                isEditMode ? 'bg-gray-50' : ''
+                                            }`}
                                         />
                                         {items.length > 1 && !isEditMode && (
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                onClick={() => removeItem(item.id)}
+                                                onClick={() =>
+                                                    removeItem(item.id)
+                                                }
                                                 className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
                                             >
                                                 <X className="w-3 h-3" />
@@ -200,7 +259,9 @@ export default function EditingList() {
                                         className="aspect-square border-2 border-dashed border-gray-300 rounded-lg items-center justify-center hover:border-gray-400 transition-colors"
                                     >
                                         <Plus className="w-6 h-6 text-gray-400" />
-                                        <span className="text-xs text-gray-500">Add Item</span>
+                                        <span className="text-xs text-gray-500">
+                                            Add Item
+                                        </span>
                                     </Button>
                                 )}
                             </div>
@@ -208,12 +269,18 @@ export default function EditingList() {
 
                         {/* Thumbnail */}
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Thumbnail</Label>
+                            <Label className="text-sm font-medium">
+                                Thumbnail
+                            </Label>
                             <div className="flex items-center gap-3">
                                 <div className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-white">
                                     <ImageIcon className="w-6 h-6 text-gray-400" />
                                 </div>
-                                <Button variant="outline" size="sm" disabled={isEditMode}>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={isEditMode}
+                                >
                                     <Upload className="w-4 h-4 mr-2" />
                                     Upload Thumbnail
                                 </Button>
@@ -225,16 +292,35 @@ export default function EditingList() {
                             {/* Visibility */}
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">
-                                    Visibility {isEditMode && <span className="text-blue-600 text-xs cursor-pointer">edit</span>}
+                                    Visibility{' '}
+                                    {isEditMode && (
+                                        <span className="text-blue-600 text-xs cursor-pointer">
+                                            edit
+                                        </span>
+                                    )}
                                 </Label>
-                                <Select value={visibility} onValueChange={setVisibility} disabled={isEditMode}>
-                                    <SelectTrigger className={isEditMode ? "bg-gray-50" : ""}>
+                                <Select
+                                    value={visibility}
+                                    onValueChange={setVisibility}
+                                    disabled={isEditMode}
+                                >
+                                    <SelectTrigger
+                                        className={
+                                            isEditMode ? 'bg-gray-50' : ''
+                                        }
+                                    >
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="public">🌐 Public</SelectItem>
-                                        <SelectItem value="private">🔒 Private</SelectItem>
-                                        <SelectItem value="friends">👥 Friends Only</SelectItem>
+                                        <SelectItem value="public">
+                                            🌐 Public
+                                        </SelectItem>
+                                        <SelectItem value="private">
+                                            🔒 Private
+                                        </SelectItem>
+                                        <SelectItem value="friends">
+                                            👥 Friends Only
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -242,19 +328,44 @@ export default function EditingList() {
                             {/* Category */}
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">
-                                    Category {isEditMode && <span className="text-blue-600 text-xs cursor-pointer">edit</span>}
+                                    Category{' '}
+                                    {isEditMode && (
+                                        <span className="text-blue-600 text-xs cursor-pointer">
+                                            edit
+                                        </span>
+                                    )}
                                 </Label>
-                                <Select value={category} onValueChange={setCategory} disabled={isEditMode}>
-                                    <SelectTrigger className={isEditMode ? "bg-gray-50" : ""}>
+                                <Select
+                                    value={category}
+                                    onValueChange={setCategory}
+                                    disabled={isEditMode}
+                                >
+                                    <SelectTrigger
+                                        className={
+                                            isEditMode ? 'bg-gray-50' : ''
+                                        }
+                                    >
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="games">🎮 Games</SelectItem>
-                                        <SelectItem value="movies">🎬 Movies</SelectItem>
-                                        <SelectItem value="music">🎵 Music</SelectItem>
-                                        <SelectItem value="food">🍕 Food</SelectItem>
-                                        <SelectItem value="travel">✈️ Travel</SelectItem>
-                                        <SelectItem value="other">📋 Other</SelectItem>
+                                        <SelectItem value="games">
+                                            🎮 Games
+                                        </SelectItem>
+                                        <SelectItem value="movies">
+                                            🎬 Movies
+                                        </SelectItem>
+                                        <SelectItem value="music">
+                                            🎵 Music
+                                        </SelectItem>
+                                        <SelectItem value="food">
+                                            🍕 Food
+                                        </SelectItem>
+                                        <SelectItem value="travel">
+                                            ✈️ Travel
+                                        </SelectItem>
+                                        <SelectItem value="other">
+                                            📋 Other
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
