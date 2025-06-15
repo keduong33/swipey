@@ -1,82 +1,18 @@
 'use client';
 
+import { List } from '@/common/types';
+import { ListCard } from '@/components/listCard';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { ArrowLeft, Clock, Play, Plus, Users } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { useGetList } from '@/hooks/useGetList';
+import { ArrowLeft, Plus, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { v4 } from 'uuid';
 
-type Status = 'completed' | 'in-progress' | 'new';
-type List = {
-    id: number;
-    name: string;
-    description: string;
-    itemCount: number;
-    lastPlayed: string;
-    status: Status;
-};
-
 export default function Home() {
-    const [lists, setLists] = useState<List[]>([
-        {
-            id: 1,
-            name: 'Favorite Movies',
-            description: 'My top movie picks for 2024',
-            itemCount: 12,
-            lastPlayed: '2 days ago',
-            status: 'completed',
-        },
-        {
-            id: 2,
-            name: 'Best Restaurants',
-            description: 'Local dining spots to rank',
-            itemCount: 8,
-            lastPlayed: '1 week ago',
-            status: 'in-progress',
-        },
-        {
-            id: 3,
-            name: 'Travel Destinations',
-            description: 'Places I want to visit',
-            itemCount: 15,
-            lastPlayed: '3 days ago',
-            status: 'new',
-        },
-    ]);
-
-    const getStatusColor = (status: Status) => {
-        switch (status) {
-            case 'completed':
-                return 'text-green-600';
-            case 'in-progress':
-                return 'text-yellow-600';
-            case 'new':
-                return 'text-blue-600';
-            default:
-                return 'text-gray-600';
-        }
-    };
-
-    const getStatusText = (status: Status) => {
-        switch (status) {
-            case 'completed':
-                return 'Finished ranking';
-            case 'in-progress':
-                return 'In progress';
-            case 'new':
-                return 'Ready to start';
-            default:
-                return 'Unknown';
-        }
-    };
+    const [lists, setLists] = useState<Map<string, List>>(new Map());
+    useGetList({ setLists });
 
     const router = useRouter();
 
@@ -110,7 +46,7 @@ export default function Home() {
 
                 {/* Your Lists Section */}
                 <div className="mb-8">
-                    {lists.length === 0 ? (
+                    {lists.size === 0 ? (
                         <Card className="text-center py-12">
                             <CardContent>
                                 <div className="text-gray-500 mb-4">
@@ -127,47 +63,8 @@ export default function Home() {
                         </Card>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {lists.slice(0, 6).map((list) => (
-                                <Card
-                                    key={list.id}
-                                    className="hover:shadow-lg transition-shadow cursor-pointer"
-                                >
-                                    <CardHeader>
-                                        <CardTitle className="text-lg">
-                                            {list.name}
-                                        </CardTitle>
-                                        <CardDescription>
-                                            {list.description}
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                                            <span className="flex items-center">
-                                                <Users className="w-4 h-4 mr-1" />
-                                                {list.itemCount} items
-                                            </span>
-                                            <span className="flex items-center">
-                                                <Clock className="w-4 h-4 mr-1" />
-                                                {list.lastPlayed}
-                                            </span>
-                                        </div>
-                                        <div
-                                            className={`text-sm font-medium ${getStatusColor(
-                                                list.status
-                                            )}`}
-                                        >
-                                            {getStatusText(list.status)}
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter>
-                                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                                            <Play className="w-4 h-4 mr-2" />
-                                            {list.status === 'new'
-                                                ? 'Start Ranking'
-                                                : 'Continue'}
-                                        </Button>
-                                    </CardFooter>
-                                </Card>
+                            {Array.from(lists.values()).map((list) => (
+                                <ListCard key={list.id} list={list} />
                             ))}
                         </div>
                     )}

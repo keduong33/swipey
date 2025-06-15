@@ -1,7 +1,18 @@
 'use client';
 
+import { Item, List, Visibility } from '@/common/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -12,31 +23,47 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, ImageIcon, Plus, Upload, X } from 'lucide-react';
+import { useGetList } from '@/hooks/useGetList';
+import { ArrowLeft, ImageIcon, Plus, Trash2, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, PropsWithChildren, useEffect, useState } from 'react';
 import Page from '../../components/page';
-
-type Item = {
-    id: number;
-    name: string;
-    image: string | null;
-};
 
 export default function EditingList() {
     const router = useRouter();
-    const [isEditMode, setIsEditMode] = useState(false);
     const [listName, setListName] = useState('');
     const [description, setDescription] = useState('');
     const [visibility, setVisibility] = useState('public');
     const [category, setCategory] = useState('');
     const [items, setItems] = useState<Item[]>([
         { id: 1, name: '', image: null },
-        { id: 2, name: '', image: null },
-        { id: 3, name: '', image: null },
-        { id: 4, name: '', image: null },
     ]);
+    const [lists, setLists] = useState<Map<string, List>>(new Map());
+
+    useGetList({ setLists });
+
+    const retrievedList: List | undefined = lists.get(
+        router.query.id as string
+    );
+
+    const isShowingCreatedList: boolean = !!retrievedList;
+
+    useEffect(() => {
+        if (retrievedList) {
+            setListName(retrievedList.name || '');
+            setDescription(retrievedList.description || '');
+            setVisibility(retrievedList.visibility || 'public');
+            setCategory(retrievedList.category || '');
+            setItems(
+                retrievedList.items.map((item) => ({
+                    id: item.id,
+                    name: item.name,
+                    image: item.image || null,
+                }))
+            );
+        }
+    }, [retrievedList]);
 
     const addNewItem = () => {
         const newItem = {
@@ -74,25 +101,84 @@ export default function EditingList() {
         }
     };
 
-    const toggleMode = () => {
-        setIsEditMode(!isEditMode);
-    };
-
     const handleSave = () => {
-        // Handle save logic here
-        console.log('Saving list:', {
-            listName,
+        const newList: List = {
+            id: router.query.id as string,
+            name: listName,
             description,
-            visibility,
+            visibility: visibility as Visibility,
             category,
             items: items.filter((item) => item.name.trim() !== ''),
-        });
+            itemCount: items.length,
+            lastPlayed: 'Never',
+            status: 'new',
+        };
+
+        // Handle save logic here
+        console.log('Saving list:', newList);
+
+        const existingList: List[] = JSON.parse(
+            localStorage.getItem('lists') || '[]'
+        );
+
+        localStorage.setItem(
+            'lists',
+            JSON.stringify([...existingList, newList])
+        );
+
+        router.push(`/`);
+    };
+
+    const handleDelete = () => {
+        const updatedLists: Map<string, List> = new Map(lists);
+
+        updatedLists.delete(router.query.id as string);
+
+        setLists(updatedLists);
+        localStorage.setItem(
+            'lists',
+            JSON.stringify(Array.from(updatedLists.values()))
+        );
+
         router.push(`/`);
     };
 
     useEffect(() => {
         console.log(router.query.id);
     }, [router]);
+
+    const DeleteConfirmationDialog = (props: PropsWithChildren) => (
+        <Dialog>
+            <DialogTrigger className="float-right">
+                {props.children}
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        Are you sure you want to delete {listName}?
+                    </DialogTitle>
+                    <DialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete the list and all its items.
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button>Cancel</Button>
+                    </DialogClose>
+                    <Button
+                        type="submit"
+                        variant="secondary"
+                        onClick={() => {
+                            handleDelete();
+                        }}
+                    >
+                        Delete
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
 
     return (
         <Page>
@@ -109,21 +195,32 @@ export default function EditingList() {
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
                         <h1 className="text-2xl font-bold text-gray-900">
-                            {isEditMode ? 'Edit List' : 'Create New List'}
+                            {isShowingCreatedList
+                                ? 'Edit List'
+                                : 'Create New List'}
                         </h1>
                     </div>
-                    <Button
-                        variant="outline"
-                        onClick={toggleMode}
-                        className="text-sm"
-                    >
-                        {isEditMode ? 'Switch to Create' : 'Switch to Edit'}
-                    </Button>
                 </div>
 
                 <Card className="mb-6">
                     <CardHeader>
-                        <CardTitle className="text-lg">Swipey</CardTitle>
+                        <CardTitle className="text-lg">
+                            {isShowingCreatedList
+                                ? 'Edit List'
+                                : 'Create New List'}
+                            {isShowingCreatedList && (
+                                <DeleteConfirmationDialog>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="float-right text-red-500 hover:text-red-600"
+                                    >
+                                        <Trash2 className="w-4 h-4 mr-1" />
+                                        Delete List
+                                    </Button>
+                                </DeleteConfirmationDialog>
+                            )}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         {/* List Name */}
@@ -132,20 +229,13 @@ export default function EditingList() {
                                 htmlFor="list-name"
                                 className="text-sm font-medium"
                             >
-                                Name of list:{' '}
-                                {isEditMode && (
-                                    <span className="text-blue-600 text-xs cursor-pointer">
-                                        edit
-                                    </span>
-                                )}
+                                List Name
                             </Label>
                             <Input
                                 id="list-name"
                                 placeholder="Enter list name"
                                 value={listName}
                                 onChange={(e) => setListName(e.target.value)}
-                                disabled={isEditMode}
-                                className={isEditMode ? 'bg-gray-50' : ''}
                             />
                         </div>
 
@@ -155,34 +245,20 @@ export default function EditingList() {
                                 htmlFor="description"
                                 className="text-sm font-medium"
                             >
-                                Description{' '}
-                                {isEditMode && (
-                                    <span className="text-blue-600 text-xs cursor-pointer">
-                                        edit
-                                    </span>
-                                )}
+                                Description
                             </Label>
                             <Textarea
                                 id="description"
-                                placeholder="Example: description here"
+                                placeholder="Enter list description here"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                disabled={isEditMode}
-                                className={`min-h-[80px] ${
-                                    isEditMode ? 'bg-gray-50' : ''
-                                }`}
                             />
                         </div>
 
                         {/* List Items */}
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">
-                                # List Items{' '}
-                                {isEditMode && (
-                                    <span className="text-blue-600 text-xs cursor-pointer">
-                                        edit
-                                    </span>
-                                )}
+                                List Items
                             </Label>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {items.map((item) => (
@@ -197,11 +273,7 @@ export default function EditingList() {
                                             ) : (
                                                 <label
                                                     htmlFor={`image-upload-${item.id}`}
-                                                    className={`text-center p-2 cursor-pointer ${
-                                                        isEditMode
-                                                            ? 'cursor-not-allowed'
-                                                            : ''
-                                                    }`}
+                                                    className="text-center p-2 cursor-pointer"
                                                 >
                                                     <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                                                     <Input
@@ -215,7 +287,6 @@ export default function EditingList() {
                                                         }
                                                         className="hidden"
                                                         id={`image-upload-${item.id}`}
-                                                        disabled={isEditMode}
                                                     />
                                                     <p
                                                         className={`text-xs text-gray-500`}
@@ -234,12 +305,8 @@ export default function EditingList() {
                                                     e.target.value
                                                 )
                                             }
-                                            disabled={isEditMode}
-                                            className={`mt-2 text-xs ${
-                                                isEditMode ? 'bg-gray-50' : ''
-                                            }`}
                                         />
-                                        {items.length > 1 && !isEditMode && (
+                                        {items.length > 1 && (
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
@@ -253,18 +320,16 @@ export default function EditingList() {
                                         )}
                                     </div>
                                 ))}
-                                {!isEditMode && (
-                                    <Button
-                                        variant="outline"
-                                        onClick={addNewItem}
-                                        className="aspect-square border-2 border-dashed border-gray-300 rounded-lg items-center justify-center hover:border-gray-400 transition-colors"
-                                    >
-                                        <Plus className="w-6 h-6 text-gray-400" />
-                                        <span className="text-xs text-gray-500">
-                                            Add Item
-                                        </span>
-                                    </Button>
-                                )}
+                                <Button
+                                    variant="outline"
+                                    onClick={addNewItem}
+                                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg items-center justify-center hover:border-gray-400 transition-colors"
+                                >
+                                    <Plus className="w-6 h-6 text-gray-400" />
+                                    <span className="text-xs text-gray-500">
+                                        Add Item
+                                    </span>
+                                </Button>
                             </div>
                         </div>
 
@@ -277,11 +342,7 @@ export default function EditingList() {
                                 <div className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-white">
                                     <ImageIcon className="w-6 h-6 text-gray-400" />
                                 </div>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    disabled={isEditMode}
-                                >
+                                <Button variant="outline" size="sm">
                                     <Upload className="w-4 h-4 mr-2" />
                                     Upload Thumbnail
                                 </Button>
@@ -293,23 +354,13 @@ export default function EditingList() {
                             {/* Visibility */}
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">
-                                    Visibility{' '}
-                                    {isEditMode && (
-                                        <span className="text-blue-600 text-xs cursor-pointer">
-                                            edit
-                                        </span>
-                                    )}
+                                    Visibility
                                 </Label>
                                 <Select
                                     value={visibility}
                                     onValueChange={setVisibility}
-                                    disabled={isEditMode}
                                 >
-                                    <SelectTrigger
-                                        className={
-                                            isEditMode ? 'bg-gray-50' : ''
-                                        }
-                                    >
+                                    <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -329,23 +380,13 @@ export default function EditingList() {
                             {/* Category */}
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">
-                                    Category{' '}
-                                    {isEditMode && (
-                                        <span className="text-blue-600 text-xs cursor-pointer">
-                                            edit
-                                        </span>
-                                    )}
+                                    Category
                                 </Label>
                                 <Select
                                     value={category}
                                     onValueChange={setCategory}
-                                    disabled={isEditMode}
                                 >
-                                    <SelectTrigger
-                                        className={
-                                            isEditMode ? 'bg-gray-50' : ''
-                                        }
-                                    >
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -379,7 +420,9 @@ export default function EditingList() {
                                 className="w-full bg-purple-600 hover:bg-purple-700"
                                 size="lg"
                             >
-                                {isEditMode ? 'Done' : 'Create'}
+                                {isShowingCreatedList
+                                    ? 'Save Changes'
+                                    : 'Create New List'}
                             </Button>
                         </div>
                     </CardContent>
