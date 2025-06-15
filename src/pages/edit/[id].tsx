@@ -3,16 +3,6 @@
 import { List, Visibility } from '@/components/listCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -26,10 +16,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { useGetList } from '@/hooks/useGetList';
 import { ArrowLeft, ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Page from '../../components/page';
-import { ListItems } from './ListItems';
+import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 import { Item } from './ListItem';
+import { ListItems } from './ListItems';
 
 export default function EditingList() {
     const router = useRouter();
@@ -102,56 +93,9 @@ export default function EditingList() {
         router.push(`/`);
     };
 
-    const handleDelete = () => {
-        const updatedLists: Map<string, List> = new Map(lists);
-
-        updatedLists.delete(router.query.id as string);
-
-        setLists(updatedLists);
-        localStorage.setItem(
-            'lists',
-            JSON.stringify(Array.from(updatedLists.values()))
-        );
-
-        router.push(`/`);
-    };
-
     useEffect(() => {
         console.log(router.query.id);
     }, [router]);
-
-    const DeleteConfirmationDialog = (props: PropsWithChildren) => (
-        <Dialog>
-            <DialogTrigger className="float-right">
-                {props.children}
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>
-                        Are you sure you want to delete {listName}?
-                    </DialogTitle>
-                    <DialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete the list and all its items.
-                    </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button>Cancel</Button>
-                    </DialogClose>
-                    <Button
-                        type="submit"
-                        variant="secondary"
-                        onClick={() => {
-                            handleDelete();
-                        }}
-                    >
-                        Delete
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    );
 
     return (
         <Page>
@@ -182,7 +126,11 @@ export default function EditingList() {
                                 ? 'Edit List'
                                 : 'Create New List'}
                             {isShowingExistingList && (
-                                <DeleteConfirmationDialog>
+                                <DeleteConfirmationDialog
+                                    lists={lists}
+                                    setLists={setLists}
+                                    id={router.query.id as string}
+                                >
                                     <Button
                                         variant="ghost"
                                         size="sm"
