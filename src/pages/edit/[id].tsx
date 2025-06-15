@@ -16,6 +16,7 @@ import { ArrowLeft, ImageIcon, Plus, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useEffect, useState } from 'react';
+import Page from '../../components/page';
 
 type Item = {
     id: number;
@@ -94,7 +95,7 @@ export default function EditingList() {
     }, [router]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+        <Page>
             <div className="max-w-2xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -384,6 +385,6 @@ export default function EditingList() {
                     </CardContent>
                 </Card>
             </div>
-        </div>
+        </Page>
     );
 }
