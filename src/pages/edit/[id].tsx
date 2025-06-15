@@ -24,11 +24,11 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useGetList } from '@/hooks/useGetList';
-import { ArrowLeft, ImageIcon, Plus, Trash2, Upload, X } from 'lucide-react';
-import Image from 'next/image';
+import { ArrowLeft, ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { ChangeEvent, PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import Page from '../../components/page';
+import { ListItems } from './ListItems';
 
 export default function EditingList() {
     const router = useRouter();
@@ -71,33 +71,6 @@ export default function EditingList() {
             image: null,
         };
         setItems([...items, newItem]);
-    };
-
-    const removeItem = (id: number) => {
-        if (items.length > 1) {
-            setItems(items.filter((item) => item.id !== id));
-        }
-    };
-
-    const updateItemName = (id: number, name: string) => {
-        setItems(
-            items.map((item) => (item.id === id ? { ...item, name } : item))
-        );
-    };
-
-    const handleImageUpload = (
-        id: number,
-        event: ChangeEvent<HTMLInputElement>
-    ) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setItems(
-                items.map((item) =>
-                    item.id === id ? { ...item, image: imageUrl } : item
-                )
-            );
-        }
     };
 
     const handleSave = () => {
@@ -177,50 +150,6 @@ export default function EditingList() {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    );
-
-    const ImageItem = ({ item }: { item: Item }) => (
-        <div key={item.id} className="relative">
-            <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-white hover:border-gray-400 transition-colors">
-                {item.image ? (
-                    <Image
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover rounded-lg"
-                    />
-                ) : (
-                    <label
-                        htmlFor={`image-upload-${item.id}`}
-                        className="text-center p-2 cursor-pointer"
-                    >
-                        <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleImageUpload(item.id, e)}
-                            className="hidden"
-                            id={`image-upload-${item.id}`}
-                        />
-                        <p className={`text-xs text-gray-500`}>Upload</p>
-                    </label>
-                )}
-            </div>
-            <Input
-                placeholder="Item name"
-                value={item.name}
-                onChange={(e) => updateItemName(item.id, e.target.value)}
-            />
-            {items.length > 1 && (
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeItem(item.id)}
-                    className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
-                >
-                    <X className="w-3 h-3" />
-                </Button>
-            )}
-        </div>
     );
 
     return (
@@ -304,9 +233,7 @@ export default function EditingList() {
                                 List Items
                             </Label>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                {items.map((item) => (
-                                    <ImageItem item={item} />
-                                ))}
+                                <ListItems items={items} setItems={setItems} />
                                 <Button
                                     variant="outline"
                                     onClick={addNewItem}
