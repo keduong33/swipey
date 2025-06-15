@@ -11,9 +11,9 @@ import { createServerFn } from '@tanstack/react-start';
 import * as React from 'react';
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
 import { NotFound } from '../components/NotFound';
-import appCss from '../styles/app.css?url';
-import { seo } from '../utils/seo';
-import { getSupabaseServerClient } from '../utils/supabase';
+import { seo } from '../lib/seo';
+import { getSupabaseServerClient } from '../lib/supabase';
+import globalCss from '../styles/global.css?url';
 
 const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
     const supabase = await getSupabaseServerClient();
@@ -44,7 +44,7 @@ export const Route = createRootRoute({
             }),
         ],
         links: [
-            { rel: 'stylesheet', href: appCss },
+            { rel: 'stylesheet', href: globalCss },
             {
                 rel: 'apple-touch-icon',
                 sizes: '180x180',
