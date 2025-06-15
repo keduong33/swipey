@@ -1,6 +1,11 @@
-import { Item } from '@/components/listCard';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { ListItem } from './ListItem';
+
+export type Item = {
+    id: number;
+    name: string;
+    image: string | null;
+};
 
 export const ListItems = ({
     items,

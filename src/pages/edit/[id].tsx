@@ -1,6 +1,6 @@
 'use client';
 
-import { Item, List, Visibility } from '@/components/listCard';
+import { List, Visibility } from '@/components/listCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -28,7 +28,7 @@ import { ArrowLeft, ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import Page from '../../components/page';
-import { ListItems } from './ListItems';
+import { Item, ListItems } from './ListItems';
 
 export default function EditingList() {
     const router = useRouter();

@@ -1,9 +1,9 @@
-import { Item } from '@/components/listCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ImageIcon, X } from 'lucide-react';
 import Image from 'next/image';
 import { ChangeEvent } from 'react';
+import { Item } from './ListItems';
 
 export const ListItem = ({
     item,

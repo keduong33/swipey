@@ -1,3 +1,4 @@
+import { Item } from '@/pages/edit/ListItems';
 import { Clock, Play, Users } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -8,12 +9,6 @@ import {
     CardHeader,
     CardTitle,
 } from './ui/card';
-
-export type Item = {
-    id: number;
-    name: string;
-    image: string | null;
-};
 
 export type List = {
     id: string;
