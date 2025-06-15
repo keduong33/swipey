@@ -1,4 +1,3 @@
-import { List, Status } from '@/common/types';
 import { Clock, Play, Users } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -9,6 +8,27 @@ import {
     CardHeader,
     CardTitle,
 } from './ui/card';
+
+export type Item = {
+    id: number;
+    name: string;
+    image: string | null;
+};
+
+export type List = {
+    id: string;
+    name: string;
+    description?: string;
+    visibility: Visibility;
+    category?: string;
+    items: Item[];
+    itemCount: number;
+    lastPlayed: string;
+    status: Status;
+};
+
+export type Status = 'completed' | 'in-progress' | 'new';
+export type Visibility = 'public' | 'private' | 'friends';
 
 const getStatusColor = (status: Status): string => {
     switch (status) {

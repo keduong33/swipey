@@ -1,6 +1,6 @@
 'use client';
 
-import { Item, List, Visibility } from '@/common/types';
+import { Item, List, Visibility } from '@/components/listCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -39,15 +39,14 @@ export default function EditingList() {
     const [items, setItems] = useState<Item[]>([
         { id: 1, name: '', image: null },
     ]);
-    const [lists, setLists] = useState<Map<string, List>>(new Map());
 
-    useGetList({ setLists });
+    const { lists, setLists } = useGetList();
 
     const retrievedList: List | undefined = lists.get(
         router.query.id as string
     );
 
-    const isShowingCreatedList: boolean = !!retrievedList;
+    const isShowingExistingList: boolean = !!retrievedList;
 
     useEffect(() => {
         if (retrievedList) {
@@ -180,6 +179,50 @@ export default function EditingList() {
         </Dialog>
     );
 
+    const ImageItem = ({ item }: { item: Item }) => (
+        <div key={item.id} className="relative">
+            <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-white hover:border-gray-400 transition-colors">
+                {item.image ? (
+                    <Image
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg"
+                    />
+                ) : (
+                    <label
+                        htmlFor={`image-upload-${item.id}`}
+                        className="text-center p-2 cursor-pointer"
+                    >
+                        <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageUpload(item.id, e)}
+                            className="hidden"
+                            id={`image-upload-${item.id}`}
+                        />
+                        <p className={`text-xs text-gray-500`}>Upload</p>
+                    </label>
+                )}
+            </div>
+            <Input
+                placeholder="Item name"
+                value={item.name}
+                onChange={(e) => updateItemName(item.id, e.target.value)}
+            />
+            {items.length > 1 && (
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeItem(item.id)}
+                    className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
+                >
+                    <X className="w-3 h-3" />
+                </Button>
+            )}
+        </div>
+    );
+
     return (
         <Page>
             <div className="max-w-2xl mx-auto">
@@ -195,7 +238,7 @@ export default function EditingList() {
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
                         <h1 className="text-2xl font-bold text-gray-900">
-                            {isShowingCreatedList
+                            {isShowingExistingList
                                 ? 'Edit List'
                                 : 'Create New List'}
                         </h1>
@@ -205,10 +248,10 @@ export default function EditingList() {
                 <Card className="mb-6">
                     <CardHeader>
                         <CardTitle className="text-lg">
-                            {isShowingCreatedList
+                            {isShowingExistingList
                                 ? 'Edit List'
                                 : 'Create New List'}
-                            {isShowingCreatedList && (
+                            {isShowingExistingList && (
                                 <DeleteConfirmationDialog>
                                     <Button
                                         variant="ghost"
@@ -262,63 +305,7 @@ export default function EditingList() {
                             </Label>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {items.map((item) => (
-                                    <div key={item.id} className="relative">
-                                        <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-white hover:border-gray-400 transition-colors">
-                                            {item.image ? (
-                                                <Image
-                                                    src={item.image}
-                                                    alt={item.name}
-                                                    className="w-full h-full object-cover rounded-lg"
-                                                />
-                                            ) : (
-                                                <label
-                                                    htmlFor={`image-upload-${item.id}`}
-                                                    className="text-center p-2 cursor-pointer"
-                                                >
-                                                    <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                                    <Input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={(e) =>
-                                                            handleImageUpload(
-                                                                item.id,
-                                                                e
-                                                            )
-                                                        }
-                                                        className="hidden"
-                                                        id={`image-upload-${item.id}`}
-                                                    />
-                                                    <p
-                                                        className={`text-xs text-gray-500`}
-                                                    >
-                                                        Upload
-                                                    </p>
-                                                </label>
-                                            )}
-                                        </div>
-                                        <Input
-                                            placeholder="Item name"
-                                            value={item.name}
-                                            onChange={(e) =>
-                                                updateItemName(
-                                                    item.id,
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        {items.length > 1 && (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() =>
-                                                    removeItem(item.id)
-                                                }
-                                                className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
-                                            >
-                                                <X className="w-3 h-3" />
-                                            </Button>
-                                        )}
-                                    </div>
+                                    <ImageItem item={item} />
                                 ))}
                                 <Button
                                     variant="outline"
@@ -420,7 +407,7 @@ export default function EditingList() {
                                 className="w-full bg-purple-600 hover:bg-purple-700"
                                 size="lg"
                             >
-                                {isShowingCreatedList
+                                {isShowingExistingList
                                     ? 'Save Changes'
                                     : 'Create New List'}
                             </Button>

@@ -1,18 +1,15 @@
 'use client';
 
-import { List } from '@/common/types';
 import { ListCard } from '@/components/listCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useGetList } from '@/hooks/useGetList';
 import { ArrowLeft, Plus, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { v4 } from 'uuid';
 
 export default function Home() {
-    const [lists, setLists] = useState<Map<string, List>>(new Map());
-    useGetList({ setLists });
+    const { lists } = useGetList();
 
     const router = useRouter();
 
