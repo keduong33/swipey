@@ -1,11 +1,5 @@
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
-import { ListItem } from './ListItem';
-
-export type Item = {
-    id: number;
-    name: string;
-    image: string | null;
-};
+import { Item, ListItem } from './ListItem';
 
 export const ListItems = ({
     items,

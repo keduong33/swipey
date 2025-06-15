@@ -3,7 +3,12 @@ import { Input } from '@/components/ui/input';
 import { ImageIcon, X } from 'lucide-react';
 import Image from 'next/image';
 import { ChangeEvent } from 'react';
-import { Item } from './ListItems';
+
+export type Item = {
+    id: number;
+    name: string;
+    image: string | null;
+};
 
 export const ListItem = ({
     item,

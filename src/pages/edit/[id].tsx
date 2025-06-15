@@ -28,7 +28,8 @@ import { ArrowLeft, ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import Page from '../../components/page';
-import { Item, ListItems } from './ListItems';
+import { ListItems } from './ListItems';
+import { Item } from './ListItem';
 
 export default function EditingList() {
     const router = useRouter();
