@@ -13,6 +13,7 @@ import { Clock, Play, Plus, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { v4 } from 'uuid';
+import Page from '../components/page';
 
 type Status = 'completed' | 'in-progress' | 'new';
 type List = {
@@ -81,7 +82,7 @@ export default function Home() {
     const router = useRouter();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+        <Page headerConfig={{ withProfile: true }}>
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-8">
@@ -192,6 +193,6 @@ export default function Home() {
                     )}
                 </div>
             </div>
-        </div>
+        </Page>
     );
 }
