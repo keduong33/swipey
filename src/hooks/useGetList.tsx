@@ -1,5 +1,5 @@
-import { List } from '@/components/listCard';
 import { useEffect, useState } from 'react';
+import { List } from '../components/listCard';
 
 const initialList: List[] = [
     {

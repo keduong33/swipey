@@ -1,5 +1,5 @@
-import { Item } from '@/pages/edit/ListItem';
 import { Clock, Play, Users } from 'lucide-react';
+import { Item } from '../pages/list/ListItem';
 import { Button } from './ui/button';
 import {
     Card,
