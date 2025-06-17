@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { List, Visibility } from '../../components/listCard';
 import Page from '../../components/page';
 import { Button } from '../../components/ui/button';
 import {
@@ -22,6 +21,7 @@ import {
 import { Textarea } from '../../components/ui/textarea';
 import { useGetList } from '../../hooks/useGetList';
 import { DeleteConfirmationDialog } from '../../pages/list/DeleteConfirmationDialog';
+import { List, Visibility } from '../../pages/list/listCard';
 import { Item } from '../../pages/list/ListItem';
 import { ListItems } from '../../pages/list/ListItems';
 

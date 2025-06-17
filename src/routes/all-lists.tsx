@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Plus, Users } from 'lucide-react';
 import { v4 } from 'uuid';
-import { ListCard } from '../components/listCard';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { useGetList } from '../hooks/useGetList';
+import { ListCard } from '../pages/list/listCard';
 
 export const Route = createFileRoute('/all-lists')({
     component: RouteComponent,

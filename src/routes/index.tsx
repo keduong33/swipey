@@ -3,9 +3,9 @@ import { Play, Plus, Users } from 'lucide-react';
 import { v4 } from 'uuid';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { ListCard } from '../components/listCard';
 import Page from '../components/page';
 import { useGetList } from '../hooks/useGetList';
+import { ListCard } from '../pages/list/listCard';
 
 export const Route = createFileRoute('/')({
     component: Home,

@@ -1,6 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Dispatch, SetStateAction } from 'react';
-import { List } from '../../components/listCard';
 import { Button } from '../../components/ui/button';
 import {
     Dialog,
@@ -12,6 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '../../components/ui/dialog';
+import { List } from './listCard';
 
 export const DeleteConfirmationDialog = ({
     lists,
