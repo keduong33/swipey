@@ -1,17 +1,19 @@
-'use client';
-
-import { ListCard } from '@/components/listCard';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { useGetList } from '@/hooks/useGetList';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Plus, Users } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { v4 } from 'uuid';
+import { Button } from '../components/ui/button';
+import { Card, CardContent } from '../components/ui/card';
+import { useGetList } from '../hooks/useGetList';
+import { ListCard } from '../pages/list/listCard';
 
-export default function Home() {
+export const Route = createFileRoute('/all-lists')({
+    component: RouteComponent,
+});
+
+function RouteComponent() {
     const { lists } = useGetList();
 
-    const router = useRouter();
+    const navigate = useNavigate();
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
@@ -23,7 +25,7 @@ export default function Home() {
                             variant="ghost"
                             size="sm"
                             className="p-2"
-                            onClick={() => router.push(`/`)}
+                            onClick={() => navigate({ to: `/` })}
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
@@ -34,7 +36,7 @@ export default function Home() {
                     <Button
                         size="lg"
                         className="sm:w-auto bg-purple-600 hover:bg-purple-700"
-                        onClick={() => router.push(`/edit/${v4()}`)}
+                        onClick={() => navigate({ to: `/list/${v4()}` })}
                     >
                         <Plus className="w-5 h-5 mr-2" />
                         Create New List

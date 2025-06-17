@@ -1,29 +1,37 @@
-'use client';
-
-import { List, Visibility } from '@/components/listCard';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { ArrowLeft, ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Page from '../../components/page';
+import { Button } from '../../components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useGetList } from '@/hooks/useGetList';
-import { ArrowLeft, ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import Page from '../../components/page';
-import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
-import { Item } from './ListItem';
-import { ListItems } from './ListItems';
+} from '../../components/ui/select';
+import { Textarea } from '../../components/ui/textarea';
+import { useGetList } from '../../hooks/useGetList';
+import { DeleteConfirmationDialog } from '../../pages/list/DeleteConfirmationDialog';
+import { List, Visibility } from '../../pages/list/listCard';
+import { Item } from '../../pages/list/ListItem';
+import { ListItems } from '../../pages/list/ListItems';
 
-export default function EditingList() {
-    const router = useRouter();
+export const Route = createFileRoute('/list/$listId')({
+    component: EditingList,
+});
+
+function EditingList() {
+    const { listId } = Route.useParams();
+    const navigate = useNavigate();
     const [listName, setListName] = useState('');
     const [description, setDescription] = useState('');
     const [visibility, setVisibility] = useState('public');
@@ -34,9 +42,7 @@ export default function EditingList() {
 
     const { lists, setLists } = useGetList();
 
-    const retrievedList: List | undefined = lists.get(
-        router.query.id as string
-    );
+    const retrievedList: List | undefined = lists.get(listId);
 
     const isShowingExistingList: boolean = !!retrievedList;
 
@@ -67,7 +73,7 @@ export default function EditingList() {
 
     const handleSave = () => {
         const newList: List = {
-            id: router.query.id as string,
+            id: listId,
             name: listName,
             description,
             visibility: visibility as Visibility,
@@ -90,12 +96,8 @@ export default function EditingList() {
             JSON.stringify([...existingList, newList])
         );
 
-        router.push(`/`);
+        navigate({ to: `/` });
     };
-
-    useEffect(() => {
-        console.log(router.query.id);
-    }, [router]);
 
     return (
         <Page>
@@ -107,7 +109,7 @@ export default function EditingList() {
                             variant="ghost"
                             size="sm"
                             className="p-2"
-                            onClick={() => router.push(`/`)}
+                            onClick={() => navigate({ to: '/' })}
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
@@ -129,7 +131,7 @@ export default function EditingList() {
                                 <DeleteConfirmationDialog
                                     lists={lists}
                                     setLists={setLists}
-                                    id={router.query.id as string}
+                                    id={listId}
                                 >
                                     <Button
                                         variant="ghost"

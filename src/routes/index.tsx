@@ -1,18 +1,20 @@
-'use client';
-
-import { ListCard } from '@/components/listCard';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { useGetList } from '@/hooks/useGetList';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Play, Plus, Users } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { v4 } from 'uuid';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
 import Page from '../components/page';
+import { useGetList } from '../hooks/useGetList';
+import { ListCard } from '../pages/list/listCard';
+
+export const Route = createFileRoute('/')({
+    component: Home,
+});
 
 export default function Home() {
     const { lists } = useGetList();
 
-    const router = useRouter();
+    const navigate = useNavigate();
 
     return (
         <Page headerConfig={{ withProfile: true }}>
@@ -32,7 +34,7 @@ export default function Home() {
                     <Button
                         size="lg"
                         className="sm:w-auto bg-purple-600 hover:bg-purple-700"
-                        onClick={() => router.push(`/edit/${v4()}`)}
+                        onClick={() => navigate({ to: `/list/${v4()}` })}
                     >
                         <Plus className="w-5 h-5 mr-2" />
                         Create New List
@@ -42,7 +44,7 @@ export default function Home() {
                     <Button
                         size="lg"
                         className="sm:w-auto bg-purple-600 hover:bg-purple-700"
-                        onClick={() => router.push(`/session/`)}
+                        onClick={() => navigate({ to: '/session' })}
                     >
                         <Play className="w-5 h-5 mr-2" />
                         Join session
@@ -58,7 +60,7 @@ export default function Home() {
                         <Button
                             variant="ghost"
                             className="text-purple-600 hover:text-purple-700"
-                            onClick={() => router.push(`/all-lists`)}
+                            onClick={() => navigate({ to: '/all-lists' })}
                         >
                             View all lists
                         </Button>
@@ -87,7 +89,9 @@ export default function Home() {
                                         key={list.id}
                                         list={list}
                                         onClick={() =>
-                                            router.push(`/edit/${list.id}`)
+                                            navigate({
+                                                to: `/list/${list.id}`,
+                                            })
                                         }
                                     />
                                 ))}

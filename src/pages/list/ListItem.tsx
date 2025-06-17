@@ -1,8 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { ImageIcon, X } from 'lucide-react';
-import Image from 'next/image';
 import { ChangeEvent } from 'react';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 
 export type Item = {
     id: number;
@@ -29,7 +28,7 @@ export const ListItem = ({
     <div key={item.id} className="relative">
         <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-white hover:border-gray-400 transition-colors">
             {item.image ? (
-                <Image
+                <img
                     src={item.image}
                     alt={item.name}
                     className="w-full h-full object-cover rounded-lg"

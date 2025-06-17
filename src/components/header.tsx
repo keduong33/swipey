@@ -1,6 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 export type HeaderProps = {
     withProfile?: boolean;
@@ -8,11 +7,11 @@ export type HeaderProps = {
 };
 
 function UserAvatar() {
-    const router = useRouter();
+    const navigate = useNavigate();
     return (
         <Avatar
             className="cursor-pointer"
-            onClick={() => router.push('/profile')}
+            onClick={() => navigate({ to: '/profile' })}
         >
             <AvatarImage
                 src="https://github.com/evilrabbit.png"
@@ -26,7 +25,7 @@ function UserAvatar() {
 export function Header({ withProfile, sessionId }: HeaderProps) {
     return (
         <header className="flex w-full justify-between items-center">
-            <Link href={'/'}>
+            <Link to={'/'}>
                 <h1>Swipey</h1>
             </Link>
             {sessionId && <p>Session: {sessionId}</p>}

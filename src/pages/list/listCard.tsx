@@ -1,6 +1,5 @@
-import { Item } from '@/pages/edit/ListItem';
 import { Clock, Play, Users } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '../../components/ui/button';
 import {
     Card,
     CardContent,
@@ -8,7 +7,8 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from './ui/card';
+} from '../../components/ui/card';
+import { Item } from './ListItem';
 
 export type List = {
     id: string;

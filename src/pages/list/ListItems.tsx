@@ -39,6 +39,7 @@ export const ListItems = ({
         <>
             {items.map((item) => (
                 <ListItem
+                    key={item.id}
                     item={item}
                     showDeleteItemButton={items.length > 1}
                     handleImageUpload={handleImageUpload}

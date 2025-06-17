@@ -1,26 +1,33 @@
-import { Button } from '@/components/ui/button';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+
+import { FormEvent } from 'react';
+import { Button } from '../../components/ui/button';
 import {
     Card,
     CardContent,
     CardFooter,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import Router from 'next/router';
-import { FormEvent } from 'react';
+} from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+
+export const Route = createFileRoute('/session/')({
+    component: JoinSession,
+});
 
 const formSessionCode = 'session-code';
 
-function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+function JoinSession() {
+    const navigate = useNavigate();
 
-    const formData = new FormData(event.currentTarget);
-    const sessionCode = formData.get(formSessionCode) as string;
-    Router.push(`/session/${sessionCode}`);
-}
+    function onSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
 
-export default function JoinSession() {
+        const formData = new FormData(event.currentTarget);
+        const sessionCode = formData.get(formSessionCode) as string;
+        navigate({ to: `/session/${sessionCode}` });
+    }
+
     return (
         <form onSubmit={onSubmit}>
             <section className="flex w-full min-h-screen items-center justify-center">

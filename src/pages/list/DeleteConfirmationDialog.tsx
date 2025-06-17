@@ -1,5 +1,6 @@
-import { List } from '@/components/listCard';
-import { Button } from '@/components/ui/button';
+import { useNavigate } from '@tanstack/react-router';
+import { Dispatch, SetStateAction } from 'react';
+import { Button } from '../../components/ui/button';
 import {
     Dialog,
     DialogClose,
@@ -9,9 +10,8 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/ui/dialog';
-import router from 'next/router';
-import { Dispatch, SetStateAction } from 'react';
+} from '../../components/ui/dialog';
+import { List } from './listCard';
 
 export const DeleteConfirmationDialog = ({
     lists,
@@ -24,6 +24,8 @@ export const DeleteConfirmationDialog = ({
     id: string;
     children: React.ReactNode;
 }) => {
+    const navigate = useNavigate();
+
     const handleDelete = () => {
         const updatedLists: Map<string, List> = new Map(lists);
 
@@ -35,7 +37,9 @@ export const DeleteConfirmationDialog = ({
             JSON.stringify(Array.from(updatedLists.values()))
         );
 
-        router.push(`/`);
+        navigate({
+            to: '/',
+        });
     };
 
     return (
