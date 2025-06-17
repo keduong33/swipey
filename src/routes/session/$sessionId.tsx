@@ -13,10 +13,6 @@ export const Route = createFileRoute('/session/$sessionId')({
     component: Session,
 });
 
-const calcNLogN = (n: number): number => {
-    return Math.floor(n * Math.log(n));
-};
-
 function Session() {
     const [currentMatchesDone, setCurrentMatchesDone] = useState(0);
     const [leftIndex, setLeftIndex] = useState<number>(0);
@@ -43,11 +39,15 @@ function Session() {
         );
     }
 
-    const numberOfItems: number = retrievedList.items.length;
-    const totalMatches: number = calcNLogN(numberOfItems);
-    const currentPercentageDone: number = currentMatchesDone / totalMatches;
+    const { items: retrievedListItems, name, description } = retrievedList;
+    const numberOfItems: number = retrievedListItems.length;
+    const totalMatches: number = Math.floor(
+        numberOfItems * Math.log(numberOfItems)
+    );
+    const currentPercentageDone: number =
+        (currentMatchesDone / totalMatches) * 100;
 
-    const items: Item[] = Array.from(retrievedList.items.values());
+    const items: Item[] = Array.from(retrievedListItems.values());
     const leftItem: Item = items[leftIndex];
     const rightItem: Item = items[rightIndex];
 
@@ -73,11 +73,9 @@ function Session() {
             <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        {retrievedList.name || 'Untitled List'}
+                        {name || 'Untitled List'}
                     </h1>
-                    <p className="text-lg text-gray-600">
-                        {retrievedList.description || ''}
-                    </p>
+                    <p className="text-lg text-gray-600">{description || ''}</p>
                     <p className="text-gray-600">
                         ({numberOfItems} items to rank)
                     </p>
@@ -108,11 +106,11 @@ function Session() {
                     </p>
                     <div className="w-full flex items-center justify-center gap-3">
                         <Progress
-                            value={currentPercentageDone * 100}
+                            value={currentPercentageDone}
                             className="[&>div]:bg-gradient-to-r [&>div]:from-blue-400 [&>div]:via-indigo-500 [&>div]:to-purple-600"
                         />
                         <span className="text-sm">
-                            {Math.round(currentPercentageDone * 100)}%
+                            {Math.round(currentPercentageDone)}%
                         </span>
                     </div>
                 </div>
