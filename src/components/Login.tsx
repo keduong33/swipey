@@ -43,36 +43,31 @@ export function Login() {
                         <div className="text-red-400">
                             {loginMutation.data.message}
                         </div>
-                        {loginMutation.data.error &&
-                        loginMutation.data.message ===
-                            'Invalid login credentials' ? (
-                            <div>
-                                <button
-                                    className="text-blue-500"
-                                    onClick={(e) => {
-                                        const formData = new FormData(
-                                            (
-                                                e.target as HTMLButtonElement
-                                            ).form!
-                                        );
 
-                                        signupMutation.mutate({
-                                            data: {
-                                                email: formData.get(
-                                                    'email'
-                                                ) as string,
-                                                password: formData.get(
-                                                    'password'
-                                                ) as string,
-                                            },
-                                        });
-                                    }}
-                                    type="button"
-                                >
-                                    Sign up instead?
-                                </button>
-                            </div>
-                        ) : null}
+                        <div>
+                            <button
+                                className="text-blue-500"
+                                onClick={(e) => {
+                                    const formData = new FormData(
+                                        (e.target as HTMLButtonElement).form!
+                                    );
+
+                                    signupMutation.mutate({
+                                        data: {
+                                            email: formData.get(
+                                                'email'
+                                            ) as string,
+                                            password: formData.get(
+                                                'password'
+                                            ) as string,
+                                        },
+                                    });
+                                }}
+                                type="button"
+                            >
+                                Sign up instead?
+                            </button>
+                        </div>
                     </>
                 ) : null
             }
