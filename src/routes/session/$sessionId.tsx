@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Progress } from '~/components/ui/progress';
 import { useGetList } from '~/hooks/useGetList';
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/session/$sessionId')({
     component: Session,
 });
 
-function Session() {
+async function Session() {
     const [currentMatchesDone, setCurrentMatchesDone] = useState(0);
     const [leftIndex, setLeftIndex] = useState<number>(0);
     const [rightIndex, setRightIndex] = useState<number>(1);
@@ -22,6 +22,73 @@ function Session() {
     const navigate = Route.useNavigate();
     const { lists } = useGetList();
     const retrievedList: List | undefined = lists.get(sessionId);
+
+    const [leftPicked, setLeftPicked] = useState<boolean | undefined>(
+        undefined
+    );
+
+    const mergeSortInteractive = async (items: Item[]): Promise<Item[]> => {
+        if (items.length <= 1) return items;
+
+        const mid: number = Math.floor(items.length / 2);
+        const left: Promise<Item[]> = mergeSortInteractive(items.slice(0, mid));
+        const right: Promise<Item[]> = mergeSortInteractive(items.slice(mid));
+
+        const result: Item[] = [];
+        let i = 0,
+            j = 0;
+
+        // console.log('me outside here');
+
+        while (i < (await left).length && j < (await right).length) {
+            setLeftIndex(i);
+            setRightIndex(j);
+            // console.log('me inside here');
+
+            await leftPicked;
+            if (leftPicked === true) {
+                console.log('Left picked');
+                result.push((await left)[i++]);
+            } else if (leftPicked === false) {
+                console.log('Right picked');
+                result.push((await right)[j++]);
+            }
+            setLeftPicked(undefined);
+        }
+
+        return result
+            .concat((await left).slice(i))
+            .concat((await right).slice(j));
+    };
+
+    useEffect(() => {
+        const run = async () => {
+            const sortedItems = await mergeSortInteractive(items);
+            console.log(sortedItems);
+        };
+
+        run();
+    }, []);
+
+    // const [mergeState, setMergeState] = useState<{
+    //     results: Item[];
+    //     left: string[];
+    //     right: string[];
+    //     i: number;
+    //     j: number;
+    //     totalComparisons: number;
+    //     comparisonsDone: number;
+    //     completed: boolean;
+    // }>({
+    //     results: [],
+    //     left: [],
+    //     right: [],
+    //     i: 0,
+    //     j: 0,
+    //     totalComparisons: 0,
+    //     comparisonsDone: 0,
+    //     completed: false,
+    // });
 
     if (!retrievedList) {
         return (
@@ -52,20 +119,25 @@ function Session() {
     const rightItem: Item = items[rightIndex];
 
     const handlePickLeft = () => {
+        setLeftPicked(true);
         if (currentMatchesDone < totalMatches) {
             setCurrentMatchesDone(currentMatchesDone + 1);
         }
-        if (leftIndex < numberOfItems - 1) {
-            setLeftIndex(leftIndex + 1);
-        }
-        if (rightIndex < numberOfItems - 1) {
-            setRightIndex(rightIndex + 1);
-        }
+        // if (leftIndex < numberOfItems - 1) {
+        //     setLeftIndex(leftIndex + 1);
+        // }
+        // if (rightIndex < numberOfItems - 1) {
+        //     setRightIndex(rightIndex + 1);
+        // }
     };
 
     const handlePickRight = () => {
+        if (currentMatchesDone < totalMatches) {
+            setCurrentMatchesDone(currentMatchesDone + 1);
+        }
         // In the future, right pick logic will be diff from left pick
-        handlePickLeft();
+        // handlePickLeft();
+        setLeftPicked(false);
     };
 
     return (
