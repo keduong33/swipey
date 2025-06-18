@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
@@ -7,6 +7,7 @@ import { useGetList } from '~/hooks/useGetList';
 import { CompareCard } from '~/pages/list/CompareCard';
 import { List } from '~/pages/list/listCard';
 import { Item } from '~/pages/list/ListItem';
+import { handlePick } from '~/pages/session/services';
 import Page from '../../components/page';
 
 export const Route = createFileRoute('/session/$sessionId')({
@@ -19,7 +20,7 @@ function Session() {
     const [rightIndex, setRightIndex] = useState<number>(1);
 
     const { sessionId } = Route.useParams();
-    const navigate = Route.useNavigate();
+    const navigate = useNavigate();
     const { lists } = useGetList();
     const retrievedList: List | undefined = lists.get(sessionId);
 
@@ -51,23 +52,6 @@ function Session() {
     const leftItem: Item = items[leftIndex];
     const rightItem: Item = items[rightIndex];
 
-    const handlePickLeft = () => {
-        if (currentMatchesDone < totalMatches) {
-            setCurrentMatchesDone(currentMatchesDone + 1);
-        }
-        if (leftIndex < numberOfItems - 1) {
-            setLeftIndex(leftIndex + 1);
-        }
-        if (rightIndex < numberOfItems - 1) {
-            setRightIndex(rightIndex + 1);
-        }
-    };
-
-    const handlePickRight = () => {
-        // In the future, right pick logic will be diff from left pick
-        handlePickLeft();
-    };
-
     return (
         <Page headerConfig={{ sessionId }}>
             <div className="max-w-4xl mx-auto">
@@ -90,12 +74,36 @@ function Session() {
                     <div className="flex width-full justify-center items-center gap-8">
                         <CompareCard
                             item={leftItem}
-                            onClick={() => handlePickLeft()}
+                            onClick={() =>
+                                handlePick({
+                                    selectedLeft: true,
+                                    currentMatchesDone,
+                                    setCurrentMatchesDone,
+                                    leftIndex,
+                                    setLeftIndex,
+                                    rightIndex,
+                                    setRightIndex,
+                                    totalMatches,
+                                    numberOfItems,
+                                })
+                            }
                         />
                         <p className="font-black text-gray-900">VS</p>
                         <CompareCard
                             item={rightItem}
-                            onClick={() => handlePickRight()}
+                            onClick={() =>
+                                handlePick({
+                                    selectedLeft: false,
+                                    currentMatchesDone,
+                                    setCurrentMatchesDone,
+                                    leftIndex,
+                                    setLeftIndex,
+                                    rightIndex,
+                                    setRightIndex,
+                                    totalMatches,
+                                    numberOfItems,
+                                })
+                            }
                         />
                     </div>
                 </div>
