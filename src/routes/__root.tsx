@@ -18,6 +18,8 @@ const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
     const supabase = await getSupabaseServerClient();
     const { data, error: _error } = await supabase.auth.getUser();
 
+    console.log(data);
+
     if (!data.user?.email) {
         return null;
     }
