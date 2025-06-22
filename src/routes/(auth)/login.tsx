@@ -9,7 +9,7 @@ import { AlertCircleIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { useMutation } from '../../hooks/useMutation';
 import { AuthForm } from '../../pages/auth/AuthForm';
-import { loginFunction } from '../../pages/auth/login/login_server_functions';
+import { loginFunction } from '../../pages/auth/login/login_service';
 
 export const Route = createFileRoute('/(auth)/login')({
     component: Login,

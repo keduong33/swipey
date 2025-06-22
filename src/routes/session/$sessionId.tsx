@@ -7,7 +7,7 @@ import { useGetList } from '~/hooks/useGetList';
 import { CompareCard } from '~/pages/list/CompareCard';
 import { List } from '~/pages/list/listCard';
 import { Item } from '~/pages/list/ListItem';
-import { handlePick } from '~/pages/session/services';
+import { handlePick } from '~/pages/session/session_functions';
 import Page from '../../components/page';
 
 export const Route = createFileRoute('/session/$sessionId')({
