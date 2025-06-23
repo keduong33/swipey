@@ -99,11 +99,13 @@ export function useHumanMergeSort(initial: Item[] = []) {
                     n - 1
                 );
 
+                // Skip invalid pairs
                 if (mid >= rightEnd) {
                     newState.leftStart += newState.size * 2;
                     continue;
                 }
 
+                // Slice out the subarrays for comparison
                 newState.leftArray = newState.currentArray.slice(
                     newState.leftStart,
                     mid + 1
@@ -151,6 +153,7 @@ export function useHumanMergeSort(initial: Item[] = []) {
                 newState.currentComparison++;
                 newState.waitingForChoice = false;
 
+                // Continue comparing next items in the same merge step
                 if (
                     newState.leftIndex < newState.leftArray.length &&
                     newState.rightIndex < newState.rightArray.length
@@ -164,6 +167,7 @@ export function useHumanMergeSort(initial: Item[] = []) {
                         rightSubarray: [...newState.rightArray],
                     });
                 } else {
+                    // Merge remaining items from whichever subarray is not yet exhausted
                     while (newState.leftIndex < newState.leftArray.length) {
                         newArray[newState.mergeIndex++] =
                             newState.leftArray[newState.leftIndex++];
@@ -180,7 +184,7 @@ export function useHumanMergeSort(initial: Item[] = []) {
 
                 return newState;
             });
-            setTimeout(getNextStep, 0);
+            getNextStep();
         },
         [getNextStep]
     );
