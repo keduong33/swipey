@@ -27,6 +27,7 @@ type SortState = {
     rightIndex: number;
     mergeIndex: number;
     waitingForChoice: boolean;
+    currentArray: Item[];
 };
 
 const defaultState: SortState = {
@@ -41,27 +42,28 @@ const defaultState: SortState = {
     rightIndex: 0,
     mergeIndex: 0,
     waitingForChoice: false,
+    currentArray: [],
 };
 
 const estimateComparisons = (n: number) => Math.ceil(n * Math.log2(n));
 
 export function useHumanMergeSort(initial: Item[] = []) {
     const [originalArray, setOriginalArray] = useState<Item[]>([...initial]);
-    const [currentArray, setCurrentArray] = useState<Item[]>([...initial]);
     const [step, setStep] = useState<Step>(null);
     const [sortState, setSortState] = useState<SortState>({
         ...defaultState,
         totalComparisons: estimateComparisons(initial.length),
+        currentArray: [...initial],
     });
 
     const reset = useCallback(
         (array: Item[] = originalArray) => {
             const freshArray = [...array];
             setOriginalArray(freshArray);
-            setCurrentArray(freshArray);
             setSortState({
                 ...defaultState,
                 totalComparisons: estimateComparisons(freshArray.length),
+                currentArray: freshArray,
             });
             setStep(null);
         },
@@ -70,12 +72,14 @@ export function useHumanMergeSort(initial: Item[] = []) {
 
     const getNextStep = useCallback(() => {
         setSortState((prev) => {
+            console.log('prev', prev);
             if (prev.isComplete || prev.waitingForChoice) return prev;
 
-            const n = currentArray.length;
+            const n = prev.currentArray.length;
             const newState = { ...prev };
 
             while (true) {
+                // If we're done with this level, move to the next merge size
                 if (newState.leftStart >= n - 1) {
                     newState.size *= 2;
                     newState.leftStart = 0;
@@ -100,11 +104,14 @@ export function useHumanMergeSort(initial: Item[] = []) {
                     continue;
                 }
 
-                newState.leftArray = currentArray.slice(
+                newState.leftArray = newState.currentArray.slice(
                     newState.leftStart,
                     mid + 1
                 );
-                newState.rightArray = currentArray.slice(mid + 1, rightEnd + 1);
+                newState.rightArray = newState.currentArray.slice(
+                    mid + 1,
+                    rightEnd + 1
+                );
                 newState.leftIndex = 0;
                 newState.rightIndex = 0;
                 newState.mergeIndex = newState.leftStart;
@@ -122,15 +129,15 @@ export function useHumanMergeSort(initial: Item[] = []) {
 
             return newState;
         });
-    }, [currentArray]);
+    }, []);
 
     const choose = useCallback(
         (choice: 'left' | 'right') => {
             setSortState((prev) => {
                 if (!prev.waitingForChoice) return prev;
 
-                const newArray = [...currentArray];
                 const newState = { ...prev };
+                const newArray = [...newState.currentArray];
                 const isLeft = choice === 'left';
 
                 newArray[newState.mergeIndex] = isLeft
@@ -143,8 +150,6 @@ export function useHumanMergeSort(initial: Item[] = []) {
                 newState.mergeIndex++;
                 newState.currentComparison++;
                 newState.waitingForChoice = false;
-
-                setCurrentArray(newArray);
 
                 if (
                     newState.leftIndex < newState.leftArray.length &&
@@ -169,19 +174,20 @@ export function useHumanMergeSort(initial: Item[] = []) {
                     }
 
                     newState.leftStart += newState.size * 2;
-                    setCurrentArray(newArray);
-                    setTimeout(() => getNextStep(), 0);
                 }
+
+                newState.currentArray = newArray;
 
                 return newState;
             });
+            setTimeout(getNextStep, 0);
         },
-        [currentArray, getNextStep]
+        [getNextStep]
     );
 
     return {
         originalArray,
-        currentArray,
+        currentArray: sortState.currentArray,
         sortState,
         step,
         progress:
