@@ -1,6 +1,6 @@
 import { ImageIcon } from 'lucide-react';
 import { Card, CardContent, CardTitle } from '~/components/ui/card';
-import { Item } from './ListItem';
+import { Item } from '../list/ListItem';
 
 export const CompareCard = ({
     item,

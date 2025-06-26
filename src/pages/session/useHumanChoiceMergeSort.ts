@@ -72,7 +72,6 @@ export function useHumanMergeSort(initial: Item[] = []) {
 
     const getNextStep = useCallback(() => {
         setSortState((prev) => {
-            console.log('prev', prev);
             if (prev.isComplete || prev.waitingForChoice) return prev;
 
             const n = prev.currentArray.length;
