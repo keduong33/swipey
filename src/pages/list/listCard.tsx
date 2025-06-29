@@ -1,4 +1,5 @@
-import { Clock, Play, Users } from 'lucide-react';
+import { Play, Users } from 'lucide-react';
+import { v4 } from 'uuid';
 import { Button } from '../../components/ui/button';
 import {
     Card,
@@ -14,42 +15,60 @@ export type List = {
     id: string;
     name: string;
     description?: string;
-    visibility: Visibility;
+    // visibility: Visibility;
     category?: string;
     items: Item[];
-    itemCount: number;
-    lastPlayed: string;
-    status: Status;
+    // lastPlayed: string;
+    // status: Status;
 };
 
-export type Status = 'completed' | 'in-progress' | 'new';
-export type Visibility = 'public' | 'private' | 'friends';
-
-const getStatusColor = (status: Status): string => {
-    switch (status) {
-        case 'completed':
-            return 'text-green-600';
-        case 'in-progress':
-            return 'text-yellow-600';
-        case 'new':
-            return 'text-blue-600';
-        default:
-            return 'text-gray-600';
-    }
+export const createNewList = (opts: Partial<Omit<List, 'id'>>): List => {
+    return {
+        ...emptyList,
+        ...opts,
+        id: v4(),
+    } satisfies List;
 };
 
-const getStatusText = (status: Status): string => {
-    switch (status) {
-        case 'completed':
-            return 'Finished ranking';
-        case 'in-progress':
-            return 'In progress';
-        case 'new':
-            return 'Ready to start';
-        default:
-            return 'Unknown';
-    }
+const emptyList: List = {
+    id: '',
+    name: '',
+    description: '',
+    // visibility: 'private',
+    category: '',
+    items: [],
+    // lastPlayed: new Date().toLocaleDateString(),
+    // status: 'new',
 };
+
+// export type Status = 'completed' | 'in-progress' | 'new';
+// export type Visibility = 'public' | 'private' | 'friends';
+
+// const getStatusColor = (status: Status): string => {
+//     switch (status) {
+//         case 'completed':
+//             return 'text-green-600';
+//         case 'in-progress':
+//             return 'text-yellow-600';
+//         case 'new':
+//             return 'text-blue-600';
+//         default:
+//             return 'text-gray-600';
+//     }
+// };
+
+// const getStatusText = (status: Status): string => {
+//     switch (status) {
+//         case 'completed':
+//             return 'Finished ranking';
+//         case 'in-progress':
+//             return 'In progress';
+//         case 'new':
+//             return 'Ready to start';
+//         default:
+//             return 'Unknown';
+//     }
+// };
 
 export function ListCard({
     list,
@@ -72,25 +91,25 @@ export function ListCard({
                 <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
                     <span className="flex items-center">
                         <Users className="w-4 h-4 mr-1" />
-                        {list.itemCount} items
+                        {list.items.length} items
                     </span>
-                    <span className="flex items-center">
+                    {/* <span className="flex items-center">
                         <Clock className="w-4 h-4 mr-1" />
                         {list.lastPlayed}
-                    </span>
+                    </span> */}
                 </div>
-                <div
+                {/* <div
                     className={`text-sm font-medium ${getStatusColor(
                         list.status
                     )}`}
                 >
                     {getStatusText(list.status)}
-                </div>
+                </div> */}
             </CardContent>
             <CardFooter>
                 <Button className="w-full bg-blue-600 hover:bg-blue-700">
                     <Play className="w-4 h-4 mr-2" />
-                    {list.status === 'new' ? 'Start Ranking' : 'Continue'}
+                    {/* {list.status === 'new' ? 'Start Ranking' : 'Continue'} */}
                 </Button>
             </CardFooter>
         </Card>

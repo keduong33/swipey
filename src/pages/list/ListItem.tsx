@@ -25,7 +25,7 @@ export const ListItem = ({
     updateItemName: (id: number, name: string) => void;
     removeItem: (id: number) => void;
 }) => (
-    <div key={item.id} className="relative">
+    <div key={item.id} className="relative space-y-1">
         <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-white hover:border-gray-400 transition-colors">
             {item.image ? (
                 <img

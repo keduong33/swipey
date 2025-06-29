@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 export type HeaderProps = {
     withProfile?: boolean;
     sessionId?: string;
+    hideLogo?: boolean;
 };
 
 function UserAvatar() {
@@ -22,12 +23,14 @@ function UserAvatar() {
     );
 }
 
-export function Header({ withProfile, sessionId }: HeaderProps) {
+export function Header({ hideLogo, withProfile, sessionId }: HeaderProps) {
     return (
         <header className="flex w-full justify-between items-center">
-            <Link to={'/'}>
-                <h1>Swipey</h1>
-            </Link>
+            {!hideLogo && (
+                <Link to={'/'}>
+                    <h1>Swipey</h1>
+                </Link>
+            )}
             {sessionId && <p>Session: {sessionId}</p>}
             {withProfile && <UserAvatar />}
         </header>

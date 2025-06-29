@@ -1,4 +1,5 @@
-import { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import imageCompression from 'browser-image-compression';
+import { ChangeEvent } from 'react';
 import { Item, ListItem } from './ListItem';
 
 export const ListItems = ({
@@ -6,10 +7,10 @@ export const ListItems = ({
     setItems,
 }: {
     items: Item[];
-    setItems: Dispatch<SetStateAction<Item[]>>;
+    setItems: (items: Item[]) => void;
 }) => {
     const removeItem = (id: number) => {
-        if (items.length > 1) {
+        if (items.length >= 1) {
             setItems(items.filter((item) => item.id !== id));
         }
     };
@@ -20,16 +21,25 @@ export const ListItems = ({
         );
     };
 
-    const handleImageUpload = (
+    const handleImageUpload = async (
         id: number,
         event: ChangeEvent<HTMLInputElement>
     ) => {
         const file = event.target.files?.[0];
         if (file) {
-            const imageUrl = URL.createObjectURL(file);
+            const compressed = await imageCompression(file, {
+                maxSizeMB: 0.1,
+                useWebWorker: true,
+            });
+
+            const compressedImageUrl =
+                await imageCompression.getDataUrlFromFile(compressed);
+
             setItems(
                 items.map((item) =>
-                    item.id === id ? { ...item, image: imageUrl } : item
+                    item.id === id
+                        ? { ...item, image: compressedImageUrl }
+                        : item
                 )
             );
         }
@@ -41,7 +51,7 @@ export const ListItems = ({
                 <ListItem
                     key={item.id}
                     item={item}
-                    showDeleteItemButton={items.length > 1}
+                    showDeleteItemButton={items.length >= 1}
                     handleImageUpload={handleImageUpload}
                     updateItemName={updateItemName}
                     removeItem={removeItem}

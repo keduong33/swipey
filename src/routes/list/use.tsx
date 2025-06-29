@@ -1,24 +1,25 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { ArrowLeft } from 'lucide-react';
-import { useGetList } from '~/hooks/useGetList';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import Page from '../../components/page';
 import { Button } from '../../components/ui/button';
-import { List } from '../../pages/list/listCard';
+import { useGetListForMVP } from '../../hooks/useGetList';
 import CompareSection from '../../pages/session/CompareSection';
 
-export const Route = createFileRoute('/session/$sessionId')({
-    component: Session,
+export const Route = createFileRoute('/list/use')({
+    component: UseList,
 });
 
-function Session() {
-    const { sessionId } = Route.useParams();
+function UseList() {
     const navigate = useNavigate();
-    const { lists } = useGetList();
-    const retrievedList: List | undefined = lists.get(sessionId);
+    const { list, isLoading } = useGetListForMVP();
 
-    if (!retrievedList) {
+    if (isLoading) {
+        return <Loader2 className="animate-spin" />;
+    }
+
+    if (!list) {
         return (
-            <Page headerConfig={{ sessionId }}>
+            <Page>
                 <Button
                     size="lg"
                     className="sm:w-auto bg-purple-600 hover:bg-purple-700"
@@ -32,19 +33,21 @@ function Session() {
         );
     }
 
-    const { name, description } = retrievedList;
+    const { name, description } = list;
 
     return (
-        <Page headerConfig={{ sessionId }}>
+        <Page>
             <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">
                     {name || 'Untitled List'}
                 </h1>
                 <p className="text-lg text-gray-600">{description || ''}</p>
-                {/* <p className="text-gray-600">({itemCount} items to rank)</p> */}
+                <p className="text-gray-600">
+                    ({list.items.length} items to rank)
+                </p>
             </div>
 
-            <CompareSection items={retrievedList.items} />
+            <CompareSection items={list.items} />
         </Page>
     );
 }

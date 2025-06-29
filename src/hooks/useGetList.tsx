@@ -32,10 +32,9 @@ const initialList: List[] = [
                 image: null,
             },
         ],
-        itemCount: 12,
-        lastPlayed: '2 days ago',
-        status: 'completed',
-        visibility: 'public',
+        // lastPlayed: '2 days ago',
+        // status: 'completed',
+        // visibility: 'public',
         category: 'movies',
     },
     {
@@ -52,10 +51,9 @@ const initialList: List[] = [
             { id: 7, name: 'Dragon Hot Pot', image: null },
             { id: 8, name: "Wong's Late Night Hot Pot", image: null },
         ],
-        itemCount: 8,
-        lastPlayed: '1 week ago',
-        status: 'in-progress',
-        visibility: 'public',
+        // lastPlayed: '1 week ago',
+        // status: 'in-progress',
+        // visibility: 'public',
         category: 'food',
     },
     {
@@ -79,10 +77,9 @@ const initialList: List[] = [
             { id: 14, name: 'Fiji', image: null },
             { id: 15, name: 'Dubai', image: null },
         ],
-        itemCount: 15,
-        lastPlayed: 'Never',
-        status: 'new',
-        visibility: 'public',
+        // lastPlayed: 'Never',
+        // status: 'new',
+        // visibility: 'public',
         category: 'travel',
     },
 ];
@@ -91,6 +88,9 @@ export const initialListMap: Map<string, List> = new Map(
     initialList.map((list) => [list.id, list])
 );
 
+/**
+ * Get multiple lists for later if we want
+ */
 export const useGetList = () => {
     const [lists, setLists] = useState<Map<string, List>>(new Map());
 
@@ -113,4 +113,45 @@ export const useGetList = () => {
     }, []);
 
     return { lists, setLists };
+};
+
+/**
+ *  Get a single list --> This is for MVP
+ */
+export const useGetListForMVP = () => {
+    const [list, setList] = useState<List>();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        try {
+            const raw: string | null = localStorage.getItem('list');
+
+            if (raw) {
+                const parsedList: List = JSON.parse(raw);
+                setList(parsedList);
+            }
+        } catch (e) {
+            console.error('Storage error:', e);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    return { list, setList, isLoading };
+};
+
+export const saveListInStorage = (list: List | undefined) => {
+    if (!list) {
+        localStorage.removeItem('list');
+        return;
+    }
+    try {
+        localStorage.setItem('list', JSON.stringify(list));
+    } catch (e) {
+        if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+            console.warn('Local storage is full!');
+        } else {
+            console.error('Storage error:', e);
+        }
+    }
 };

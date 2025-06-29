@@ -21,7 +21,7 @@ function Profile() {
 
     return (
         <>
-            <>Hello {user?.email}</>
+            {/* <>Hello {user?.email}</> */}
             <Button onClick={() => logoutMutation.mutate({})}>
                 {ProfileMessages.LogOutButton()}
             </Button>
