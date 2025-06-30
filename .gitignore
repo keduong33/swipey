@@ -21,3 +21,8 @@ yarn.lock
 
 *storybook.log
 storybook-static
+
+.tanstack/
+.netlify/*
+.nitro/*
+server-function-manifest.json
