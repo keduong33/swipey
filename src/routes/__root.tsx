@@ -38,8 +38,8 @@ export const Route = createRootRoute({
                 content: 'width=device-width, initial-scale=1',
             },
             ...seo({
-                title: 'TanStack Start | Type-Safe, Client-First, Full-Stack React Framework',
-                description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+                title: 'Swipey',
+                description: `Swipe to rank your favourite things.`,
             }),
         ],
         links: [
@@ -62,7 +62,7 @@ export const Route = createRootRoute({
                 href: '/favicon-16x16.png',
             },
             { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
-            { rel: 'icon', href: '/favicon.ico' },
+            { rel: 'icon', href: '/favicon.svg' },
         ],
     }),
     beforeLoad: async () => {
