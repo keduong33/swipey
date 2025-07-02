@@ -42,7 +42,7 @@ function UseList() {
                     {name || 'Untitled List'}
                 </h1>
                 <p className="text-lg text-gray-600">{description || ''}</p>
-                <CompareSection items={list.items} />
+                <CompareSection name={name} items={list.items} />
             </div>
         </Page>
     );

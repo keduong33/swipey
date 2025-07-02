@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { ArrowRight, ImportIcon, Loader2, Plus } from 'lucide-react';
+import { ArrowRight, Eye, ImportIcon, Loader2, Plus } from 'lucide-react';
 import {
     ButtonHTMLAttributes,
     ChangeEvent,
@@ -8,6 +8,7 @@ import {
     useRef,
 } from 'react';
 import z from 'zod';
+import { useGetResult } from '~/hooks/useGetResult';
 import Page from '../../components/page';
 import {
     AlertDialog,
@@ -33,7 +34,8 @@ export function MvpHome() {
         fileInputRef.current?.click();
     };
 
-    const { list, setList, isLoading } = useGetListForMVP();
+    const { list, isLoading } = useGetListForMVP();
+    const { result, isLoading: isResultLoading } = useGetResult();
 
     async function onImport(e: ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
@@ -91,6 +93,22 @@ export function MvpHome() {
                             <>
                                 <ArrowRight className="w-5 h-5 mr-2" />
                                 {`${!list ? 'No' : 'Use'} Saved List`}
+                            </>
+                        )}
+                    </Button>
+
+                    <Button
+                        size="lg"
+                        className="w-full bg-purple-600 hover:bg-purple-700"
+                        onClick={() => navigate({ to: '/list/result' })}
+                        disabled={!result}
+                    >
+                        {isResultLoading ? (
+                            <Loader2 className="animate-spin" />
+                        ) : (
+                            <>
+                                <Eye className="w-5 h-5 mr-2" />
+                                {`${!result ? 'No' : 'View'} Results`}
                             </>
                         )}
                     </Button>

@@ -1,18 +1,37 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
+import { Result } from '~/hooks/useGetResult';
 import { CircularProgress } from '../../components/CircularProgress';
 import { Item } from '../list/ListItem';
 import { CompareCard } from './CompareCard';
 import { useHumanMergeSort } from './useHumanChoiceMergeSort';
 
-export default function CompareSection({ items }: { items: Item[] }) {
+export default function CompareSection({
+    name,
+    items,
+}: {
+    name?: string;
+    items: Item[];
+}) {
     const { choose, step, currentArray, getNextStep, sortState, progress } =
         useHumanMergeSort(items);
+    const navigate = useNavigate();
 
     const displayProgress = step?.type === 'complete' ? 100 : progress;
 
     useEffect(() => {
         getNextStep();
     }, [items]);
+
+    if (step?.type === 'complete') {
+        const result: Result = {
+            name: name ?? '',
+            currentArray: currentArray,
+            comparisions: sortState.currentComparison,
+        };
+        localStorage.setItem('result', JSON.stringify(result));
+        navigate({ to: '/list/result' });
+    }
 
     return (
         <div className="overflow-x-hidden w-full">
@@ -84,16 +103,6 @@ export default function CompareSection({ items }: { items: Item[] }) {
                         />
                     </div>
                 </>
-            )}
-
-            {step?.type === 'complete' && (
-                <ol>
-                    {currentArray.map((item, i) => (
-                        <li>
-                            {i + 1}. {item.name}
-                        </li>
-                    ))}
-                </ol>
             )}
         </div>
     );
