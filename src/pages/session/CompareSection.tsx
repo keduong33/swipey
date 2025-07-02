@@ -78,7 +78,7 @@ export default function CompareSection({ items }: { items: Item[] }) {
                         <CircularProgress
                             strokeWidth={10}
                             size={80}
-                            value={displayProgress}
+                            value={Math.round(displayProgress)}
                             showLabel
                             renderLabel={(progress) => `${progress}%`}
                         />
