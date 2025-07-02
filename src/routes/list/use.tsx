@@ -37,17 +37,13 @@ function UseList() {
 
     return (
         <Page>
-            <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            <div className="text-center relative">
+                <h1 className="text-4xl font-bold text-gray-900 ">
                     {name || 'Untitled List'}
                 </h1>
                 <p className="text-lg text-gray-600">{description || ''}</p>
-                <p className="text-gray-600">
-                    ({list.items.length} items to rank)
-                </p>
+                <CompareSection items={list.items} />
             </div>
-
-            <CompareSection items={list.items} />
         </Page>
     );
 }
