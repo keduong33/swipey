@@ -1,6 +1,6 @@
 import { ImageIcon } from 'lucide-react';
-import { motion, useAnimation } from 'motion/react';
-import { useRef } from 'react';
+import { motion, useAnimate } from 'motion/react';
+import { useRef, useState } from 'react';
 import { Card, CardContent, CardTitle } from '~/components/ui/card';
 import { Item } from '../list/ListItem';
 
@@ -15,25 +15,28 @@ export const CompareCard = ({
 }) => {
     const dragOffset = useRef(0);
 
-    const controls = useAnimation();
+    const [scope, animate] = useAnimate();
+    const [isAnimating, setIsAnimating] = useState(false);
 
     const handleSwipe = async (direction: 'left' | 'right') => {
         const x = direction === 'left' ? -200 : 200;
-        await controls.start({
+        setIsAnimating(true);
+        await animate(scope.current, {
             x,
             opacity: 0,
             transition: { duration: 0.3, ease: 'easeInOut' },
         });
         onChoose?.(direction);
-        controls.set({ x: 0, opacity: 1 });
+        animate(scope.current, { x: 0, opacity: 1 });
+        setIsAnimating(false);
     };
     return (
         <motion.div
-            className="hover:shadow-lg transition-shadow cursor-pointer w-[275px] md:w-full"
+            className={`hover:shadow-lg transition-shadow ${isAnimating ? 'pointer-events-none' : 'cursor-pointer'} w-[275px] md:w-full`}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             whileTap={{ scale: 0.95 }}
-            animate={controls}
+            ref={scope}
             onDrag={(_, info) => {
                 dragOffset.current = info.offset.x;
             }}
