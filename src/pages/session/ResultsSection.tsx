@@ -58,7 +58,7 @@ export default function ResultsSection({
                     </div>
 
                     {/* Remaining Rankings */}
-                    {<RemainingRanking array={currentArray} />}
+                    {<RemainingRanking items={currentArray.slice(3)} />}
                 </div>
             </div>
 

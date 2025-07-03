@@ -83,9 +83,9 @@ export const Podium = ({ item, place }: { item: Item; place: 1 | 2 | 3 }) => {
     );
 };
 
-export const RemainingRanking = ({ array }: { array: Item[] }) => (
+export const RemainingRanking = ({ items }: { items: Item[] }) => (
     <div className="space-y-0 w-full">
-        {array.slice(3).map((item, index) => (
+        {items.map((item, index) => (
             <div
                 key={item.id || index + 3}
                 className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 bg-white mb-4"
