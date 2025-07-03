@@ -275,7 +275,7 @@ function EditingList() {
                 </Card>
             </div>
 
-            <ShareDialog
+            <ShareListDialog
                 open={dialogOpen}
                 setIsOpen={setDialogOpen}
                 list={list}
@@ -284,7 +284,40 @@ function EditingList() {
     );
 }
 
-function ShareDialog({
+export function ShareDialog({
+    title,
+    open,
+    setIsOpen,
+    pretty,
+    onDownload,
+}: {
+    title: string;
+    open: boolean;
+    setIsOpen: (open: boolean) => void;
+    pretty: string;
+    onDownload: (file: string) => void;
+}) {
+    return (
+        <Dialog open={open} onOpenChange={setIsOpen}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>{title}</DialogTitle>
+                    <DialogDescription>
+                        Download this file and send it to your friends
+                    </DialogDescription>
+                </DialogHeader>
+                <Textarea readOnly className="overflow-y-auto max-h-[60vh]">
+                    {pretty}
+                </Textarea>
+                <DialogFooter>
+                    <Button onClick={() => onDownload(pretty)}>Download</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function ShareListDialog({
     open,
     setIsOpen,
     list,
@@ -293,7 +326,7 @@ function ShareDialog({
     setIsOpen: (open: boolean) => void;
     list: List;
 }) {
-    const pretty = JSON.stringify(list, null, 2);
+    const pretty: string = JSON.stringify(list, null, 2);
 
     const onDownload = (file: string) => {
         const blob = new Blob([file], { type: 'application/json' });
@@ -308,21 +341,12 @@ function ShareDialog({
     };
 
     return (
-        <Dialog open={open} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Share List</DialogTitle>
-                    <DialogDescription>
-                        Download this file and send it to your friends
-                    </DialogDescription>
-                </DialogHeader>
-                <Textarea readOnly className="overflow-y-auto max-h-[60vh]">
-                    {pretty}
-                </Textarea>
-                <DialogFooter>
-                    <Button onClick={() => onDownload(pretty)}>Download</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <ShareDialog
+            title={'Share List'}
+            open={open}
+            setIsOpen={setIsOpen}
+            pretty={pretty}
+            onDownload={onDownload}
+        />
     );
 }

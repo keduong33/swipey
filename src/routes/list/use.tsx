@@ -33,16 +33,10 @@ function UseList() {
         );
     }
 
-    const { name, description } = list;
-
     return (
         <Page>
             <div className="text-center relative">
-                <h1 className="text-4xl font-bold text-gray-900 ">
-                    {name || 'Untitled List'}
-                </h1>
-                <p className="text-lg text-gray-600">{description || ''}</p>
-                <CompareSection items={list.items} />
+                <CompareSection list={list} />
             </div>
         </Page>
     );

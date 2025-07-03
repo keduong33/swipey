@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { List } from '~/pages/list/listCard';
 import { Item } from '../../list/ListItem';
 import CompareSection from '../CompareSection';
 
-const ComponentWithOriginal = ({ items }: { items: Item[] }) => {
+const ComponentWithOriginal = ({ list }: { list: List }) => {
+    const { items } = list;
     return (
         <>
             <ol>
@@ -13,7 +15,7 @@ const ComponentWithOriginal = ({ items }: { items: Item[] }) => {
                     .trim()}
                 ]
             </ol>
-            <CompareSection items={items} />
+            <CompareSection list={list} />
         </>
     );
 };
@@ -34,8 +36,15 @@ const items: Item[] = [
     { id: 5, name: 'K', image: null },
 ];
 
+const list: List = {
+    id: '1',
+    name: 'Test List',
+    description: 'Test description',
+    items: items,
+};
+
 export const FullTest: Story = {
     args: {
-        items,
+        list,
     },
 };

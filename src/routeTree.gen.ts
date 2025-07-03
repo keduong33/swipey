@@ -17,6 +17,7 @@ import { Route as SessionIndexRouteImport } from './routes/session/index'
 import { Route as ListIndexRouteImport } from './routes/list/index'
 import { Route as SessionSessionIdRouteImport } from './routes/session/$sessionId'
 import { Route as ListUseRouteImport } from './routes/list/use'
+import { Route as ListResultRouteImport } from './routes/list/result'
 import { Route as ListListIdRouteImport } from './routes/list/$listId'
 import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
@@ -61,6 +62,11 @@ const ListUseRoute = ListUseRouteImport.update({
   path: '/list/use',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ListResultRoute = ListResultRouteImport.update({
+  id: '/list/result',
+  path: '/list/result',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListListIdRoute = ListListIdRouteImport.update({
   id: '/list/$listId',
   path: '/list/$listId',
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupRoute
   '/profile': typeof AuthedProfileRoute
   '/list/$listId': typeof ListListIdRoute
+  '/list/result': typeof ListResultRoute
   '/list/use': typeof ListUseRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/list': typeof ListIndexRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupRoute
   '/profile': typeof AuthedProfileRoute
   '/list/$listId': typeof ListListIdRoute
+  '/list/result': typeof ListResultRoute
   '/list/use': typeof ListUseRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/list': typeof ListIndexRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/(auth)/signup': typeof authSignupRoute
   '/_authed/profile': typeof AuthedProfileRoute
   '/list/$listId': typeof ListListIdRoute
+  '/list/result': typeof ListResultRoute
   '/list/use': typeof ListUseRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/list/': typeof ListIndexRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/profile'
     | '/list/$listId'
+    | '/list/result'
     | '/list/use'
     | '/session/$sessionId'
     | '/list'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/profile'
     | '/list/$listId'
+    | '/list/result'
     | '/list/use'
     | '/session/$sessionId'
     | '/list'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/(auth)/signup'
     | '/_authed/profile'
     | '/list/$listId'
+    | '/list/result'
     | '/list/use'
     | '/session/$sessionId'
     | '/list/'
@@ -174,6 +186,7 @@ export interface RootRouteChildren {
   authLoginRoute: typeof authLoginRoute
   authSignupRoute: typeof authSignupRoute
   ListListIdRoute: typeof ListListIdRoute
+  ListResultRoute: typeof ListResultRoute
   ListUseRoute: typeof ListUseRoute
   SessionSessionIdRoute: typeof SessionSessionIdRoute
   ListIndexRoute: typeof ListIndexRoute
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListUseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/list/result': {
+      id: '/list/result'
+      path: '/list/result'
+      fullPath: '/list/result'
+      preLoaderRoute: typeof ListResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/list/$listId': {
       id: '/list/$listId'
       path: '/list/$listId'
@@ -288,6 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   authLoginRoute: authLoginRoute,
   authSignupRoute: authSignupRoute,
   ListListIdRoute: ListListIdRoute,
+  ListResultRoute: ListResultRoute,
   ListUseRoute: ListUseRoute,
   SessionSessionIdRoute: SessionSessionIdRoute,
   ListIndexRoute: ListIndexRoute,
