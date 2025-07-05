@@ -5,15 +5,13 @@ import { Result } from '~/hooks/useGetResult';
 import { ShareDialog } from '~/routes/list';
 import { Podium, RemainingRanking } from './Podium';
 
-export default function ResultsSection({
-    name,
-    currentArray,
-    comparisions,
-}: Result) {
+export default function ResultsSection({ result }: { result: Result }) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const navigate = useNavigate();
 
-    const pretty: string = JSON.stringify(currentArray, null, 2);
+    const { name, currentArray, comparisons } = result;
+
+    const pretty: string = JSON.stringify([result], null, 2);
 
     const onDownload = (file: string) => {
         const blob = new Blob([file], { type: 'application/json' });
@@ -69,14 +67,18 @@ export default function ResultsSection({
                         Ranking Complete! 🎉
                     </h3>
                     <p className="text-blue-700">
-                        You compared {comparisions} pairs to rank{' '}
+                        You compared {comparisons} pairs to rank{' '}
                         {currentArray.length} items
                     </p>
                 </div>
             </div>
 
             <div className="flex flex-wrap gap-2 md:justify-between justify-center">
-                <Button onClick={() => navigate({ to: '/list/use' })}>
+                <Button
+                    onClick={() =>
+                        navigate({ to: `/list/use/${result.listId}` })
+                    }
+                >
                     Rank again
                 </Button>
                 <Button onClick={() => setDialogOpen(true)}>

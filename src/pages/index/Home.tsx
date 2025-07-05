@@ -1,19 +1,25 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Play, Plus, Users } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
+import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { v4 } from 'uuid';
 import Page from '../../components/page';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
-import { useGetList } from '../../hooks/useGetList';
+import { useLocalGetLists } from '../../hooks/useGetList';
 import { ListCard } from '../list/listCard';
+import { JsonImportDialog } from './JsonImportSection';
 
 export default function Home() {
-    const { lists } = useGetList();
+    const { lists, fetch } = useLocalGetLists();
+
+    const refresh = async () => {
+        await fetch();
+    };
 
     const navigate = useNavigate();
 
     return (
-        <Page headerConfig={{ withProfile: true }}>
+        <Page>
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-8">
@@ -25,26 +31,12 @@ export default function Home() {
                     </p>
                 </div>
 
-                <div className="mb-8 gap-4 flex justify-center">
+                <div className="mb-8 gap-4 flex justify-center flex-wrap">
                     {/* Create New List Button */}
-                    <Button
-                        size="lg"
-                        className="sm:w-auto bg-purple-600 hover:bg-purple-700"
-                        onClick={() => navigate({ to: `/list/${v4()}` })}
-                    >
-                        <Plus className="w-5 h-5 mr-2" />
-                        Create New List
-                    </Button>
-
-                    {/* Join session Button */}
-                    <Button
-                        size="lg"
-                        className="sm:w-auto bg-purple-600 hover:bg-purple-700"
-                        onClick={() => navigate({ to: '/session' })}
-                    >
-                        <Play className="w-5 h-5 mr-2" />
-                        Join session
-                    </Button>
+                    <CreateNewListButton
+                        onClick={() => navigate({ to: `/list/edit/${v4()}` })}
+                    />
+                    <JsonImportDialog refresh={refresh} />
                 </div>
 
                 {/* Your Lists Section */}
@@ -61,7 +53,7 @@ export default function Home() {
                             View all lists
                         </Button>
                     </div>
-                    {lists.size === 0 ? (
+                    {lists?.length === 0 ? (
                         <Card className="text-center py-12">
                             <CardContent>
                                 <div className="text-gray-500 mb-4">
@@ -78,19 +70,17 @@ export default function Home() {
                         </Card>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {Array.from(lists.values())
-                                .slice(0, 3)
-                                .map((list) => (
-                                    <ListCard
-                                        key={list.id}
-                                        list={list}
-                                        onClick={() =>
-                                            navigate({
-                                                to: `/list/${list.id}`,
-                                            })
-                                        }
-                                    />
-                                ))}
+                            {lists?.slice(0, 3).map((list) => (
+                                <ListCard
+                                    key={list.id}
+                                    list={list}
+                                    onClick={() =>
+                                        navigate({
+                                            to: `/list/edit/${list.id}`,
+                                        })
+                                    }
+                                />
+                            ))}
                         </div>
                     )}
                 </div>
@@ -98,3 +88,18 @@ export default function Home() {
         </Page>
     );
 }
+
+const CreateNewListButton = forwardRef<
+    HTMLButtonElement,
+    ButtonHTMLAttributes<HTMLButtonElement>
+>((props, ref) => (
+    <Button
+        {...props}
+        ref={ref}
+        size="lg"
+        className="bg-purple-600 hover:bg-purple-700"
+    >
+        <Plus className="w-5 h-5 mr-2" />
+        Create New List
+    </Button>
+));

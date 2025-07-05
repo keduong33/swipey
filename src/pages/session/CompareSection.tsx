@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Result } from '~/hooks/useGetResult';
 import { CircularProgress } from '../../components/CircularProgress';
+import { localDb } from '../../storage/indexedDbStorage';
 import { List } from '../list/listCard';
 import { CompareCard } from './CompareCard';
 import { useHumanMergeSort } from './useHumanChoiceMergeSort';
@@ -19,15 +20,22 @@ export default function CompareSection({ list }: { list: List }) {
         getNextStep();
     }, [items]);
 
-    if (step?.type === 'complete') {
-        const result: Result = {
-            name: name ?? '',
-            currentArray: currentArray,
-            comparisions: sortState.currentComparison,
-        };
-        localStorage.setItem('result', JSON.stringify(result));
-        navigate({ to: '/list/result' });
-    }
+    useEffect(() => {
+        if (step?.type === 'complete') {
+            const result: Result = {
+                // Note: right now, 1 history per list
+                id: list.id,
+                listId: list.id,
+                name: name ?? 'Your list',
+                currentArray,
+                comparisons: sortState.currentComparison,
+            };
+
+            localDb.saveResult(result).then(() => {
+                navigate({ to: `/result/${result.id}` });
+            });
+        }
+    }, [step]);
 
     return (
         <>

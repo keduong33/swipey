@@ -4,8 +4,11 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 
 export type Item = {
-    id: number;
+    id: string;
     name: string;
+    /**
+     * Base 64
+     **/
     image: string | null;
 };
 
@@ -19,11 +22,11 @@ export const ListItem = ({
     item: Item;
     showDeleteItemButton: boolean;
     handleImageUpload: (
-        id: number,
+        id: string,
         event: ChangeEvent<HTMLInputElement>
     ) => void;
-    updateItemName: (id: number, name: string) => void;
-    removeItem: (id: number) => void;
+    updateItemName: (id: string, name: string) => void;
+    removeItem: (id: string) => void;
 }) => (
     <div key={item.id} className="relative space-y-1">
         <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-white hover:border-gray-400 transition-colors">
