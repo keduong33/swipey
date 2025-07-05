@@ -1,4 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router';
+import { useTheme } from '~/hooks/useTheme';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 export type HeaderProps = {
@@ -24,12 +25,15 @@ function UserAvatar() {
 }
 
 export function Header({ hideLogo, withProfile, sessionId }: HeaderProps) {
+    const theme = useTheme();
+    // console.log('theme', theme);
+
     return (
-        <header className="flex w-full justify-between items-center bg-primary">
+        <header className="flex w-full justify-between items-center bg-sidebar">
             {!hideLogo && (
                 <Link to={'/'}>
                     <img
-                        src={'/icon-light.svg'}
+                        src={`/icon-${theme}.svg`}
                         alt={'Swipey'}
                         className="object-cover h-8 ml-4 my-2"
                     />

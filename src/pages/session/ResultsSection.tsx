@@ -29,7 +29,7 @@ export default function ResultsSection({ result }: { result: Result }) {
         <div className="space-y-4 justify-items-center">
             {/* Header */}
             <div className="text-center mb-4">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-primary dark:text-primary-dark mb-2">
                     Ranking results
                 </h1>
                 <p>{name}</p>
@@ -61,12 +61,12 @@ export default function ResultsSection({ result }: { result: Result }) {
             </div>
 
             {/* Summary Stats */}
-            <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+            <div className="mt-4 p-6 bg-gradient-to-r from-accent dark:from-[#1b0530] to-[#e0e4fe] dark:to-accent rounded-xl border">
                 <div className="text-center">
-                    <h3 className="font-semibold text-lg text-blue-900 mb-2">
+                    <h3 className="font-semibold text-lg mb-2 text-primary dark:text-white">
                         Ranking Complete! 🎉
                     </h3>
-                    <p className="text-blue-700">
+                    <p>
                         You compared {comparisons} pairs to rank{' '}
                         {currentArray.length} items
                     </p>

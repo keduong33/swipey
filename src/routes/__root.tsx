@@ -92,9 +92,12 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
     // const { user } = Route.useRouteContext();
+    // const theme = useTheme();
+    // console.log('theme2', theme);
 
     return (
-        <html>
+        // TODO: i need help with setting the theme!
+        <html className="dark">
             <head>
                 <HeadContent />
             </head>

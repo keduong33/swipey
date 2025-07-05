@@ -128,9 +128,9 @@ function EditingList() {
                             className="p-2"
                             onClick={() => navigate({ to: '/' })}
                         >
-                            <ArrowLeft className="w-5 h-5" />
+                            <ArrowLeft className="w-5 h-5 text-primary dark:text-white" />
                         </Button>
-                        <h1 className="text-2xl font-bold text-gray-900">
+                        <h1 className="text-2xl font-bold text-primary dark:text-primary-dark">
                             {isShowingExistingList
                                 ? 'Edit List'
                                 : 'Create New List'}
@@ -138,7 +138,7 @@ function EditingList() {
                     </div>
                 </div>
 
-                <Card className="mb-6">
+                <Card className="mb-6 dark:bg-[#0e0e0e]">
                     <CardContent className="space-y-6">
                         {/* List Name */}
                         <div className="space-y-2">
@@ -189,7 +189,7 @@ function EditingList() {
                                 <Button
                                     variant="outline"
                                     onClick={addNewItem}
-                                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg items-center justify-center hover:border-gray-400 transition-colors"
+                                    className="aspect-square border rounded-lg shadow-md items-center justify-center transition-colors"
                                 >
                                     <Plus className="w-6 h-6 text-gray-400" />
                                     <span className="text-xs text-gray-500">
@@ -239,11 +239,7 @@ function EditingList() {
 
                         {/* Action Button */}
                         <div className="flex flex-wrap gap-2 md:justify-between justify-center">
-                            <Button
-                                size="lg"
-                                className="bg-purple-600 hover:bg-purple-700"
-                                onClick={handleSaveAndUse}
-                            >
+                            <Button size="lg" onClick={handleSaveAndUse}>
                                 Save and Use
                             </Button>
 

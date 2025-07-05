@@ -3,6 +3,7 @@ import { ImportIcon, Plus } from 'lucide-react';
 import { ButtonHTMLAttributes, ChangeEvent, forwardRef, useRef } from 'react';
 import { v4 } from 'uuid';
 import z from 'zod';
+import { useTheme } from '~/hooks/useTheme';
 import Page from '../../components/page';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -10,6 +11,7 @@ import { saveListInStorage } from '../../hooks/useGetList';
 import { ListSchema } from '../list/zodSchema';
 
 export function MvpHome() {
+    const theme = useTheme();
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -47,11 +49,11 @@ export function MvpHome() {
                 {/* Header */}
                 <div className="text-center justify-items-center mb-8">
                     <img
-                        src={'/icon-light.svg'}
+                        src={`/icon-${theme}.svg`}
                         alt={'Swipey'}
                         className="h-20 my-8"
                     />
-                    <p className="text-lg text-gray-600">
+                    <p className="text-lg text-gray-600 dark:text-gray-400">
                         Swipe to rank your favorite things
                     </p>
                 </div>
@@ -97,12 +99,7 @@ const ImportButton = forwardRef<
     HTMLButtonElement,
     ButtonHTMLAttributes<HTMLButtonElement>
 >((props, ref) => (
-    <Button
-        {...props}
-        ref={ref}
-        size="lg"
-        className="bg-purple-600 hover:bg-purple-700"
-    >
+    <Button {...props} ref={ref} size="lg">
         <ImportIcon className="w-5 h-5 mr-2" />
         Import List from JSON
     </Button>
@@ -112,12 +109,7 @@ const CreateNewListButton = forwardRef<
     HTMLButtonElement,
     ButtonHTMLAttributes<HTMLButtonElement>
 >((props, ref) => (
-    <Button
-        {...props}
-        ref={ref}
-        size="lg"
-        className="bg-purple-600 hover:bg-purple-700"
-    >
+    <Button {...props} ref={ref} size="lg">
         <Plus className="w-5 h-5 mr-2" />
         Create New List
     </Button>

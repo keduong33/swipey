@@ -51,7 +51,7 @@ export const CircularProgress = ({
                     strokeWidth={strokeWidth ?? circleStrokeWidth}
                     strokeDasharray={circumference}
                     strokeDashoffset="0"
-                    className={cn('stroke-primary/25', className)}
+                    className={cn('stroke-third-primary/25', className)}
                 />
                 {/* Progress */}
                 <circle
@@ -63,7 +63,7 @@ export const CircularProgress = ({
                     strokeDashoffset={percentage}
                     fill="transparent"
                     strokeDasharray={circumference}
-                    className={cn('stroke-primary', progressClassName)}
+                    className={cn('stroke-third-primary', progressClassName)}
                 />
             </svg>
             {showLabel && (

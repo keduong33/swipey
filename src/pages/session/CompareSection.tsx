@@ -39,16 +39,18 @@ export default function CompareSection({ list }: { list: List }) {
 
     return (
         <>
-            <h1 className="text-4xl font-bold text-gray-900 ">
+            <h1 className="text-4xl font-bold text-primary dark:text-primary-dark">
                 {name || 'Untitled List'}
             </h1>
-            <p className="text-lg text-gray-600">{description || ''}</p>
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+                {description || ''}
+            </p>
             <div className="overflow-x-hidden w-full">
                 {step?.type === 'comparison' && (
                     <>
                         <div className="mb-2 max-w-4xl w-full justify-self-center gap-4 flex flex-col">
                             <div className="flex items-center justify-center flex-col">
-                                <p className="text-gray-600">
+                                <p className="text-gray-600 dark:text-gray-400">
                                     (Max {sortState.totalComparisons}{' '}
                                     comparisons)
                                 </p>
