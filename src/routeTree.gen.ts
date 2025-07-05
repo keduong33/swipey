@@ -13,8 +13,6 @@ import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as AllListsRouteImport } from './routes/all-lists'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ListIndexRouteImport } from './routes/list/index'
-import { Route as SessionSessionIdRouteImport } from './routes/session/$sessionId'
 import { Route as ResultResultIdRouteImport } from './routes/result/$resultId'
 import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
@@ -39,16 +37,6 @@ const AuthedRoute = AuthedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ListIndexRoute = ListIndexRouteImport.update({
-  id: '/list/',
-  path: '/list/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SessionSessionIdRoute = SessionSessionIdRouteImport.update({
-  id: '/session/$sessionId',
-  path: '/session/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultResultIdRoute = ResultResultIdRouteImport.update({
@@ -90,8 +78,6 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupRoute
   '/profile': typeof AuthedProfileRoute
   '/result/$resultId': typeof ResultResultIdRoute
-  '/session/$sessionId': typeof SessionSessionIdRoute
-  '/list': typeof ListIndexRoute
   '/list/edit/$listId': typeof ListEditListIdRoute
   '/list/use/$listId': typeof ListUseListIdRoute
 }
@@ -103,8 +89,6 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupRoute
   '/profile': typeof AuthedProfileRoute
   '/result/$resultId': typeof ResultResultIdRoute
-  '/session/$sessionId': typeof SessionSessionIdRoute
-  '/list': typeof ListIndexRoute
   '/list/edit/$listId': typeof ListEditListIdRoute
   '/list/use/$listId': typeof ListUseListIdRoute
 }
@@ -118,8 +102,6 @@ export interface FileRoutesById {
   '/(auth)/signup': typeof authSignupRoute
   '/_authed/profile': typeof AuthedProfileRoute
   '/result/$resultId': typeof ResultResultIdRoute
-  '/session/$sessionId': typeof SessionSessionIdRoute
-  '/list/': typeof ListIndexRoute
   '/list/edit/$listId': typeof ListEditListIdRoute
   '/list/use/$listId': typeof ListUseListIdRoute
 }
@@ -133,8 +115,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/profile'
     | '/result/$resultId'
-    | '/session/$sessionId'
-    | '/list'
     | '/list/edit/$listId'
     | '/list/use/$listId'
   fileRoutesByTo: FileRoutesByTo
@@ -146,8 +126,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/profile'
     | '/result/$resultId'
-    | '/session/$sessionId'
-    | '/list'
     | '/list/edit/$listId'
     | '/list/use/$listId'
   id:
@@ -160,8 +138,6 @@ export interface FileRouteTypes {
     | '/(auth)/signup'
     | '/_authed/profile'
     | '/result/$resultId'
-    | '/session/$sessionId'
-    | '/list/'
     | '/list/edit/$listId'
     | '/list/use/$listId'
   fileRoutesById: FileRoutesById
@@ -174,8 +150,6 @@ export interface RootRouteChildren {
   authLoginRoute: typeof authLoginRoute
   authSignupRoute: typeof authSignupRoute
   ResultResultIdRoute: typeof ResultResultIdRoute
-  SessionSessionIdRoute: typeof SessionSessionIdRoute
-  ListIndexRoute: typeof ListIndexRoute
   ListEditListIdRoute: typeof ListEditListIdRoute
   ListUseListIdRoute: typeof ListUseListIdRoute
 }
@@ -208,20 +182,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/list/': {
-      id: '/list/'
-      path: '/list'
-      fullPath: '/list'
-      preLoaderRoute: typeof ListIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/session/$sessionId': {
-      id: '/session/$sessionId'
-      path: '/session/$sessionId'
-      fullPath: '/session/$sessionId'
-      preLoaderRoute: typeof SessionSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/result/$resultId': {
@@ -288,8 +248,6 @@ const rootRouteChildren: RootRouteChildren = {
   authLoginRoute: authLoginRoute,
   authSignupRoute: authSignupRoute,
   ResultResultIdRoute: ResultResultIdRoute,
-  SessionSessionIdRoute: SessionSessionIdRoute,
-  ListIndexRoute: ListIndexRoute,
   ListEditListIdRoute: ListEditListIdRoute,
   ListUseListIdRoute: ListUseListIdRoute,
 }

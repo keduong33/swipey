@@ -65,11 +65,15 @@ function EditingList() {
         return <Loader2 className="animate-spin" />;
     }
 
-    const updateList = (updates: Partial<List>) => {
+    const updateList = (
+        updates: Partial<List> | ((prev: List) => Partial<List>)
+    ) => {
         setIsSaved(false);
         setList((prev) => {
             if (!prev) throw new Error('List not initialized');
-            return { ...prev, ...updates };
+            const resolvedUpdates =
+                typeof updates === 'function' ? updates(prev) : updates;
+            return { ...prev, ...resolvedUpdates };
         });
     };
 
@@ -84,10 +88,10 @@ function EditingList() {
         });
     };
 
-    const setItems = (items: Item[]) => {
-        updateList({
-            items,
-        });
+    const setItems = (updater: (prev: Item[]) => Item[]) => {
+        updateList((prev) => ({
+            items: updater(prev.items),
+        }));
     };
 
     const handleSave = async () => {
