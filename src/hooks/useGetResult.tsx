@@ -30,14 +30,15 @@ export const useLocalGetResults = () => {
     const [results, setResults] = useState<Result[]>();
     const [isLoading, setIsLoading] = useState(true);
 
+    const fetch = async () => {
+        const results = await localDb.getResults();
+        setResults(results);
+        setIsLoading(false);
+    };
+
     useEffect(() => {
-        const run = async () => {
-            const results = await localDb.getResults();
-            setResults(results);
-            setIsLoading(false);
-        };
-        run();
+        fetch();
     }, []);
 
-    return { results, setResults, isLoading };
+    return { results, setResults, isLoading, fetch };
 };
