@@ -3,7 +3,7 @@ import imageCompression from 'browser-image-compression';
 import { ArrowLeft, Loader2, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
-import Page from '../../../components/page';
+import Page from '../../../components/Pagee';
 import { Button } from '../../../components/ui/button';
 import { Card, CardContent } from '../../../components/ui/card';
 import {
@@ -33,7 +33,7 @@ import {
 } from '../../../components/ui/select';
 import { Textarea } from '../../../components/ui/textarea';
 import { useLocalGetList } from '../../../hooks/useGetList';
-import { createNewList, List } from '../../../pages/list/listCard';
+import { createNewList, List } from '../../../pages/list/list-card';
 import { Item } from '../../../pages/list/ListItem';
 import { ListItems } from '../../../pages/list/ListItems';
 import { MultipleUploads } from '../../../pages/list/MultipleUploads';

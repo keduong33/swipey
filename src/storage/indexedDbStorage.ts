@@ -1,7 +1,7 @@
 // storage/indexedDbStorage.ts
 
 import { Result } from '../hooks/useGetResult';
-import { List } from '../pages/list/listCard';
+import { List } from '../pages/list/list-card';
 import { getDb } from './db';
 
 export interface IndexedDbStorage {
