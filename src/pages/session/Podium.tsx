@@ -94,7 +94,7 @@ export const RemainingRanking = ({ items }: { items: Item[] }) => (
                 className="flex items-center gap-4 p-4 rounded-lg border bg-card mb-4"
             >
                 {/* Rank Number */}
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-second-primary to-primary text-white flex items-center justify-center font-bold">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-third-primary to-[#ff5100] text-white flex items-center justify-center font-bold">
                     {index + 4}
                 </div>
 

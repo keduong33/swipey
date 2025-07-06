@@ -51,10 +51,10 @@ export default function CompareSection({ list }: { list: List }) {
                         <div className="mb-2 max-w-4xl w-full justify-self-center gap-4 flex flex-col">
                             <div className="flex items-center justify-center flex-col">
                                 <p className="text-gray-600 dark:text-gray-400">
-                                    (Max {sortState.totalComparisons}{' '}
-                                    comparisons)
+                                    ({items.length} items to compare, max{' '}
+                                    {sortState.totalComparisons} comparisons)
                                 </p>
-                                <p className="text-lg font-bold">
+                                <p className="text-lg font-bold text-[#ff7e06] dark:text-third-primary">
                                     Choose the card you like more
                                 </p>
                             </div>

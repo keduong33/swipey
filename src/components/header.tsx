@@ -28,13 +28,13 @@ function UserAvatar() {
 export function Header({ hideLogo, withProfile, sessionId }: HeaderProps) {
     const { theme } = useTheme();
     return (
-        <header className="flex w-full justify-between items-center bg-sidebar">
+        <header className="flex w-full justify-between items-center bg-sidebar px-4">
             {!hideLogo && (
                 <Link to={'/'}>
                     <img
                         src={`/icon-${theme}.svg`}
                         alt={'Swipey'}
-                        className="object-cover h-8 ml-4 my-2"
+                        className="object-cover h-8 my-2"
                     />
                 </Link>
             )}

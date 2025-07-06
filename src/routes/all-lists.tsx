@@ -25,12 +25,14 @@ function RouteComponent() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="p-2"
+                            className="p-2 text-primary dark:text-primary-dark hover:bg-accent-darker dark:hover:bg-accent-darker"
                             onClick={() => navigate({ to: `/` })}
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
-                        <h2>All Your Lists</h2>
+                        <h2 className="text-primary dark:text-primary-dark">
+                            All Your Lists
+                        </h2>
                     </div>
                     <Button
                         size="lg"

@@ -125,10 +125,10 @@ function EditingList() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="p-2"
+                            className="p-2 hover:bg-accent-darker dark:hover:bg-accent-darker"
                             onClick={() => navigate({ to: '/' })}
                         >
-                            <ArrowLeft className="w-5 h-5 text-primary dark:text-white" />
+                            <ArrowLeft className="w-5 h-5 text-primary dark:text-primary-dark" />
                         </Button>
                         <h1 className="text-2xl font-bold text-primary dark:text-primary-dark">
                             {isShowingExistingList
@@ -192,7 +192,7 @@ function EditingList() {
                                     className="aspect-square border rounded-lg shadow-md items-center justify-center transition-colors"
                                 >
                                     <Plus className="w-6 h-6 text-gray-400" />
-                                    <span className="text-xs text-gray-500">
+                                    <span className="text-xs text-muted-foreground">
                                         Add Item
                                     </span>
                                 </Button>

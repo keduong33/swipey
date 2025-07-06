@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Result } from '~/hooks/useGetResult';
-import { ShareDialog } from '~/routes/list';
+import { ShareDialog } from '~/routes/list/edit/$listId';
 import { Podium, RemainingRanking } from './Podium';
 
 export default function ResultsSection({ result }: { result: Result }) {
@@ -61,9 +61,9 @@ export default function ResultsSection({ result }: { result: Result }) {
             </div>
 
             {/* Summary Stats */}
-            <div className="mt-4 p-6 bg-gradient-to-r from-accent dark:from-[#1b0530] to-[#e0e4fe] dark:to-accent rounded-xl border">
+            <div className="mt-4 p-6 bg-gradient-to-r from-third-primary/20 to-[#ff5100]/20 rounded-xl border">
                 <div className="text-center">
-                    <h3 className="font-semibold text-lg mb-2 text-primary dark:text-white">
+                    <h3 className="font-semibold text-lg mb-2">
                         Ranking Complete! 🎉
                     </h3>
                     <p>

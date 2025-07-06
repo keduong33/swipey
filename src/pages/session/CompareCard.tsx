@@ -58,10 +58,10 @@ export const CompareCard = ({
         >
             <Card
                 key={item.id}
-                className="hover:shadow-xl dark:hover:bg-[#1a1a1a]"
+                className={`hover:shadow-xl hover:bg-third-primary dark:hover:bg-third-primary ${isAnimating ? 'bg-third-primary' : ''} transition-colors`}
             >
                 <CardContent className="pointer-events-none ">
-                    <div className="w-full aspect-square border-2 rounded-lg flex flex-col items-center justify-center transition-colors">
+                    <div className="w-full aspect-square border-2 rounded-lg flex flex-col items-center justify-center transition-colors bg-card dark:bg-gray-200">
                         {item.image ? (
                             <img
                                 src={item.image}

@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Plus, Users } from 'lucide-react';
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { v4 } from 'uuid';
+import { useTheme } from '~/components/ThemeProvider';
 import Page from '../../components/page';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
@@ -10,6 +11,7 @@ import { ListCard } from '../list/listCard';
 import { JsonImportDialog } from './JsonImportSection';
 
 export default function Home() {
+    const { theme } = useTheme();
     const { lists, fetch } = useLocalGetLists();
 
     const refresh = async () => {
@@ -22,10 +24,14 @@ export default function Home() {
         <Page>
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="mb-2">Swipey</h1>
-                    <p className="text-lg ">
-                        Swipe to rank your favorite things
+                <div className="text-center mb-8 justify-items-center">
+                    <img
+                        src={`/icon-${theme}.svg`}
+                        alt={'Swipey'}
+                        className="h-20 my-4"
+                    />
+                    <p className="text-lg text-gray-600 dark:text-gray-400">
+                        Swipe to rank your favourite things
                     </p>
                 </div>
 
@@ -40,10 +46,13 @@ export default function Home() {
                 {/* Your Lists Section */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-4">
-                        <h2>Your Lists</h2>
+                        <h2 className="text-primary dark:text-primary-dark">
+                            Your Lists
+                        </h2>
                         <Button
                             variant="ghost"
                             onClick={() => navigate({ to: '/all-lists' })}
+                            className="text-primary dark:text-primary-dark"
                         >
                             View all lists
                         </Button>
@@ -69,11 +78,11 @@ export default function Home() {
                                 <ListCard
                                     key={list.id}
                                     list={list}
-                                    onClick={() =>
-                                        navigate({
-                                            to: `/list/edit/${list.id}`,
-                                        })
-                                    }
+                                    // onClick={() =>
+                                    //     navigate({
+                                    //         to: `/list/edit/${list.id}`,
+                                    //     })
+                                    // }
                                 />
                             ))}
                         </div>
