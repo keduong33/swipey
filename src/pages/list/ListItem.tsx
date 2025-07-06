@@ -1,5 +1,4 @@
-import { ImageIcon, X } from 'lucide-react';
-import { ChangeEvent } from 'react';
+import { ImageIcon, Loader2, X } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 
@@ -18,21 +17,24 @@ export const ListItem = ({
     handleImageUpload,
     updateItemName,
     removeItem,
+    isLoading,
 }: {
     item: Item;
     showDeleteItemButton: boolean;
-    handleImageUpload: (
-        id: string,
-        event: ChangeEvent<HTMLInputElement>
-    ) => void;
+    handleImageUpload: (id: string, file: File | undefined) => void;
     updateItemName: (id: string, name: string) => void;
     removeItem: (id: string) => void;
+    isLoading?: boolean;
 }) => (
     <div key={item.id} className="relative space-y-1">
         <div
             className={`aspect-square border ${item.image ?? 'border-dashed border-2'} rounded-lg flex flex-col items-center justify-center bg-card shadow-sm hover:border-border-hover transition-colors`}
         >
-            {item.image ? (
+            {isLoading ? (
+                <div className="w-full h-full flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                </div>
+            ) : item.image ? (
                 <img
                     src={item.image}
                     alt={item.name}
@@ -47,7 +49,9 @@ export const ListItem = ({
                     <Input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleImageUpload(item.id, e)}
+                        onChange={(e) =>
+                            handleImageUpload(item.id, e.target.files?.[0])
+                        }
                         className="hidden"
                         id={`image-upload-${item.id}`}
                     />

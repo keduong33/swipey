@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import imageCompression from 'browser-image-compression';
 import { ArrowLeft, Loader2, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
@@ -7,6 +8,7 @@ import { Button } from '../../../components/ui/button';
 import { Card, CardContent } from '../../../components/ui/card';
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -34,6 +36,7 @@ import { useLocalGetList } from '../../../hooks/useGetList';
 import { createNewList, List } from '../../../pages/list/listCard';
 import { Item } from '../../../pages/list/ListItem';
 import { ListItems } from '../../../pages/list/ListItems';
+import { MultipleUploads } from '../../../pages/list/MultipleUploads';
 import { localDb } from '../../../storage/indexedDbStorage';
 
 export const Route = createFileRoute('/list/edit/$listId')({
@@ -47,6 +50,11 @@ function EditingList() {
     // maybe use isSaved in the future
     const [isSaved, setIsSaved] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+    const [loadingImageIds, setLoadingImageIds] = useState<Set<string>>(
+        new Set()
+    );
 
     const { list: retrievedList, isLoading } = useLocalGetList(listId);
 
@@ -113,6 +121,50 @@ function EditingList() {
         if (retrievedList) {
             setList(retrievedList);
             setIsSaved(false);
+        }
+    };
+
+    const onDeleteList = async () => {
+        await localDb.deleteList(listId);
+        navigate({ to: '/' });
+    };
+
+    const handleImageUpload = async (
+        id: string,
+        file: File | undefined
+    ): Promise<void> => {
+        if (!file) return;
+
+        try {
+            setLoadingImageIds((prev) => new Set(prev).add(id));
+            const compressed = await imageCompression(file, {
+                maxSizeMB: 0.1,
+                useWebWorker: true,
+            });
+
+            const compressedImageUrl =
+                await imageCompression.getDataUrlFromFile(compressed);
+
+            console.log(
+                `image before compressed: ${file.size / 1024 / 1024} MB`,
+                `image after compressed: ${compressed.size / 1024 / 1024} MB`
+            );
+
+            setItems((prev) =>
+                prev.map((item) =>
+                    item.id === id
+                        ? { ...item, image: compressedImageUrl }
+                        : item
+                )
+            );
+        } catch (error) {
+            console.error('Error on uploading images:', error);
+        } finally {
+            setLoadingImageIds((prev) => {
+                const updated = new Set(prev);
+                updated.delete(id);
+                return updated;
+            });
         }
     };
 
@@ -185,17 +237,26 @@ function EditingList() {
                                 <ListItems
                                     items={list.items}
                                     setItems={setItems}
+                                    handleImageUpload={handleImageUpload}
+                                    loadingImageIds={loadingImageIds}
                                 />
+                            </div>
+                            <div className="w-full flex flex-col md:flex-row gap-2 justify-center">
                                 <Button
                                     variant="outline"
                                     onClick={addNewItem}
                                     className="aspect-square border rounded-lg shadow-md items-center justify-center transition-colors"
                                 >
                                     <Plus className="w-6 h-6 text-gray-400" />
-                                    <span className="text-xs text-muted-foreground">
-                                        Add Item
-                                    </span>
+                                    <p className="text-xs text-muted-foreground">
+                                        Add Blank Item
+                                    </p>
                                 </Button>
+
+                                <MultipleUploads
+                                    setItems={setItems}
+                                    handleImageUpload={handleImageUpload}
+                                />
                             </div>
                         </div>
 
@@ -258,9 +319,9 @@ function EditingList() {
                                     >
                                         Save and Share
                                     </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
                                     {retrievedList && (
                                         <>
-                                            <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 onClick={handleRevert}
                                             >
@@ -268,6 +329,14 @@ function EditingList() {
                                             </DropdownMenuItem>
                                         </>
                                     )}
+                                    <DropdownMenuItem
+                                        variant="destructive"
+                                        onClick={() =>
+                                            setDeleteDialogOpen(true)
+                                        }
+                                    >
+                                        Delete
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
@@ -275,12 +344,46 @@ function EditingList() {
                 </Card>
             </div>
 
+            <DeleteDialog
+                open={deleteDialogOpen}
+                setIsOpen={setDeleteDialogOpen}
+                onDelete={onDeleteList}
+            />
             <ShareListDialog
                 open={dialogOpen}
                 setIsOpen={setDialogOpen}
                 list={list}
             />
         </Page>
+    );
+}
+
+function DeleteDialog({
+    open,
+    setIsOpen,
+    onDelete,
+}: {
+    open: boolean;
+    setIsOpen: (open: boolean) => void;
+    onDelete: () => void;
+}) {
+    return (
+        <Dialog open={open} onOpenChange={setIsOpen}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogDescription>
+                        This action is irreversible!
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                    <Button onClick={onDelete}>Delete List</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
 
