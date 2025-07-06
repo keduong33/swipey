@@ -1,13 +1,15 @@
-import imageCompression from 'browser-image-compression';
-import { ChangeEvent } from 'react';
 import { Item, ListItem } from './ListItem';
 
 export const ListItems = ({
     items,
     setItems,
+    handleImageUpload,
+    loadingImageIds,
 }: {
     items: Item[];
     setItems: (updater: (prev: Item[]) => Item[]) => void;
+    handleImageUpload: (id: string, file: File | undefined) => void;
+    loadingImageIds: Set<string>;
 }) => {
     const removeItem = (id: string) => {
         if (items.length >= 1) {
@@ -21,35 +23,6 @@ export const ListItems = ({
         );
     };
 
-    const updateItemImage = (id: string, image: string) => {
-        setItems((prev) =>
-            prev.map((item) => (item.id === id ? { ...item, image } : item))
-        );
-    };
-
-    const handleImageUpload = async (
-        id: string,
-        event: ChangeEvent<HTMLInputElement>
-    ) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const compressed = await imageCompression(file, {
-                maxSizeMB: 0.1,
-                useWebWorker: true,
-            });
-
-            const compressedImageUrl =
-                await imageCompression.getDataUrlFromFile(compressed);
-
-            console.log(
-                `image before compressed: ${file.size}`,
-                `image after compressed: ${compressed.size}`
-            );
-
-            updateItemImage(id, compressedImageUrl);
-        }
-    };
-
     return (
         <>
             {items.map((item) => (
@@ -60,6 +33,7 @@ export const ListItems = ({
                     handleImageUpload={handleImageUpload}
                     updateItemName={updateItemName}
                     removeItem={removeItem}
+                    isLoading={loadingImageIds.has(item.id)}
                 />
             ))}
         </>
