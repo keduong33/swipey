@@ -91,7 +91,7 @@ export function ListCard({ list }: { list: List }) {
                 <CardTitle className="text-lg flex justify-between">
                     {list.name}
                     <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger asChild>
                             <Button
                                 className="bg-third-primary hover:bg-third-primary-hover text-black dark:text-black "
                                 onClick={() =>

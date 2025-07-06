@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useState,
+} from 'react';
 
 type Theme = 'dark' | 'light' | 'system';
 
@@ -28,7 +34,7 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
     const [theme, setTheme] = useState<Theme>(defaultTheme);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const storedTheme = localStorage.getItem(storageKey) as Theme;
         if (storedTheme) setTheme(storedTheme);
     }, []);
