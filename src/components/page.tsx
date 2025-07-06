@@ -11,7 +11,9 @@ export default function Page({
     return (
         <div className="flex w-full flex-col min-h-screen">
             <Header {...headerConfig} />
-            <main className="flex-1 flex-col bg-primary p-4">{children}</main>
+            <main className="flex-1 flex-col bg-background p-4">
+                {children}
+            </main>
         </div>
     );
 }

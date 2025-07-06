@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Plus, Users } from 'lucide-react';
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { v4 } from 'uuid';
+import { useTheme } from '~/components/ThemeProvider';
 import Page from '../../components/page';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
@@ -10,6 +11,7 @@ import { ListCard } from '../list/listCard';
 import { JsonImportDialog } from './JsonImportSection';
 
 export default function Home() {
+    const { theme } = useTheme();
     const { lists, fetch } = useLocalGetLists();
 
     const refresh = async () => {
@@ -22,13 +24,13 @@ export default function Home() {
         <Page>
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        Swipey
-                    </h1>
-                    <p className="text-lg text-gray-600">
-                        Swipe to rank your favorite things
-                    </p>
+                <div className="text-center mb-8 justify-items-center">
+                    <img
+                        src={`/icon-${theme}.svg`}
+                        alt={'Swipey'}
+                        className="h-20 my-4"
+                    />
+                    <h3>Swipe to rank your favourite things</h3>
                 </div>
 
                 <div className="mb-8 gap-4 flex justify-center flex-wrap">
@@ -42,12 +44,10 @@ export default function Home() {
                 {/* Your Lists Section */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-2xl font-semibold text-gray-900">
-                            Your Lists
-                        </h2>
+                        <h2>Your Lists</h2>
                         <Button
-                            variant="ghost"
-                            className="text-purple-600 hover:text-purple-700"
+                            variant="link"
+                            className="dark:text-primary-dark"
                             onClick={() => navigate({ to: '/all-lists' })}
                         >
                             View all lists
@@ -70,17 +70,11 @@ export default function Home() {
                         </Card>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {lists?.slice(0, 3).map((list) => (
-                                <ListCard
-                                    key={list.id}
-                                    list={list}
-                                    onClick={() =>
-                                        navigate({
-                                            to: `/list/edit/${list.id}`,
-                                        })
-                                    }
-                                />
-                            ))}
+                            {lists
+                                ?.slice(0, 3)
+                                .map((list) => (
+                                    <ListCard key={list.id} list={list} />
+                                ))}
                         </div>
                     )}
                 </div>
@@ -93,12 +87,7 @@ const CreateNewListButton = forwardRef<
     HTMLButtonElement,
     ButtonHTMLAttributes<HTMLButtonElement>
 >((props, ref) => (
-    <Button
-        {...props}
-        ref={ref}
-        size="lg"
-        className="bg-purple-600 hover:bg-purple-700"
-    >
+    <Button {...props} ref={ref} size="lg" className="">
         <Plus className="w-5 h-5 mr-2" />
         Create New List
     </Button>

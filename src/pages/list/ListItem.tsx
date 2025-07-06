@@ -29,7 +29,9 @@ export const ListItem = ({
     removeItem: (id: string) => void;
 }) => (
     <div key={item.id} className="relative space-y-1">
-        <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-white hover:border-gray-400 transition-colors">
+        <div
+            className={`aspect-square border ${item.image ?? 'border-dashed border-2'} rounded-lg flex flex-col items-center justify-center bg-card shadow-sm hover:border-border-hover transition-colors`}
+        >
             {item.image ? (
                 <img
                     src={item.image}
@@ -63,7 +65,7 @@ export const ListItem = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => removeItem(item.id)}
-                className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
+                className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-destructive hover:bg-destructive-hover dark:hover:bg-destructive-hover hover:text-white text-white rounded-full"
             >
                 <X className="w-3 h-3" />
             </Button>

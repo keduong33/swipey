@@ -5,11 +5,11 @@ import {
     Scripts,
     createRootRoute,
 } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { createServerFn } from '@tanstack/react-start';
 import * as React from 'react';
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
 import { NotFound } from '../components/NotFound';
+import { ThemeProvider } from '../components/ThemeProvider';
 import { seo } from '../lib/seo';
 import { getSupabaseServerClient } from '../lib/supabase';
 import globalCss from '../styles/global.css?url';
@@ -61,7 +61,7 @@ export const Route = createRootRoute({
                 sizes: '16x16',
                 href: '/favicon-16x16.png',
             },
-            { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
+            // { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
             { rel: 'icon', href: '/favicon.svg' },
         ],
     }),
@@ -79,7 +79,7 @@ export const Route = createRootRoute({
         );
     },
     notFoundComponent: () => <NotFound />,
-    component: RootComponent,
+    shellComponent: RootComponent,
 });
 
 function RootComponent() {
@@ -91,16 +91,14 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-    // const { user } = Route.useRouteContext();
-
     return (
         <html>
             <head>
                 <HeadContent />
             </head>
             <body>
-                {children}
-                <TanStackRouterDevtools position="bottom-right" />
+                <ThemeProvider>{children}</ThemeProvider>
+                {/* <TanStackRouterDevtools position="bottom-right" /> */}
                 <Scripts />
             </body>
         </html>

@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Result } from '~/hooks/useGetResult';
-import { ShareDialog } from '~/routes/list';
+import { ShareDialog } from '~/routes/list/edit/$listId';
 import { Podium, RemainingRanking } from './Podium';
 
 export default function ResultsSection({ result }: { result: Result }) {
@@ -28,11 +28,9 @@ export default function ResultsSection({ result }: { result: Result }) {
     return (
         <div className="space-y-4 justify-items-center">
             {/* Header */}
-            <div className="text-center mb-4">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Ranking results
-                </h1>
-                <p>{name}</p>
+            <div className="text-center">
+                <h1>Ranking results</h1>
+                <h3>{name}</h3>
             </div>
 
             <div className="relative mb-4 md:w-2/3">
@@ -61,12 +59,10 @@ export default function ResultsSection({ result }: { result: Result }) {
             </div>
 
             {/* Summary Stats */}
-            <div className="mt-4 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+            <div className="mt-4 p-6 bg-gradient-to-r from-third-primary/20 to-[#ff5100]/20 rounded-xl border">
                 <div className="text-center">
-                    <h3 className="font-semibold text-lg text-blue-900 mb-2">
-                        Ranking Complete! 🎉
-                    </h3>
-                    <p className="text-blue-700">
+                    <h4 className="mb-2">Ranking Complete! 🎉</h4>
+                    <p>
                         You compared {comparisons} pairs to rank{' '}
                         {currentArray.length} items
                     </p>

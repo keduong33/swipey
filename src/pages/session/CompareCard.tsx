@@ -32,7 +32,7 @@ export const CompareCard = ({
     };
     return (
         <motion.div
-            className={`hover:shadow-lg transition-shadow ${isAnimating ? 'pointer-events-none' : 'cursor-pointer'} w-[275px] md:w-full`}
+            className={`transition-shadow ${isAnimating ? 'pointer-events-none' : 'cursor-pointer'} w-[275px] md:w-full`}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             whileTap={{ scale: 0.95 }}
@@ -56,9 +56,12 @@ export const CompareCard = ({
                 dragOffset.current = 0;
             }}
         >
-            <Card key={item.id}>
+            <Card
+                key={item.id}
+                className={`hover:shadow-xl hover:bg-third-primary dark:hover:bg-third-primary ${isAnimating ? 'bg-third-primary' : ''} transition-colors`}
+            >
                 <CardContent className="pointer-events-none ">
-                    <div className="w-full aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-white hover:border-gray-400 transition-colors">
+                    <div className="w-full aspect-square border-2 rounded-lg flex flex-col items-center justify-center transition-colors bg-card dark:bg-gray-200">
                         {item.image ? (
                             <img
                                 src={item.image}
@@ -75,7 +78,7 @@ export const CompareCard = ({
                         )}
                     </div>
                 </CardContent>
-                <CardTitle className="text-xl text-center select-none">
+                <CardTitle className="text-xl text-center select-none min-h-[2rem]">
                     {item.name}
                 </CardTitle>
             </Card>

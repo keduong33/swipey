@@ -1,6 +1,13 @@
-import { Play, Users } from 'lucide-react';
+import { useNavigate } from '@tanstack/react-router';
+import { Copy, Eye, Loader2, Pencil, Play } from 'lucide-react';
 import { v4 } from 'uuid';
 import { z } from 'zod';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '~/components/ui/tooltip';
+import { useLocalGetResult } from '~/hooks/useGetResult';
 import { Button } from '../../components/ui/button';
 import {
     Card,
@@ -74,27 +81,41 @@ const emptyList: List = {
 //     }
 // };
 
-export function ListCard({
-    list,
-    onClick,
-}: {
-    list: List;
-    onClick?: () => void;
-}) {
+export function ListCard({ list }: { list: List }) {
+    const navigate = useNavigate();
+    const { result, isLoading } = useLocalGetResult(list.id);
+
     return (
-        <Card
-            key={list.id}
-            className="hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={onClick}
-        >
+        <Card key={list.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
-                <CardTitle className="text-lg">{list.name}</CardTitle>
-                <CardDescription>{list.description}</CardDescription>
+                <CardTitle className="text-lg flex justify-between">
+                    {list.name}
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className="bg-third-primary hover:bg-third-primary-hover text-black dark:text-black "
+                                onClick={() =>
+                                    navigate({
+                                        to: `/list/edit/${list.id}`,
+                                    })
+                                }
+                            >
+                                <Pencil className="w-4 h-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="dark:text-white">
+                            Edit List
+                        </TooltipContent>
+                    </Tooltip>
+                </CardTitle>
+                <CardDescription className="min-h-[1rem]">
+                    {list.description}
+                </CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
                     <span className="flex items-center">
-                        <Users className="w-4 h-4 mr-1" />
+                        <Copy className="w-4 h-4 mr-1" />
                         {list.items.length} items
                     </span>
                     {/* <span className="flex items-center">
@@ -110,10 +131,35 @@ export function ListCard({
                     {getStatusText(list.status)}
                 </div> */}
             </CardContent>
-            <CardFooter>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+            <CardFooter className="flex-col gap-2">
+                <Button
+                    className="w-full bg-third-primary hover:bg-third-primary-hover text-black dark:text-black "
+                    onClick={() =>
+                        navigate({
+                            to: `/list/use/${list.id}`,
+                        })
+                    }
+                >
                     <Play className="w-4 h-4 mr-2" />
-                    {/* {list.status === 'new' ? 'Start Ranking' : 'Continue'} */}
+                    Rank list
+                </Button>
+                <Button
+                    disabled={!result}
+                    className="w-full bg-third-primary hover:bg-third-primary-hover text-black dark:text-black"
+                    onClick={() =>
+                        navigate({
+                            to: `/result/${list.id}`,
+                        })
+                    }
+                >
+                    {isLoading ? (
+                        <Loader2 className="animate-spin" />
+                    ) : (
+                        <>
+                            <Eye className="w-5 h-5 mr-2" />
+                            {`${!result ? 'No' : 'View'} Results`}
+                        </>
+                    )}
                 </Button>
             </CardFooter>
         </Card>
