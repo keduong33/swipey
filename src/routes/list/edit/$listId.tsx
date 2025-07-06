@@ -130,11 +130,11 @@ function EditingList() {
                         >
                             <ArrowLeft className="w-5 h-5 text-primary dark:text-primary-dark" />
                         </Button>
-                        <h1 className="text-2xl font-bold text-primary dark:text-primary-dark">
+                        <h2>
                             {isShowingExistingList
                                 ? 'Edit List'
                                 : 'Create New List'}
-                        </h1>
+                        </h2>
                     </div>
                 </div>
 

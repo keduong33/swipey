@@ -30,9 +30,7 @@ export default function Home() {
                         alt={'Swipey'}
                         className="h-20 my-4"
                     />
-                    <p className="text-lg text-gray-600 dark:text-gray-400">
-                        Swipe to rank your favourite things
-                    </p>
+                    <h3>Swipe to rank your favourite things</h3>
                 </div>
 
                 <div className="mb-8 gap-4 flex justify-center flex-wrap">
@@ -46,13 +44,11 @@ export default function Home() {
                 {/* Your Lists Section */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-primary dark:text-primary-dark">
-                            Your Lists
-                        </h2>
+                        <h2>Your Lists</h2>
                         <Button
-                            variant="ghost"
+                            variant="link"
+                            className="dark:text-primary-dark"
                             onClick={() => navigate({ to: '/all-lists' })}
-                            className="text-primary dark:text-primary-dark"
                         >
                             View all lists
                         </Button>
@@ -74,17 +70,11 @@ export default function Home() {
                         </Card>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {lists?.slice(0, 3).map((list) => (
-                                <ListCard
-                                    key={list.id}
-                                    list={list}
-                                    // onClick={() =>
-                                    //     navigate({
-                                    //         to: `/list/edit/${list.id}`,
-                                    //     })
-                                    // }
-                                />
-                            ))}
+                            {lists
+                                ?.slice(0, 3)
+                                .map((list) => (
+                                    <ListCard key={list.id} list={list} />
+                                ))}
                         </div>
                     )}
                 </div>

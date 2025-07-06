@@ -30,9 +30,7 @@ function RouteComponent() {
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
-                        <h2 className="text-primary dark:text-primary-dark">
-                            All Your Lists
-                        </h2>
+                        <h2>All Your Lists</h2>
                     </div>
                     <Button
                         size="lg"
@@ -40,7 +38,7 @@ function RouteComponent() {
                         onClick={() => navigate({ to: `/list/${v4()}` })}
                     >
                         <Plus className="w-5 h-5 mr-2" />
-                        Create New List
+                        New List
                     </Button>
                 </div>
 

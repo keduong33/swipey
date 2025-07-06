@@ -28,11 +28,9 @@ export default function ResultsSection({ result }: { result: Result }) {
     return (
         <div className="space-y-4 justify-items-center">
             {/* Header */}
-            <div className="text-center mb-4">
-                <h1 className="text-3xl font-bold text-primary dark:text-primary-dark mb-2">
-                    Ranking results
-                </h1>
-                <p>{name}</p>
+            <div className="text-center">
+                <h1>Ranking results</h1>
+                <h3>{name}</h3>
             </div>
 
             <div className="relative mb-4 md:w-2/3">
@@ -63,9 +61,7 @@ export default function ResultsSection({ result }: { result: Result }) {
             {/* Summary Stats */}
             <div className="mt-4 p-6 bg-gradient-to-r from-third-primary/20 to-[#ff5100]/20 rounded-xl border">
                 <div className="text-center">
-                    <h3 className="font-semibold text-lg mb-2">
-                        Ranking Complete! 🎉
-                    </h3>
+                    <h4 className="mb-2">Ranking Complete! 🎉</h4>
                     <p>
                         You compared {comparisons} pairs to rank{' '}
                         {currentArray.length} items

@@ -1,7 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Result } from '~/hooks/useGetResult';
-import { CircularProgress } from '../../components/CircularProgress';
 import { localDb } from '../../storage/indexedDbStorage';
 import { List } from '../list/listCard';
 import { CompareCard } from './CompareCard';
@@ -39,12 +38,11 @@ export default function CompareSection({ list }: { list: List }) {
 
     return (
         <>
-            <h1 className="text-4xl font-bold text-primary dark:text-primary-dark">
-                {name || 'Untitled List'}
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <h2>{name || 'Untitled List'}</h2>
+            <h3 className="text-lg text-gray-600 dark:text-gray-400">
                 {description || ''}
-            </p>
+            </h3>
+
             <div className="overflow-x-hidden w-full">
                 {step?.type === 'comparison' && (
                     <>
@@ -54,7 +52,7 @@ export default function CompareSection({ list }: { list: List }) {
                                     ({items.length} items to compare, max{' '}
                                     {sortState.totalComparisons} comparisons)
                                 </p>
-                                <p className="text-lg font-bold text-[#ff7e06] dark:text-third-primary">
+                                <p className="font-bold text-[#ff7e06] dark:text-third-primary">
                                     Choose the card you like more
                                 </p>
                             </div>
@@ -92,27 +90,10 @@ export default function CompareSection({ list }: { list: List }) {
                             <div className="flex justify-center items-center flex-col">
                                 <p>
                                     {sortState.currentComparison} out of{' '}
-                                    {sortState.totalComparisons} matches done
+                                    {sortState.totalComparisons} matches done (
+                                    {displayProgress}%)
                                 </p>
-                                {/* <div className="w-full flex items-center justify-center gap-3">
-                            <Progress
-                                value={progress}
-                                className="[&>div]:bg-gradient-to-r [&>div]:from-blue-400 [&>div]:via-indigo-500 [&>div]:to-purple-600"
-                            />
-                            <span className="text-sm">
-                                {Math.round(progress)}%
-                            </span>
-                        </div> */}
                             </div>
-                        </div>
-                        <div className="absolute top-0 right-0 md:right-4">
-                            <CircularProgress
-                                strokeWidth={10}
-                                size={80}
-                                value={Math.round(displayProgress)}
-                                showLabel
-                                renderLabel={(progress) => `${progress}%`}
-                            />
                         </div>
                     </>
                 )}

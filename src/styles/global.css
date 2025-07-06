@@ -143,16 +143,18 @@
         @apply bg-background text-foreground;
     }
     h1 {
-        @apply text-foreground text-4xl font-bold;
+        @apply text-foreground text-3xl font-bold;
     }
     h2 {
-        @apply text-2xl font-semibold;
+        @apply text-2xl font-semibold text-primary dark:text-primary-dark;
     }
 
     h3 {
+        @apply text-lg text-gray-600 dark:text-gray-400;
     }
 
     h4 {
+        @apply font-bold;
     }
 
     p {

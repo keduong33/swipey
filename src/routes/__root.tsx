@@ -5,7 +5,6 @@ import {
     Scripts,
     createRootRoute,
 } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { createServerFn } from '@tanstack/react-start';
 import * as React from 'react';
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
@@ -62,7 +61,7 @@ export const Route = createRootRoute({
                 sizes: '16x16',
                 href: '/favicon-16x16.png',
             },
-            { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
+            // { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
             { rel: 'icon', href: '/favicon.svg' },
         ],
     }),
@@ -99,7 +98,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </head>
             <body>
                 <ThemeProvider>{children}</ThemeProvider>
-                <TanStackRouterDevtools position="bottom-right" />
+                {/* <TanStackRouterDevtools position="bottom-right" /> */}
                 <Scripts />
             </body>
         </html>

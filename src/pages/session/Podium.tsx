@@ -70,9 +70,7 @@ export const Podium = ({ item, place }: { item: Item; place: 1 | 2 | 3 }) => {
                     </label>
                 )}
                 <div className="text-center">
-                    <h3 className="font-bold text-sm leading-tight min-h-[1rem]">
-                        {item?.name}
-                    </h3>
+                    <p className="leading-tight min-h-[1rem]">{item?.name}</p>
                 </div>
             </div>
             <div
