@@ -1,6 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useTheme } from '~/hooks/useTheme';
+import { useTheme } from './ThemeProvider';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { ModeToggle } from './ui/theme-toggle';
 
 export type HeaderProps = {
     withProfile?: boolean;
@@ -25,9 +26,7 @@ function UserAvatar() {
 }
 
 export function Header({ hideLogo, withProfile, sessionId }: HeaderProps) {
-    const theme = useTheme();
-    // console.log('theme', theme);
-
+    const { theme } = useTheme();
     return (
         <header className="flex w-full justify-between items-center bg-sidebar">
             {!hideLogo && (
@@ -41,6 +40,7 @@ export function Header({ hideLogo, withProfile, sessionId }: HeaderProps) {
             )}
             {sessionId && <p>Session: {sessionId}</p>}
             {withProfile && <UserAvatar />}
+            <ModeToggle />
         </header>
     );
 }

@@ -10,6 +10,7 @@ import { createServerFn } from '@tanstack/react-start';
 import * as React from 'react';
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
 import { NotFound } from '../components/NotFound';
+import { ThemeProvider } from '../components/ThemeProvider';
 import { seo } from '../lib/seo';
 import { getSupabaseServerClient } from '../lib/supabase';
 import globalCss from '../styles/global.css?url';
@@ -79,7 +80,7 @@ export const Route = createRootRoute({
         );
     },
     notFoundComponent: () => <NotFound />,
-    component: RootComponent,
+    shellComponent: RootComponent,
 });
 
 function RootComponent() {
@@ -91,18 +92,13 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-    // const { user } = Route.useRouteContext();
-    // const theme = useTheme();
-    // console.log('theme2', theme);
-
     return (
-        // TODO: i need help with setting the theme!
-        <html className="dark">
+        <html>
             <head>
                 <HeadContent />
             </head>
             <body>
-                {children}
+                <ThemeProvider>{children}</ThemeProvider>
                 <TanStackRouterDevtools position="bottom-right" />
                 <Scripts />
             </body>
