@@ -45,10 +45,12 @@ export function MvpHome() {
         <Page headerConfig={{ hideLogo: true }}>
             <div className="max-w-4xl mx-auto flex flex-col items-center">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        Swipey
-                    </h1>
+                <div className="text-center justify-items-center mb-8">
+                    <img
+                        src={'/icon-light.svg'}
+                        alt={'Swipey'}
+                        className="h-20 my-8"
+                    />
                     <p className="text-lg text-gray-600">
                         Swipe to rank your favorite things
                     </p>

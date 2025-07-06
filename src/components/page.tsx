@@ -11,9 +11,7 @@ export default function Page({
     return (
         <div className="flex w-full flex-col min-h-screen">
             <Header {...headerConfig} />
-            <main className="flex-1 flex-col bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-                {children}
-            </main>
+            <main className="flex-1 flex-col bg-primary p-4">{children}</main>
         </div>
     );
 }
