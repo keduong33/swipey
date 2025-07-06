@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { List } from '~/pages/list/listCard';
+import { List } from '~/pages/list/list-card';
 import { Item } from '../../list/ListItem';
 import CompareSection from '../CompareSection';
 
