@@ -11,7 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '../../components/ui/dialog';
-import { List } from './list-card';
+import { List } from './ListCard';
 
 export const DeleteConfirmationDialog = ({
     lists,

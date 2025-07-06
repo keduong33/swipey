@@ -1,6 +1,6 @@
 import { DBSchema, IDBPDatabase, openDB } from 'idb';
 import { Result } from '../hooks/useGetResult';
-import { List } from '../pages/list/list-card';
+import { List } from '../pages/list/ListCard';
 import { Item } from '../pages/list/ListItem';
 
 // ---------------- Schema ----------------

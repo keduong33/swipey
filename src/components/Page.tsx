@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Header, HeaderProps } from './Headerr';
+import { Header, HeaderProps } from './Header';
 
 export default function Page({
     children,

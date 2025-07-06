@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Result } from '~/hooks/useGetResult';
 import { localDb } from '../../storage/indexedDbStorage';
-import { List } from '../list/list-card';
+import { List } from '../list/ListCard';
 import { CompareCard } from './CompareCard';
 import { useHumanMergeSort } from './useHumanChoiceMergeSort';
 

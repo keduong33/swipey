@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import Page from '../../components/Pagee';
+import Page from '../../components/Page';
 import { Button } from '../../components/ui/button';
 
 import { useLocalGetResult } from '../../hooks/useGetResult';

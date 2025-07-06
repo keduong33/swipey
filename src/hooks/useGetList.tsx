@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { List } from '../pages/list/list-card';
+import { List } from '../pages/list/ListCard';
 import { localDb } from '../storage/indexedDbStorage';
 
 /**

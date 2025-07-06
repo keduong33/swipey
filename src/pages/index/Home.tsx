@@ -3,11 +3,11 @@ import { Plus, Users } from 'lucide-react';
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { v4 } from 'uuid';
 import { useTheme } from '~/components/ThemeProvider';
-import Page from '../../components/Pagee';
+import Page from '../../components/Page';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { useLocalGetLists } from '../../hooks/useGetList';
-import { ListCard } from '../list/list-card';
+import { ListCard } from '../list/ListCard';
 import { JsonImportDialog } from './JsonImportSection';
 
 export default function Home() {

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import Page from '../../../components/Pagee';
+import Page from '../../../components/Page';
 import { Button } from '../../../components/ui/button';
 import { useLocalGetList } from '../../../hooks/useGetList';
 import CompareSection from '../../../pages/session/CompareSection';
