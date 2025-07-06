@@ -135,4 +135,20 @@
     body {
         @apply bg-background text-foreground;
     }
+    h1 {
+        @apply text-foreground text-4xl font-bold;
+    }
+    h2 {
+        @apply text-2xl font-semibold;
+    }
+
+    h3 {
+    }
+
+    h4 {
+    }
+
+    p {
+        @apply text-foreground;
+    }
 }

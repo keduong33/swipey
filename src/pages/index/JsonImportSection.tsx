@@ -69,7 +69,7 @@ export function JsonImportDialog({ refresh }: { refresh: () => void }) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+                <Button size="lg" className="">
                     <ImportIcon className="w-5 h-5 mr-2" />
                     Import your saved lists
                 </Button>

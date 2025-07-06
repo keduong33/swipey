@@ -111,7 +111,7 @@ export function ListCard({
                 </div> */}
             </CardContent>
             <CardFooter>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                <Button className="w-full">
                     <Play className="w-4 h-4 mr-2" />
                     {/* {list.status === 'new' ? 'Start Ranking' : 'Continue'} */}
                 </Button>
