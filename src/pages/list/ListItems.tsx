@@ -7,22 +7,28 @@ export const ListItems = ({
     setItems,
 }: {
     items: Item[];
-    setItems: (items: Item[]) => void;
+    setItems: (updater: (prev: Item[]) => Item[]) => void;
 }) => {
-    const removeItem = (id: number) => {
+    const removeItem = (id: string) => {
         if (items.length >= 1) {
-            setItems(items.filter((item) => item.id !== id));
+            setItems((prev) => prev.filter((item) => item.id !== id));
         }
     };
 
-    const updateItemName = (id: number, name: string) => {
-        setItems(
-            items.map((item) => (item.id === id ? { ...item, name } : item))
+    const updateItemName = (id: string, name: string) => {
+        setItems((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, name } : item))
+        );
+    };
+
+    const updateItemImage = (id: string, image: string) => {
+        setItems((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, image } : item))
         );
     };
 
     const handleImageUpload = async (
-        id: number,
+        id: string,
         event: ChangeEvent<HTMLInputElement>
     ) => {
         const file = event.target.files?.[0];
@@ -35,13 +41,12 @@ export const ListItems = ({
             const compressedImageUrl =
                 await imageCompression.getDataUrlFromFile(compressed);
 
-            setItems(
-                items.map((item) =>
-                    item.id === id
-                        ? { ...item, image: compressedImageUrl }
-                        : item
-                )
+            console.log(
+                `image before compressed: ${file.size}`,
+                `image after compressed: ${compressed.size}`
             );
+
+            updateItemImage(id, compressedImageUrl);
         }
     };
 

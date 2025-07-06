@@ -1,5 +1,6 @@
 import { Play, Users } from 'lucide-react';
 import { v4 } from 'uuid';
+import { z } from 'zod';
 import { Button } from '../../components/ui/button';
 import {
     Card,
@@ -9,24 +10,27 @@ import {
     CardHeader,
     CardTitle,
 } from '../../components/ui/card';
-import { Item } from './ListItem';
+import { ListSchema } from './zodSchema';
 
-export type List = {
-    id: string;
-    name: string;
-    description?: string;
-    // visibility: Visibility;
-    category?: string;
-    items: Item[];
-    // lastPlayed: string;
-    // status: Status;
-};
+// export type List = {
+//     id: string;
+//     name: string;
+//     description?: string;
+//     // visibility: Visibility;
+//     category?: string;
+//     items: Item[];
+//     // lastPlayed: string;
+//     // status: Status;
+// };
 
-export const createNewList = (opts: Partial<Omit<List, 'id'>>): List => {
+export type List = z.infer<typeof ListSchema>;
+
+export const createNewList = (opts: Partial<List>): List => {
+    const id = opts.id ?? v4();
     return {
         ...emptyList,
         ...opts,
-        id: v4(),
+        id,
     } satisfies List;
 };
 

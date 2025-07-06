@@ -3,7 +3,7 @@ import { ArrowLeft, Plus, Users } from 'lucide-react';
 import { v4 } from 'uuid';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { useGetList } from '../hooks/useGetList';
+import { useLocalGetLists } from '../hooks/useGetList';
 import { ListCard } from '../pages/list/listCard';
 
 export const Route = createFileRoute('/all-lists')({
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/all-lists')({
 });
 
 function RouteComponent() {
-    const { lists } = useGetList();
+    const { lists } = useLocalGetLists();
 
     const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ function RouteComponent() {
 
                 {/* Your Lists Section */}
                 <div className="mb-8">
-                    {lists.size === 0 ? (
+                    {lists?.length === 0 ? (
                         <Card className="text-center py-12">
                             <CardContent>
                                 <div className="text-gray-500 mb-4">
@@ -62,7 +62,7 @@ function RouteComponent() {
                         </Card>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {Array.from(lists.values()).map((list) => (
+                            {lists?.map((list) => (
                                 <ListCard key={list.id} list={list} />
                             ))}
                         </div>

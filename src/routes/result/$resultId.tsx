@@ -2,22 +2,25 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import Page from '../../components/page';
 import { Button } from '../../components/ui/button';
-import { useGetListForMVP } from '../../hooks/useGetList';
-import CompareSection from '../../pages/session/CompareSection';
 
-export const Route = createFileRoute('/list/use')({
-    component: UseList,
+import { useLocalGetResult } from '../../hooks/useGetResult';
+import ResultsSection from '../../pages/session/ResultsSection';
+
+export const Route = createFileRoute('/result/$resultId')({
+    component: RouteComponent,
 });
 
-function UseList() {
+function RouteComponent() {
+    const { resultId } = Route.useParams();
     const navigate = useNavigate();
-    const { list, isLoading } = useGetListForMVP();
+
+    const { result, isLoading } = useLocalGetResult(resultId);
 
     if (isLoading) {
         return <Loader2 className="animate-spin" />;
     }
 
-    if (!list) {
+    if (!result) {
         return (
             <Page>
                 <Button
@@ -28,16 +31,14 @@ function UseList() {
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     Go back to Home
                 </Button>
-                <p>List not found :(</p>
+                <p>Results not found :(</p>
             </Page>
         );
     }
 
     return (
         <Page>
-            <div className="text-center relative">
-                <CompareSection list={list} />
-            </div>
+            <ResultsSection result={result} />
         </Page>
     );
 }

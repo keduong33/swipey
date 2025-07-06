@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Loader2, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import Page from '../../components/page';
-import { Button } from '../../components/ui/button';
-import { Card, CardContent } from '../../components/ui/card';
+import { v4 } from 'uuid';
+import Page from '../../../components/page';
+import { Button } from '../../../components/ui/button';
+import { Card, CardContent } from '../../../components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -11,44 +12,43 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '../../components/ui/dialog';
+} from '../../../components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
+} from '../../../components/ui/dropdown-menu';
+import { Input } from '../../../components/ui/input';
+import { Label } from '../../../components/ui/label';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '../../components/ui/select';
-import { Textarea } from '../../components/ui/textarea';
-import { saveListInStorage, useGetListForMVP } from '../../hooks/useGetList';
-import { createNewList, List } from '../../pages/list/listCard';
-import { Item } from '../../pages/list/ListItem';
-import { ListItems } from '../../pages/list/ListItems';
+} from '../../../components/ui/select';
+import { Textarea } from '../../../components/ui/textarea';
+import { useLocalGetList } from '../../../hooks/useGetList';
+import { createNewList, List } from '../../../pages/list/listCard';
+import { Item } from '../../../pages/list/ListItem';
+import { ListItems } from '../../../pages/list/ListItems';
+import { localDb } from '../../../storage/indexedDbStorage';
 
-export const Route = createFileRoute('/list/')({
+export const Route = createFileRoute('/list/edit/$listId')({
     component: EditingList,
 });
 
-/**
- * This is for MVP
- */
 function EditingList() {
+    const { listId } = Route.useParams();
     const navigate = useNavigate();
     const [list, setList] = useState<List>();
     // maybe use isSaved in the future
     const [isSaved, setIsSaved] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const { list: retrievedList, isLoading } = useGetListForMVP();
+    const { list: retrievedList, isLoading } = useLocalGetList(listId);
 
     const isShowingExistingList: boolean = !!retrievedList;
 
@@ -57,7 +57,7 @@ function EditingList() {
         if (retrievedList) {
             setList(retrievedList);
         } else {
-            setList(createNewList({}));
+            setList(createNewList({ id: listId }));
         }
     }, [isLoading, retrievedList]);
 
@@ -65,17 +65,21 @@ function EditingList() {
         return <Loader2 className="animate-spin" />;
     }
 
-    const updateList = (updates: Partial<List>) => {
+    const updateList = (
+        updates: Partial<List> | ((prev: List) => Partial<List>)
+    ) => {
         setIsSaved(false);
         setList((prev) => {
             if (!prev) throw new Error('List not initialized');
-            return { ...prev, ...updates };
+            const resolvedUpdates =
+                typeof updates === 'function' ? updates(prev) : updates;
+            return { ...prev, ...resolvedUpdates };
         });
     };
 
     const addNewItem = () => {
         const newItem: Item = {
-            id: list.items.length + 1,
+            id: v4(),
             name: '',
             image: null,
         };
@@ -84,20 +88,20 @@ function EditingList() {
         });
     };
 
-    const setItems = (items: Item[]) => {
-        updateList({
-            items,
-        });
+    const setItems = (updater: (prev: Item[]) => Item[]) => {
+        updateList((prev) => ({
+            items: updater(prev.items),
+        }));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsSaved(true);
-        saveListInStorage(list);
+        await localDb.saveList(list);
     };
 
-    const handleSaveAndUse = () => {
-        handleSave();
-        navigate({ to: '/list/use' });
+    const handleSaveAndUse = async () => {
+        await handleSave();
+        navigate({ to: `/list/use/${listId}` });
     };
 
     const handleSaveAndShare = () => {
@@ -326,7 +330,7 @@ function ShareListDialog({
     setIsOpen: (open: boolean) => void;
     list: List;
 }) {
-    const pretty: string = JSON.stringify(list, null, 2);
+    const pretty: string = JSON.stringify([list], null, 2);
 
     const onDownload = (file: string) => {
         const blob = new Blob([file], { type: 'application/json' });
@@ -334,7 +338,7 @@ function ShareListDialog({
 
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${list.name || 'my-list'}.json`;
+        a.download = `${list.name || `my-list`}.json`;
         a.click();
 
         URL.revokeObjectURL(url);

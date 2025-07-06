@@ -29,11 +29,11 @@ type Story = StoryObj<typeof meta>;
 export default meta;
 
 const items: Item[] = [
-    { id: 1, name: 'A', image: null },
-    { id: 2, name: 'E', image: null },
-    { id: 3, name: 'D', image: null },
-    { id: 4, name: 'C', image: null },
-    { id: 5, name: 'K', image: null },
+    { id: '1', name: 'A', image: null },
+    { id: '2', name: 'E', image: null },
+    { id: '3', name: 'D', image: null },
+    { id: '4', name: 'C', image: null },
+    { id: '5', name: 'K', image: null },
 ];
 
 const list: List = {
