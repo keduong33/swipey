@@ -1,0 +1,9 @@
+model Item {
+    id        String   @id @default(dbgenerated("gen_random_uuid()"))
+    name      String
+    createdAt DateTime @default(now())
+    editedAt  DateTime @default(now())
+    imageUrl  String?
+    listId    String
+    list      List     @relation(fields: [listId], references: [id])
+}

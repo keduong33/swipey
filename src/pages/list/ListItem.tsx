@@ -1,15 +1,7 @@
 import { ImageIcon, Loader2, X } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-
-export type Item = {
-    id: string;
-    name: string;
-    /**
-     * Base 64
-     **/
-    image: string | null;
-};
+import { Item } from '../../prisma';
 
 export const ListItem = ({
     item,
@@ -36,7 +28,7 @@ export const ListItem = ({
                 </div>
             ) : item.image ? (
                 <img
-                    src={item.image}
+                    src={item.imageUrl}
                     alt={item.name}
                     className="w-full h-full object-cover rounded-lg"
                 />

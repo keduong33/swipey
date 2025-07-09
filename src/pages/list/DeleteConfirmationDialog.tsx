@@ -11,7 +11,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '../../components/ui/dialog';
-import { List } from './ListCard';
 
 export const DeleteConfirmationDialog = ({
     lists,
@@ -19,15 +18,17 @@ export const DeleteConfirmationDialog = ({
     id,
     children,
 }: {
-    lists: Map<string, List>;
-    setLists: Dispatch<SetStateAction<Map<string, List>>>;
+    lists: Map<string, ListWithItemsAndCategories>;
+    setLists: Dispatch<SetStateAction<Map<string, ListWithItemsAndCategories>>>;
     id: string;
     children: React.ReactNode;
 }) => {
     const navigate = useNavigate();
 
     const handleDelete = () => {
-        const updatedLists: Map<string, List> = new Map(lists);
+        const updatedLists: Map<string, ListWithItemsAndCategories> = new Map(
+            lists
+        );
 
         updatedLists.delete(id);
 

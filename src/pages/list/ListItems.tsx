@@ -1,4 +1,5 @@
-import { Item, ListItem } from './ListItem';
+import type { Item } from '../../prisma/client';
+import { ListItem } from './ListItem';
 
 export const ListItems = ({
     items,

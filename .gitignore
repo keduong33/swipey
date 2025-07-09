@@ -19,6 +19,8 @@ yarn.lock
 /blob-report/
 /playwright/.cache/
 
+/src/prisma
+
 *storybook.log
 storybook-static
 

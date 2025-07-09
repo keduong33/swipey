@@ -2,7 +2,7 @@ import { ImageIcon } from 'lucide-react';
 import { motion, useAnimate } from 'motion/react';
 import { useRef, useState } from 'react';
 import { Card, CardContent, CardTitle } from '~/components/ui/card';
-import { Item } from '../list/ListItem';
+import { Item } from '../../prisma';
 
 export const CompareCard = ({
     direction,
