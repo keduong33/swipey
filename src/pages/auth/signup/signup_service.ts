@@ -1,15 +1,12 @@
 import { isAuthWeakPasswordError } from '@supabase/supabase-js';
-import { redirect } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
-import { getSupabaseServerClient } from '../../../lib/supabase';
-import { GenericServerError } from '../../../lib/types';
+import { getSupabaseServerClient } from '../../../integrations/supabase/serverClient';
+import { GenericServerResponse } from '../../../lib/types';
 import { SignupMessages } from './signup.messages';
 
 export const signupFunction = createServerFn({ method: 'POST' })
-    .validator(
-        (d: { email: string; password: string; redirectUrl?: string }) => d
-    )
-    .handler(async ({ data }): Promise<GenericServerError | undefined> => {
+    .validator((d: { email: string; password: string }) => d)
+    .handler(async ({ data }): Promise<GenericServerResponse> => {
         const supabase = await getSupabaseServerClient();
         const { error } = await supabase.auth.signUp({
             email: data.email,
@@ -28,8 +25,7 @@ export const signupFunction = createServerFn({ method: 'POST' })
             };
         }
 
-        // Redirect to the prev page stored in the "redirect" search param
-        throw redirect({
-            href: data.redirectUrl || '/',
-        });
+        return {
+            error: false,
+        };
     });

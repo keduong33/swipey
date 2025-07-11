@@ -1,10 +1,9 @@
-import { redirect } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
-import { getSupabaseServerClient } from '../../lib/supabase';
-import { GenericServerError } from '../../lib/types';
+import { getSupabaseServerClient } from '../../integrations/supabase/serverClient';
+import { GenericServerResponse } from '../../lib/types';
 
 export const logoutFunction = createServerFn({ method: 'POST' }).handler(
-    async (): Promise<GenericServerError | undefined> => {
+    async (): Promise<GenericServerResponse> => {
         const supabase = await getSupabaseServerClient();
         const { error } = await supabase.auth.signOut({ scope: 'local' });
 
@@ -15,8 +14,8 @@ export const logoutFunction = createServerFn({ method: 'POST' }).handler(
             };
         }
 
-        throw redirect({
-            href: '/',
-        });
+        return {
+            error: false,
+        };
     }
 );

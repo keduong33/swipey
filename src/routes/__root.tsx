@@ -1,33 +1,23 @@
 /// <reference types="vite/client" />
+import { QueryClient } from '@tanstack/react-query';
 import {
     HeadContent,
     Outlet,
     Scripts,
-    createRootRoute,
+    createRootRouteWithContext,
 } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/react-start';
 import * as React from 'react';
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
 import { NotFound } from '../components/NotFound';
 import { ThemeProvider } from '../components/ThemeProvider';
 import { seo } from '../lib/seo';
-import { getSupabaseServerClient } from '../lib/supabase';
+import { User } from '../pages/auth/auth.queries';
 import globalCss from '../styles/global.css?url';
 
-const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
-    const supabase = await getSupabaseServerClient();
-    const { data, error: _error } = await supabase.auth.getUser();
-
-    if (!data.user?.email) {
-        return null;
-    }
-
-    return {
-        email: data.user.email,
-    };
-});
-
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+    queryClient: QueryClient;
+    user: User;
+}>()({
     head: () => ({
         meta: [
             {
@@ -65,12 +55,6 @@ export const Route = createRootRoute({
             { rel: 'icon', href: '/favicon.svg' },
         ],
     }),
-    beforeLoad: async () => {
-        // const user = await fetchUser();
-        return {
-            user: {},
-        };
-    },
     errorComponent: (props) => {
         return (
             <RootDocument>

@@ -1,22 +1,21 @@
+import { useMutation } from '@tanstack/react-query';
 import {
     createFileRoute,
     redirect,
     SearchSchemaInput,
     useRouter,
 } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
 import { AlertCircleIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { useMutation } from '../../hooks/useMutation';
+import { getBrowserClient } from '../../integrations/supabase/browserClient';
 import { AuthForm } from '../../pages/auth/AuthForm';
-import { loginFunction } from '../../pages/auth/login/login_service';
 
 export const Route = createFileRoute('/(auth)/login')({
     component: Login,
-    beforeLoad: ({ context }) => {
-        if (context.user) {
+    beforeLoad: ({ context, search }) => {
+        if (context.user.isAuthenticated) {
             throw redirect({
-                to: '/',
+                to: search?.redirectUrl || '/',
             });
         }
     },
@@ -31,12 +30,36 @@ export const Route = createFileRoute('/(auth)/login')({
 });
 
 export function Login() {
+    const { queryClient } = Route.useRouteContext();
     const router = useRouter();
     const search = Route.useSearch();
 
-    const loginMutation = useMutation({
-        fn: useServerFn(loginFunction),
-    });
+    const loginMutation = useMutation(
+        {
+            mutationFn: async ({
+                email,
+                password,
+            }: {
+                email: string;
+                password: string;
+            }) => {
+                return await getBrowserClient().auth.signInWithPassword({
+                    email,
+                    password,
+                });
+            },
+            onSuccess: async (response) => {
+                if (!response.error) {
+                    await queryClient.invalidateQueries({
+                        queryKey: ['user'],
+                    });
+                    router.navigate({ to: search?.redirectUrl ?? '/' });
+                    return;
+                }
+            },
+        },
+        queryClient
+    );
 
     return (
         <AuthForm
@@ -46,11 +69,13 @@ export function Login() {
             status={loginMutation.status}
             onSubmit={async ({ username, password }) => {
                 await loginMutation.mutate({
-                    data: {
-                        email: username,
-                        password,
-                        redirectUrl: search?.redirectUrl,
-                    },
+                    // data: {
+                    //     email: username,
+                    //     password,
+                    //     // redirectUrl: search?.redirectUrl,
+                    // },
+                    email: username,
+                    password,
                 });
             }}
             afterSubmit={
@@ -58,7 +83,7 @@ export function Login() {
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertDescription>
-                            {loginMutation.data.message}
+                            {loginMutation.data.error.message}
                         </AlertDescription>
                     </Alert>
                 ) : null
