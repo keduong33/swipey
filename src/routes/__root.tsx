@@ -10,6 +10,7 @@ import * as React from 'react';
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
 import { NotFound } from '../components/NotFound';
 import { ThemeProvider } from '../components/ThemeProvider';
+import { getUser } from '../lib/auth';
 import { seo } from '../lib/seo';
 import { User } from '../pages/auth/auth.queries';
 import globalCss from '../styles/global.css?url';
@@ -55,6 +56,12 @@ export const Route = createRootRouteWithContext<{
             { rel: 'icon', href: '/favicon.svg' },
         ],
     }),
+    async beforeLoad() {
+        const user = await getUser();
+        return {
+            user,
+        };
+    },
     errorComponent: (props) => {
         return (
             <RootDocument>
