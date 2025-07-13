@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { AlertCircleIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { getBrowserClient } from '../../integrations/supabase/browserClient';
+import { supabaseClient } from '../../integrations/supabase/browserClient';
 import { AuthForm } from '../../pages/auth/AuthForm';
 
 export const Route = createFileRoute('/(auth)/login')({
@@ -43,7 +43,7 @@ export function Login() {
                 email: string;
                 password: string;
             }) => {
-                return await getBrowserClient().auth.signInWithPassword({
+                return await supabaseClient.auth.signInWithPassword({
                     email,
                     password,
                 });
