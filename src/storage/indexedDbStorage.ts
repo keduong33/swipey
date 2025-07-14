@@ -1,15 +1,15 @@
 // storage/indexedDbStorage.ts
 
 import { Result } from '../hooks/useGetResult';
-import { List } from '../pages/list/ListCard';
+import { ListWithItems } from '../pages/list/ListCard';
 import { getDb } from './db';
 
 export interface IndexedDbStorage {
     // Lists
-    getLists(): Promise<List[] | undefined>;
-    getList(id: string): Promise<List | undefined>;
-    saveList(list: List): Promise<void>;
-    saveLists(lists: List[]): Promise<void>;
+    getLists(): Promise<ListWithItems[] | undefined>;
+    getList(id: string): Promise<ListWithItems | undefined>;
+    saveList(list: ListWithItems): Promise<void>;
+    saveLists(lists: ListWithItems[]): Promise<void>;
     deleteList(id: string): Promise<void>;
 
     // Rankings
@@ -40,7 +40,7 @@ export const localDb: IndexedDbStorage = {
         }
     },
 
-    async saveList(list: List) {
+    async saveList(list: ListWithItems) {
         try {
             const db = await getDb();
             await db.put('lists', list);
@@ -49,7 +49,7 @@ export const localDb: IndexedDbStorage = {
         }
     },
 
-    async saveLists(lists: List[]) {
+    async saveLists(lists: ListWithItems[]) {
         try {
             const db = await getDb();
             const tx = db.transaction('lists', 'readwrite');

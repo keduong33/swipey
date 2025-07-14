@@ -3,12 +3,12 @@ import {
     createFileRoute,
     redirect,
     SearchSchemaInput,
-    useRouter,
 } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/react-start';
 import { AlertCircleIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { supabaseClient } from '../../integrations/supabase/browserClient';
 import { AuthForm } from '../../pages/auth/AuthForm';
+import { loginFunction } from '../../pages/auth/login.api';
 
 export const Route = createFileRoute('/(auth)/login')({
     component: Login,
@@ -22,41 +22,20 @@ export const Route = createFileRoute('/(auth)/login')({
     validateSearch: ({
         redirectUrl,
     }: { redirectUrl?: string } & SearchSchemaInput) => {
-        if (redirectUrl)
-            return {
-                redirectUrl: redirectUrl,
-            };
+        return {
+            redirectUrl,
+        };
     },
 });
 
 export function Login() {
     const { queryClient } = Route.useRouteContext();
-    const router = useRouter();
     const search = Route.useSearch();
+    const login = useServerFn(loginFunction);
 
     const loginMutation = useMutation(
         {
-            mutationFn: async ({
-                email,
-                password,
-            }: {
-                email: string;
-                password: string;
-            }) => {
-                return await supabaseClient.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-            },
-            onSuccess: async (response) => {
-                if (!response.error) {
-                    await queryClient.invalidateQueries({
-                        queryKey: ['user'],
-                    });
-                    router.navigate({ to: search?.redirectUrl ?? '/' });
-                    return;
-                }
-            },
+            mutationFn: login,
         },
         queryClient
     );
@@ -68,22 +47,20 @@ export function Login() {
             actionText="Login"
             status={loginMutation.status}
             onSubmit={async ({ username, password }) => {
-                await loginMutation.mutate({
-                    // data: {
-                    //     email: username,
-                    //     password,
-                    //     // redirectUrl: search?.redirectUrl,
-                    // },
-                    email: username,
-                    password,
+                loginMutation.mutate({
+                    data: {
+                        email: username,
+                        password,
+                        redirectUrl: search?.redirectUrl,
+                    },
                 });
             }}
             afterSubmit={
-                loginMutation.data?.error ? (
+                loginMutation.error ? (
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertDescription>
-                            {loginMutation.data.error.message}
+                            {loginMutation.error.message}
                         </AlertDescription>
                     </Alert>
                 ) : null

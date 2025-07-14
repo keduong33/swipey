@@ -1,7 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Copy, Eye, Loader2, Pencil, Play } from 'lucide-react';
 import { v4 } from 'uuid';
-import { z } from 'zod';
 import {
     Tooltip,
     TooltipContent,
@@ -17,39 +16,41 @@ import {
     CardHeader,
     CardTitle,
 } from '../../components/ui/card';
-import { ListSchema } from './zodSchema';
+import { Database } from '../../integrations/supabase/database.types';
+import { Item } from './ListItem';
 
-// export type List = {
-//     id: string;
-//     name: string;
-//     description?: string;
-//     // visibility: Visibility;
-//     category?: string;
-//     items: Item[];
-//     // lastPlayed: string;
-//     // status: Status;
-// };
+export type BaseList = Database['public']['Tables']['List']['Row'];
+export type Category = Database['public']['Tables']['Category']['Row'];
 
-export type List = z.infer<typeof ListSchema>;
+export type ListWithItemCount = BaseList & {
+    itemCount: number;
+};
+export type ListWithItems = BaseList & {
+    items: Item[];
+};
+export type EditingList = ListWithItems & {
+    category: Category[];
+};
 
-export const createNewList = (opts: Partial<List>): List => {
+export type SimpleList = Database['public']['Tables']['List']['Row'];
+
+export const createNewList = (opts: Partial<ListWithItems>): ListWithItems => {
     const id = opts.id ?? v4();
     return {
         ...emptyList,
         ...opts,
         id,
-    } satisfies List;
+    } satisfies ListWithItems;
 };
 
-const emptyList: List = {
+const emptyList: EditingList = {
     id: '',
     name: '',
     description: '',
-    // visibility: 'private',
-    category: '',
+    visibility: 'PRIVATE',
+    category: [],
     items: [],
-    // lastPlayed: new Date().toLocaleDateString(),
-    // status: 'new',
+    userId: '',
 };
 
 // export type Status = 'completed' | 'in-progress' | 'new';
@@ -81,7 +82,7 @@ const emptyList: List = {
 //     }
 // };
 
-export function ListCard({ list }: { list: List }) {
+export function ListCard({ list }: { list: ListWithItemCount }) {
     const navigate = useNavigate();
     const { result, isLoading } = useLocalGetResult(list.id);
 
@@ -116,7 +117,7 @@ export function ListCard({ list }: { list: List }) {
                 <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
                     <span className="flex items-center">
                         <Copy className="w-4 h-4 mr-1" />
-                        {list.items.length} items
+                        {list.itemCount} items
                     </span>
                     {/* <span className="flex items-center">
                         <Clock className="w-4 h-4 mr-1" />

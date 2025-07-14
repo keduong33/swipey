@@ -1,19 +1,22 @@
 /// <reference types="vite/client" />
 import { QueryClient } from '@tanstack/react-query';
 import {
+    createRootRouteWithContext,
     HeadContent,
     Outlet,
     Scripts,
-    createRootRouteWithContext,
 } from '@tanstack/react-router';
 import * as React from 'react';
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
 import { NotFound } from '../components/NotFound';
 import { ThemeProvider } from '../components/ThemeProvider';
-import { getUser } from '../lib/auth';
+import { getUser, User } from '../lib/auth';
 import { seo } from '../lib/seo';
-import { User } from '../pages/auth/auth.queries';
 import globalCss from '../styles/global.css?url';
+
+// registerGlobalMiddleware({
+//     middleware: [authMiddleware],
+// });
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient;
@@ -58,6 +61,7 @@ export const Route = createRootRouteWithContext<{
     }),
     async beforeLoad() {
         const user = await getUser();
+        console.log(user);
         return {
             user,
         };

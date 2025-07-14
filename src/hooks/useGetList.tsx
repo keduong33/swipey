@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { List } from '../pages/list/ListCard';
+import { ListWithItems } from '../pages/list/ListCard';
 import { localDb } from '../storage/indexedDbStorage';
 
 /**
  * If we go online, need to use this hook less since it refetching every time
  */
 export const useLocalGetList = (id: string) => {
-    const [list, setList] = useState<List>();
+    const [list, setList] = useState<ListWithItems>();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export const useLocalGetList = (id: string) => {
  * If we go online, need to use this hook less since it refetching every time
  */
 export const useLocalGetLists = () => {
-    const [lists, setLists] = useState<List[]>();
+    const [lists, setLists] = useState<ListWithItems[]>();
     const [isLoading, setIsLoading] = useState(true);
 
     const fetch = async () => {
@@ -45,7 +45,7 @@ export const useLocalGetLists = () => {
  *  Get a single list --> This is for MVP
  */
 export const useGetListForMVP = () => {
-    const [list, setList] = useState<List>();
+    const [list, setList] = useState<ListWithItems>();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -53,7 +53,7 @@ export const useGetListForMVP = () => {
             const raw: string | null = localStorage.getItem('list');
 
             if (raw) {
-                const parsedList: List = JSON.parse(raw);
+                const parsedList: ListWithItems = JSON.parse(raw);
                 setList(parsedList);
             }
         } catch (e) {

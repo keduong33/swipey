@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Result } from '~/hooks/useGetResult';
-import { ShareDialog } from '~/routes/list/edit/$listId';
+import { ShareDialog } from '~/pages/list/edit/EditList';
 import { Podium, RemainingRanking } from './Podium';
 
 export default function ResultsSection({ result }: { result: Result }) {

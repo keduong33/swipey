@@ -1,6 +1,6 @@
 import { DBSchema, IDBPDatabase, openDB } from 'idb';
 import { Result } from '../hooks/useGetResult';
-import { List } from '../pages/list/ListCard';
+import { ListWithItems } from '../pages/list/ListCard';
 import { Item } from '../pages/list/ListItem';
 
 // ---------------- Schema ----------------
@@ -8,7 +8,7 @@ import { Item } from '../pages/list/ListItem';
 interface SwipeyDB extends DBSchema {
     lists: {
         key: string;
-        value: List;
+        value: ListWithItems;
     };
     items: {
         key: string;

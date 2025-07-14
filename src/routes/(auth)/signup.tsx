@@ -3,7 +3,6 @@ import {
     createFileRoute,
     redirect,
     SearchSchemaInput,
-    useRouter,
 } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
 import { AlertCircleIcon } from 'lucide-react';
@@ -23,10 +22,9 @@ export const Route = createFileRoute('/(auth)/signup')({
     validateSearch: ({
         redirectUrl,
     }: { redirectUrl?: string } & SearchSchemaInput) => {
-        if (redirectUrl)
-            return {
-                redirectUrl,
-            };
+        return {
+            redirectUrl,
+        };
     },
 });
 
@@ -34,20 +32,10 @@ export default function Signup() {
     const { queryClient } = Route.useRouteContext();
     const search = Route.useSearch();
     const signup = useServerFn(signupFunction);
-    const router = useRouter();
 
     const signupMutation = useMutation(
         {
             mutationFn: signup,
-            onSuccess: async (response) => {
-                if (!response.error) {
-                    await queryClient.invalidateQueries({
-                        queryKey: ['user'],
-                    });
-                    router.navigate({ to: search?.redirectUrl ?? '/' });
-                    return;
-                }
-            },
         },
         queryClient
     );
@@ -57,8 +45,8 @@ export default function Signup() {
             redirectUrl={search?.redirectUrl}
             actionText="Sign Up"
             status={signupMutation.status}
-            onSubmit={async ({ username, password }) => {
-                await signupMutation.mutate({
+            onSubmit={({ username, password }) => {
+                signupMutation.mutate({
                     data: {
                         email: username,
                         password,
@@ -66,11 +54,11 @@ export default function Signup() {
                 });
             }}
             afterSubmit={
-                signupMutation.data?.error ? (
+                signupMutation.error ? (
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertDescription>
-                            {signupMutation.data.message}
+                            {signupMutation.error.message}
                         </AlertDescription>
                     </Alert>
                 ) : null

@@ -7,6 +7,10 @@ export const logoutFunction = createServerFn({ method: 'POST' }).handler(
         const supabase = await getSupabaseServerClient();
         const { error } = await supabase.auth.signOut({ scope: 'local' });
 
+        const user = await supabase.auth.getUser();
+
+        supabase.from('Item');
+
         if (error) {
             return {
                 error: true,
