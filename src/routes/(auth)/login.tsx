@@ -4,16 +4,15 @@ import {
     redirect,
     SearchSchemaInput,
 } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
 import { AlertCircleIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { AuthForm } from '../../pages/auth/AuthForm';
-import { loginFunction } from '../../pages/auth/login.api';
+import { login } from '../../pages/auth/login.api';
 
 export const Route = createFileRoute('/(auth)/login')({
     component: Login,
     beforeLoad: ({ context, search }) => {
-        if (context.user.isAuthenticated) {
+        if (context.user?.isAuthenticated) {
             throw redirect({
                 to: search?.redirectUrl || '/',
             });
@@ -31,7 +30,6 @@ export const Route = createFileRoute('/(auth)/login')({
 export function Login() {
     const { queryClient } = Route.useRouteContext();
     const search = Route.useSearch();
-    const login = useServerFn(loginFunction);
 
     const loginMutation = useMutation(
         {
@@ -48,11 +46,9 @@ export function Login() {
             status={loginMutation.status}
             onSubmit={async ({ username, password }) => {
                 loginMutation.mutate({
-                    data: {
-                        email: username,
-                        password,
-                        redirectUrl: search?.redirectUrl,
-                    },
+                    email: username,
+                    password,
+                    redirectUrl: search?.redirectUrl,
                 });
             }}
             afterSubmit={

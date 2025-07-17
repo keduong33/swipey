@@ -4,16 +4,15 @@ import {
     redirect,
     SearchSchemaInput,
 } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
 import { AlertCircleIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { AuthForm } from '../../pages/auth/AuthForm';
-import { signupFunction } from '../../pages/auth/signup/signup_service';
+import { signUp } from '../../pages/auth/signup/signup.api';
 
 export const Route = createFileRoute('/(auth)/signup')({
     component: Signup,
     beforeLoad: ({ context, search }) => {
-        if (context.user.isAuthenticated) {
+        if (context.user?.isAuthenticated) {
             throw redirect({
                 to: search?.redirectUrl || '/',
             });
@@ -31,11 +30,11 @@ export const Route = createFileRoute('/(auth)/signup')({
 export default function Signup() {
     const { queryClient } = Route.useRouteContext();
     const search = Route.useSearch();
-    const signup = useServerFn(signupFunction);
+    const { redirectUrl } = Route.useSearch();
 
     const signupMutation = useMutation(
         {
-            mutationFn: signup,
+            mutationFn: signUp,
         },
         queryClient
     );
@@ -47,10 +46,9 @@ export default function Signup() {
             status={signupMutation.status}
             onSubmit={({ username, password }) => {
                 signupMutation.mutate({
-                    data: {
-                        email: username,
-                        password,
-                    },
+                    email: username,
+                    password,
+                    redirectUrl,
                 });
             }}
             afterSubmit={

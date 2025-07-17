@@ -6,17 +6,18 @@ import {
     Outlet,
     Scripts,
 } from '@tanstack/react-router';
+import { registerGlobalMiddleware } from '@tanstack/react-start';
 import * as React from 'react';
 import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
 import { NotFound } from '../components/NotFound';
 import { ThemeProvider } from '../components/ThemeProvider';
-import { getUser, User } from '../lib/auth';
+import { authMiddleware, getUser, User } from '../lib/auth';
 import { seo } from '../lib/seo';
 import globalCss from '../styles/global.css?url';
 
-// registerGlobalMiddleware({
-//     middleware: [authMiddleware],
-// });
+registerGlobalMiddleware({
+    middleware: [authMiddleware],
+});
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient;
@@ -59,9 +60,11 @@ export const Route = createRootRouteWithContext<{
             { rel: 'icon', href: '/favicon.svg' },
         ],
     }),
-    async beforeLoad() {
-        const user = await getUser();
-        console.log(user);
+    async beforeLoad({ context: { user } }) {
+        if (user === null) {
+            user = await getUser();
+        }
+
         return {
             user,
         };

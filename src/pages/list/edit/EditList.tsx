@@ -26,32 +26,38 @@ import {
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
-import { supabaseClient } from '../../../integrations/supabase/browserClient';
-import { handlePostgresError } from '../../../integrations/supabase/handleError';
 import { ItemInsert } from '../../../integrations/supabase/typescript.types';
 import { localDb } from '../../../storage/indexedDbStorage';
 import { getListWithItemsOptions } from '../list.queries';
 import { createNewList, ListWithItems } from '../ListCard';
-import { Item } from '../ListItem';
 import { ListItems } from '../ListItems';
 import { MultipleUploads } from '../MultipleUploads';
+import { useEditState } from './useEditState';
+import { useOnlineEdit } from './useOnlineEdit';
 
-export function EditList({ listId }: { listId: string }) {
+export function EditList({
+    listId,
+    isOnline,
+}: {
+    listId: string;
+    isOnline: boolean;
+}) {
     const navigate = useNavigate();
-    const [list, setList] = useState<ListWithItems>();
 
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const {
+        data: retrievedList,
+        isLoading,
+        error: getListError,
+    } = useQuery(getListWithItemsOptions(listId, isOnline));
 
-    const [loadingImageIds, setLoadingImageIds] = useState<Set<string>>(
-        new Set()
-    );
+    useEffect(() => {
+        if (getListError) {
+            alert(getListError.message);
+        }
+    }, [getListError]);
 
-    const { data: retrievedList, isLoading } = useQuery(
-        getListWithItemsOptions(listId)
-    );
-
-    const isShowingExistingList: boolean = !!retrievedList;
+    const { list, setList, updateList, setItems } = useEditState();
+    const { listNameMutation, listDescriptionMutation } = useOnlineEdit();
 
     useEffect(() => {
         if (isLoading) return;
@@ -62,81 +68,76 @@ export function EditList({ listId }: { listId: string }) {
         }
     }, [isLoading, retrievedList]);
 
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+    const [loadingImageIds, setLoadingImageIds] = useState<Set<string>>(
+        new Set()
+    );
+
     if (isLoading || !list) {
         return <Loader2 className="animate-spin" />;
     }
 
-    const updateListName = async (name: string) => {
-        if (name === list.name) return;
-        const { data, error } = await supabaseClient
-            .from('List')
-            .update({
-                name,
-            })
-            .eq('id', listId)
-            .select('name')
-            .single();
-
-        if (error || !data) {
-            const revert = () => {
-                updateList({ name: list.name });
-            };
-            handlePostgresError(error);
-            return;
-        }
-
-        // updateList({ name: data.name });
-    };
-
-    const updateList = (
-        updates:
-            | Partial<ListWithItems>
-            | ((prev: ListWithItems) => Partial<ListWithItems>)
-    ) => {
-        setList((prev) => {
-            if (!prev) throw new Error('List not initialized');
-            const resolvedUpdates =
-                typeof updates === 'function' ? updates(prev) : updates;
-            return { ...prev, ...resolvedUpdates };
-        });
-    };
-
-    const addNewItem = () => {
-        const newItem: ItemInsert = {
-            id: v4(),
-            name: '',
-            imageUrl: null,
-            listId,
-        };
-        updateList({
-            items: [...list.items, newItem],
-        });
-    };
-
-    const setItems = (updater: (prev: Item[]) => Item[]) => {
-        updateList((prev) => ({
-            items: updater(prev.items),
-        }));
-    };
-
-    const handleSave = async () => {
+    const saveLocally = async (list: ListWithItems) => {
         await localDb.saveList(list);
     };
 
-    const handleSaveAndUse = async () => {
-        await handleSave();
+    const saveListName = () => {
+        if (isOnline) {
+            listNameMutation.mutate({
+                data: {
+                    name: list.name,
+                    listId,
+                },
+            });
+        } else {
+            saveLocally(list);
+        }
+    };
+
+    const saveListDescription = () => {
+        if (isOnline) {
+            listDescriptionMutation.mutate({
+                data: {
+                    description: list.description ?? '',
+                    listId,
+                },
+            });
+        } else {
+            saveLocally(list);
+        }
+    };
+
+    const addBlankItem = () => {
+        const blankItem = {
+            id: v4(),
+            name: '',
+            imageUrl: null,
+            createdAt: new Date().toUTCString(),
+            editedAt: new Date().toUTCString(),
+            listId,
+        } satisfies ItemInsert;
+
+        const updatedList = {
+            ...list,
+            items: [...list.items, blankItem],
+        } satisfies ListWithItems;
+
+        updateList(updatedList);
+
+        if (isOnline) {
+        } else {
+            saveLocally(updatedList);
+        }
+    };
+
+    const use = async () => {
         navigate({ to: `/list/use/${listId}` });
     };
 
-    const handleSaveAndShare = () => {
-        handleSave();
+    const share = () => {
         setDialogOpen(true);
-    };
-
-    const handleRevert = () => {
-        if (retrievedList) {
-            setList(retrievedList);
-        }
     };
 
     const onDeleteList = async () => {
@@ -198,9 +199,10 @@ export function EditList({ listId }: { listId: string }) {
                             <ArrowLeft className="w-5 h-5 text-primary dark:text-primary-dark" />
                         </Button>
                         <h2>
-                            {isShowingExistingList
+                            {/* {isShowingExistingList
                                 ? 'Edit List'
-                                : 'Create New List'}
+                                : 'Create New List'} */}
+                            Edit List
                         </h2>
                     </div>
                 </div>
@@ -218,10 +220,11 @@ export function EditList({ listId }: { listId: string }) {
                             <Input
                                 id="list-name"
                                 placeholder="Enter list name"
-                                defaultValue={list.name}
-                                onBlur={(e) => {
-                                    updateListName(e.target.value);
-                                }}
+                                value={list.name}
+                                onChange={(e) =>
+                                    updateList({ name: e.target.value })
+                                }
+                                onBlur={saveListName}
                             />
                         </div>
 
@@ -240,6 +243,7 @@ export function EditList({ listId }: { listId: string }) {
                                 onChange={(e) =>
                                     updateList({ description: e.target.value })
                                 }
+                                onBlur={saveListDescription}
                             />
                         </div>
 
@@ -259,7 +263,7 @@ export function EditList({ listId }: { listId: string }) {
                             <div className="w-full flex flex-col md:flex-row gap-2 justify-center">
                                 <Button
                                     variant="outline"
-                                    onClick={addNewItem}
+                                    onClick={addBlankItem}
                                     className="aspect-square border rounded-lg shadow-md items-center justify-center transition-colors"
                                 >
                                     <Plus className="w-6 h-6 text-gray-400" />
@@ -315,8 +319,8 @@ export function EditList({ listId }: { listId: string }) {
 
                         {/* Action Button */}
                         <div className="flex flex-wrap gap-2 md:justify-between justify-center">
-                            <Button size="lg" onClick={handleSaveAndUse}>
-                                Save and Use
+                            <Button size="lg" onClick={use}>
+                                Use
                             </Button>
 
                             <DropdownMenu>
@@ -326,24 +330,10 @@ export function EditList({ listId }: { listId: string }) {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent>
-                                    <DropdownMenuItem onClick={handleSave}>
-                                        Save
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={handleSaveAndShare}
-                                    >
-                                        Save and Share
+                                    <DropdownMenuItem onClick={share}>
+                                        Share
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    {retrievedList && (
-                                        <>
-                                            <DropdownMenuItem
-                                                onClick={handleRevert}
-                                            >
-                                                Revert Changes
-                                            </DropdownMenuItem>
-                                        </>
-                                    )}
                                     <DropdownMenuItem
                                         variant="destructive"
                                         onClick={() =>

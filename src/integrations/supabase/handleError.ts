@@ -1,7 +1,11 @@
 import { PostgrestError } from '@supabase/supabase-js';
 
+export const nonExistingRow = 'PGRST116';
+
 export function handlePostgresError(error: PostgrestError): string {
     switch (error.code) {
+        case nonExistingRow:
+            return 'There is no such row';
         case '23505': // unique_violation
             return 'That already exists.';
         case '23503': // foreign_key_violation

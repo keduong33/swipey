@@ -6,7 +6,10 @@ export const Route = createFileRoute('/list/edit/$listId')({
 });
 
 function RouteComponent() {
+    const { user } = Route.useRouteContext();
     const { listId } = Route.useParams();
 
-    return <EditList listId={listId} />;
+    return (
+        <EditList listId={listId} isOnline={user?.isAuthenticated ?? false} />
+    );
 }

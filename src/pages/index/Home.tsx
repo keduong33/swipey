@@ -1,30 +1,32 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Plus, Users } from 'lucide-react';
-import { ButtonHTMLAttributes, forwardRef, useEffect } from 'react';
+import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { v4 } from 'uuid';
 import { useTheme } from '~/components/ThemeProvider';
 import Page from '../../components/Page';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { useLocalGetLists } from '../../hooks/useGetList';
+import { createNewList } from '../list/edit/edit.api';
 import { getListsByUserOptions } from '../list/list.queries';
 import { ListCard } from '../list/ListCard';
-import { JsonImportDialog } from './JsonImportSection';
 
 export default function Home({ userId }: { userId?: string }) {
     const { theme } = useTheme();
     const { lists: localList, fetch } = useLocalGetLists();
-    const { data: lists, status } = useQuery(getListsByUserOptions());
+    const { data: lists, status } = useQuery(getListsByUserOptions(userId));
 
-    useEffect(() => {
-        if (status === 'success') {
-        }
-    }, [lists, status]);
+    const newList = useMutation({
+        mutationFn: createNewList,
+        onSuccess: (listId) => {
+            navigate({ to: `/list/edit/${listId}` });
+        },
+    });
 
-    const refresh = async () => {
-        await fetch();
-    };
+    // const refresh = async () => {
+    //     await fetch();
+    // };
 
     const navigate = useNavigate();
 
@@ -44,9 +46,15 @@ export default function Home({ userId }: { userId?: string }) {
                 <div className="mb-8 gap-4 flex justify-center flex-wrap">
                     {/* Create New List Button */}
                     <CreateNewListButton
-                        onClick={() => navigate({ to: `/list/edit/${v4()}` })}
+                        onClick={() =>
+                            newList.mutate({
+                                data: {
+                                    listId: v4(),
+                                },
+                            })
+                        }
                     />
-                    <JsonImportDialog refresh={refresh} />
+                    {/* <JsonImportDialog refresh={refresh} /> */}
                 </div>
 
                 {/* Your Lists Section */}

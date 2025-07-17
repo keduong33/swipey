@@ -7,6 +7,6 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
     const { user } = Route.useRouteContext();
-    const userId = user.isAuthenticated ? user.id : undefined;
+    const userId = user?.isAuthenticated ? user.accessToken.sub : undefined;
     return <Home userId={userId} />;
 }

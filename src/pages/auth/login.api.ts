@@ -1,24 +1,32 @@
+import { isAuthWeakPasswordError } from '@supabase/supabase-js';
 import { redirect } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/react-start';
-import { getSupabaseServerClient } from '../../integrations/supabase/serverClient';
+import { supabaseClient } from '../../integrations/supabase/browserClient';
+import { SignupMessages } from './signup/signup.messages';
 
-export const loginFunction = createServerFn({ method: 'POST' })
-    .validator(
-        (d: { email: string; password: string; redirectUrl?: string }) => d
-    )
-    .handler(async ({ data }) => {
-        const supabase = getSupabaseServerClient();
-        const { error } = await supabase.auth.signInWithPassword({
-            email: data.email,
-            password: data.password,
-        });
+export async function login({
+    email,
+    password,
+    redirectUrl,
+}: {
+    email: string;
+    password: string;
+    redirectUrl?: string;
+}) {
+    const { error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password,
+    });
 
-        if (error) {
-            console.log('SignInWithPassword:', error);
-            throw new Error('Cannot login');
+    if (error) {
+        let message = error.message;
+        if (isAuthWeakPasswordError(error)) {
+            message = SignupMessages.WeakPassword();
         }
 
-        throw redirect({
-            href: data.redirectUrl || '/',
-        });
-    });
+        console.error(error);
+
+        throw new Error(message);
+    }
+
+    throw redirect({ to: redirectUrl ?? '/' });
+}

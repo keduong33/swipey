@@ -4,6 +4,6 @@ import { Database } from './database.types';
 export function getSupabaseServerClient() {
     return createClient<Database>(
         process.env.SUPABASE_URL!,
-        process.env.VITE_SUPABASE_ANON_KEY!
+        process.env.SUPABASE_SECRET_KEY!
     );
 }
