@@ -1,10 +1,11 @@
-import { createServerFn } from '@tanstack/react-start';
+import { createServerFn, json } from '@tanstack/react-start';
 import { getWebRequest } from '@tanstack/react-start/server';
 import { z } from 'zod';
 import { handlePostgresError } from '../../../integrations/supabase/handleError';
 import { getSupabaseServerClient } from '../../../integrations/supabase/serverClient';
 import { verifyAuthMiddleWare } from '../../../lib/auth';
 import { getAccessToken } from '../../auth/auth.api';
+import { CustomErrorCause } from './edit_item.api';
 
 export const updateListNameSchema = z.object({
     name: z.string().nonempty('Name cannot be empty'),
@@ -71,14 +72,35 @@ const createNewListSchema = z.object({
     listId: z.string(),
 });
 
-export const createNewList = createServerFn({ method: 'POST' })
+export const listLimit = 3;
+export const createNewListServerFn = createServerFn({ method: 'POST' })
     .validator(createNewListSchema)
     .middleware([verifyAuthMiddleWare])
-    .handler(async ({ data: { listId }, context: { user } }) => {
+    .handler(async ({ data: { listId }, context: { claims } }) => {
+        const { count, error: countError } = await getSupabaseServerClient()
+            .from('List')
+            .select('*', { count: 'exact', head: true })
+            .eq('userId', claims.sub);
+
+        if (!count) {
+            console.error('createNewList - no count', countError);
+            throw new Error('Something went wrong - Cannot create new list');
+        }
+
+        if (claims.plan === 'FREE' && count >= listLimit) {
+            throw json(
+                {
+                    message: 'Upgrade required',
+                    cause: CustomErrorCause.UPGRADE_REQUIRED,
+                },
+                { status: 403 }
+            );
+        }
+
         const { error } = await getSupabaseServerClient().from('List').insert({
             id: listId,
             name: 'New list',
-            userId: user.id,
+            userId: claims.sub,
         });
 
         if (error) {

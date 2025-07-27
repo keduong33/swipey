@@ -94,19 +94,17 @@ export const verifyAuthMiddleWare = createMiddleware({
     const accessToken = getAccessToken(getWebRequest().headers);
     const supabase = getSupabaseServerClient();
 
-    const {
-        data: { user },
-        error: authError,
-    } = await supabase.auth.getUser(accessToken);
+    const { data, error: authError } =
+        await supabase.auth.getClaims(accessToken);
 
-    if (authError || !user) {
+    if (authError || !data) {
         console.error('authError', authError);
         throw new Response('You must login', { status: 401 });
     }
 
     return next({
         context: {
-            user,
+            claims: data.claims as AccessToken,
         },
     });
 });

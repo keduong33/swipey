@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/react-start';
 import { Plus, Users } from 'lucide-react';
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { v4 } from 'uuid';
@@ -7,7 +8,8 @@ import { useTheme } from '~/components/ThemeProvider';
 import Page from '../../components/Page';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
-import { createNewList } from '../list/edit/edit.api';
+import { createNewListServerFn } from '../list/edit/edit.api';
+import { CustomErrorCause } from '../list/edit/edit_item.api';
 import { getListsOptions } from '../list/list.queries';
 import { ListCard } from '../list/ListCard';
 
@@ -16,7 +18,13 @@ export default function Home({ userId }: { userId?: string }) {
     const { data: allLists } = useQuery(getListsOptions(!!userId));
 
     const newList = useMutation({
-        mutationFn: createNewList,
+        mutationFn: useServerFn(createNewListServerFn),
+        onError: (error) => {
+            if (error.cause === CustomErrorCause.UPGRADE_REQUIRED) {
+                console.log('Upgrade required');
+            }
+            alert(error.message);
+        },
         onSuccess: (listId) => {
             navigate({ to: `/list/edit/${listId}` });
         },

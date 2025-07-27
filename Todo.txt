@@ -1,0 +1,7 @@
+[] Replace Image
+[] Analytics
+[] Default theme = dark
+[] Better loading screen
+[] Better loading state for list
+[] Save result & Delete result
+[] Sort list

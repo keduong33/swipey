@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 import { ItemInsert } from '../../../../integrations/supabase/typescript.types';
 import { BaseList, ListWithItems } from '../../ListCard';
 import { Item } from '../../ListItem';
-import { useOnlineEdit } from './useListOnline';
+import { useListOnline } from './useListOnline';
 import { UpdateListOpts } from './useListState';
 
 export function useEditList(
@@ -11,7 +11,8 @@ export function useEditList(
     saveListLocally: (list: BaseList) => void,
     saveItemLocally: (item: Item) => void
 ) {
-    const { listNameMutation, listDescriptionMutation } = useOnlineEdit();
+    const { listNameMutation, listDescriptionMutation, addNewItem } =
+        useListOnline();
 
     const saveListName = (name: string, list: ListWithItems | undefined) => {
         if (!list || list.name === name) return;
@@ -60,6 +61,18 @@ export function useEditList(
         updateList(updatedList);
 
         if (isOnline) {
+            addNewItem.mutate(
+                {
+                    data: {
+                        ...blankItem,
+                    },
+                },
+                {
+                    onError: () => {
+                        updateList(list);
+                    },
+                }
+            );
         } else {
             saveItemLocally(blankItem);
         }
