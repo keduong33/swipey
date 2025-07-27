@@ -6,7 +6,7 @@ import { getSupabaseServerClient } from '../../../integrations/supabase/serverCl
 import { verifyAuthMiddleWare } from '../../../lib/auth';
 import { getAccessToken } from '../../auth/auth.api';
 
-const updateListNameSchema = z.object({
+export const updateListNameSchema = z.object({
     name: z.string().nonempty('Name cannot be empty'),
     listId: z.string(),
 });
@@ -43,7 +43,7 @@ export const updateListNameServerFn = createServerFn({ method: 'POST' })
         }
     });
 
-const updateListDescriptionSchema = z.object({
+export const updateListDescriptionSchema = z.object({
     description: z.string(),
     listId: z.string(),
 });

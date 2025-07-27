@@ -1,41 +1,44 @@
+import { ImageUploadStatusMap } from './edit/hooks/useImageUpload';
+import { useOfflineEdit } from './edit/hooks/useOffline';
+import { ListWithItems } from './ListCard';
 import { Item, ListItem } from './ListItem';
 
 export const ListItems = ({
-    items,
+    list,
     setItems,
     handleImageUpload,
-    loadingImageIds,
+    imageUploadStatusMap,
+    isOnline,
 }: {
-    items: Item[];
+    list: ListWithItems;
     setItems: (updater: (prev: Item[]) => Item[]) => void;
-    handleImageUpload: (id: string, file: File | undefined) => void;
-    loadingImageIds: Set<string>;
+    handleImageUpload: (item: Item, file: File | undefined) => void;
+    imageUploadStatusMap: ImageUploadStatusMap;
+    isOnline: boolean;
 }) => {
-    const removeItem = (id: string) => {
-        if (items.length >= 1) {
-            setItems((prev) => prev.filter((item) => item.id !== id));
-        }
-    };
-
-    const updateItemName = (id: string, name: string) => {
-        setItems((prev) =>
-            prev.map((item) => (item.id === id ? { ...item, name } : item))
-        );
-    };
-
+    const { saveItemLocally, deleteItemLocally } = useOfflineEdit();
     return (
         <>
-            {items.map((item) => (
+            {list.items.sort(byLatestUpdate).map((item) => (
                 <ListItem
                     key={item.id}
                     item={item}
-                    showDeleteItemButton={items.length >= 1}
                     handleImageUpload={handleImageUpload}
-                    updateItemName={updateItemName}
-                    removeItem={removeItem}
-                    isLoading={loadingImageIds.has(item.id)}
+                    imageUploadStatus={imageUploadStatusMap.get(item.id)}
+                    saveItemLocally={saveItemLocally}
+                    deleteItemLocally={deleteItemLocally}
+                    isOnline={isOnline}
+                    setItems={setItems}
                 />
             ))}
         </>
     );
+};
+
+const byName = (a: Item, b: Item) => {
+    return a.name.localeCompare(b.name);
+};
+
+const byLatestUpdate = (a: Item, b: Item) => {
+    return new Date(b.editedAt).getTime() - new Date(a.editedAt).getTime();
 };

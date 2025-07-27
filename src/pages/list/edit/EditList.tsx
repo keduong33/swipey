@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import imageCompression from 'browser-image-compression';
 import { ArrowLeft, Loader2, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { v4 } from 'uuid';
 import Page from '../../../components/Page';
 import { Button } from '../../../components/ui/button';
 import { Card, CardContent } from '../../../components/ui/card';
@@ -26,14 +24,14 @@ import {
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
-import { ItemInsert } from '../../../integrations/supabase/typescript.types';
-import { localDb } from '../../../storage/indexedDbStorage';
 import { getListWithItemsOptions } from '../list.queries';
 import { createNewList, ListWithItems } from '../ListCard';
 import { ListItems } from '../ListItems';
 import { MultipleUploads } from '../MultipleUploads';
-import { useEditState } from './useEditState';
-import { useOnlineEdit } from './useOnlineEdit';
+import { useImageUpload } from './hooks/useImageUpload';
+import { useEditList } from './hooks/useList';
+import { useEditListState } from './hooks/useListState';
+import { useOfflineEdit } from './hooks/useOffline';
 
 export function EditList({
     listId,
@@ -43,6 +41,9 @@ export function EditList({
     isOnline: boolean;
 }) {
     const navigate = useNavigate();
+
+    const { saveItemLocally, deleteListLocally, saveListLocally } =
+        useOfflineEdit();
 
     const {
         data: retrievedList,
@@ -56,8 +57,19 @@ export function EditList({
         }
     }, [getListError]);
 
-    const { list, setList, updateList, setItems } = useEditState();
-    const { listNameMutation, listDescriptionMutation } = useOnlineEdit();
+    const { list, setList, updateList, setItems } = useEditListState();
+    const { saveListName, saveListDescription, addBlankItem } = useEditList(
+        updateList,
+        isOnline,
+        saveListLocally,
+        saveItemLocally
+    );
+
+    const { handleImageUpload, imageUploadStatusMap } = useImageUpload({
+        isOnline,
+        setItems,
+        saveItemLocally,
+    });
 
     useEffect(() => {
         if (isLoading) return;
@@ -71,66 +83,9 @@ export function EditList({
     const [dialogOpen, setDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-    const [loadingImageIds, setLoadingImageIds] = useState<Set<string>>(
-        new Set()
-    );
-
     if (isLoading || !list) {
         return <Loader2 className="animate-spin" />;
     }
-
-    const saveLocally = async (list: ListWithItems) => {
-        await localDb.saveList(list);
-    };
-
-    const saveListName = () => {
-        if (isOnline) {
-            listNameMutation.mutate({
-                data: {
-                    name: list.name,
-                    listId,
-                },
-            });
-        } else {
-            saveLocally(list);
-        }
-    };
-
-    const saveListDescription = () => {
-        if (isOnline) {
-            listDescriptionMutation.mutate({
-                data: {
-                    description: list.description ?? '',
-                    listId,
-                },
-            });
-        } else {
-            saveLocally(list);
-        }
-    };
-
-    const addBlankItem = () => {
-        const blankItem = {
-            id: v4(),
-            name: '',
-            imageUrl: null,
-            createdAt: new Date().toUTCString(),
-            editedAt: new Date().toUTCString(),
-            listId,
-        } satisfies ItemInsert;
-
-        const updatedList = {
-            ...list,
-            items: [...list.items, blankItem],
-        } satisfies ListWithItems;
-
-        updateList(updatedList);
-
-        if (isOnline) {
-        } else {
-            saveLocally(updatedList);
-        }
-    };
 
     const use = async () => {
         navigate({ to: `/list/use/${listId}` });
@@ -141,47 +96,8 @@ export function EditList({
     };
 
     const onDeleteList = async () => {
-        await localDb.deleteList(listId);
+        await deleteListLocally(listId);
         navigate({ to: '/' });
-    };
-
-    const handleImageUpload = async (
-        id: string,
-        file: File | undefined
-    ): Promise<void> => {
-        if (!file) return;
-
-        try {
-            setLoadingImageIds((prev) => new Set(prev).add(id));
-            const compressed = await imageCompression(file, {
-                maxSizeMB: 0.1,
-                useWebWorker: true,
-            });
-
-            const compressedImageUrl =
-                await imageCompression.getDataUrlFromFile(compressed);
-
-            console.log(
-                `image before compressed: ${file.size / 1024 / 1024} MB`,
-                `image after compressed: ${compressed.size / 1024 / 1024} MB`
-            );
-
-            setItems((prev) =>
-                prev.map((item) =>
-                    item.id === id
-                        ? { ...item, image: compressedImageUrl }
-                        : item
-                )
-            );
-        } catch (error) {
-            console.error('Error on uploading images:', error);
-        } finally {
-            setLoadingImageIds((prev) => {
-                const updated = new Set(prev);
-                updated.delete(id);
-                return updated;
-            });
-        }
     };
 
     return (
@@ -220,11 +136,10 @@ export function EditList({
                             <Input
                                 id="list-name"
                                 placeholder="Enter list name"
-                                value={list.name}
-                                onChange={(e) =>
-                                    updateList({ name: e.target.value })
+                                defaultValue={list.name}
+                                onBlur={(e) =>
+                                    saveListName(e.target.value, list)
                                 }
-                                onBlur={saveListName}
                             />
                         </div>
 
@@ -239,11 +154,10 @@ export function EditList({
                             <Textarea
                                 id="description"
                                 placeholder="Enter list description here"
-                                value={list.description ?? ''}
-                                onChange={(e) =>
-                                    updateList({ description: e.target.value })
+                                defaultValue={list.description ?? ''}
+                                onBlur={(e) =>
+                                    saveListDescription(e.target.value, list)
                                 }
-                                onBlur={saveListDescription}
                             />
                         </div>
 
@@ -254,16 +168,17 @@ export function EditList({
                             </Label>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 <ListItems
-                                    items={list.items}
+                                    list={list}
                                     setItems={setItems}
                                     handleImageUpload={handleImageUpload}
-                                    loadingImageIds={loadingImageIds}
+                                    imageUploadStatusMap={imageUploadStatusMap}
+                                    isOnline={isOnline}
                                 />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2 justify-center">
                                 <Button
                                     variant="outline"
-                                    onClick={addBlankItem}
+                                    onClick={() => addBlankItem(list)}
                                     className="aspect-square border rounded-lg shadow-md items-center justify-center transition-colors"
                                 >
                                     <Plus className="w-6 h-6 text-gray-400" />
@@ -275,16 +190,17 @@ export function EditList({
                                 <MultipleUploads
                                     setItems={setItems}
                                     handleImageUpload={handleImageUpload}
+                                    listId={listId}
                                 />
                             </div>
                         </div>
 
                         {/* Category */}
-                        <div className="space-y-2">
+                        {/* <div className="space-y-2">
                             <Label className="text-sm font-medium">
                                 Category
                             </Label>
-                            {/* <Select
+                            <Select
                                 value={list.category}
                                 onValueChange={(e) =>
                                     updateList({ category: e })
@@ -313,9 +229,8 @@ export function EditList({
                                         📋 Other
                                     </SelectItem>
                                 </SelectContent>
-                            </Select> */}
-                        </div>
-                        {/* </div> */}
+                            </Select>
+                        </div> */}
 
                         {/* Action Button */}
                         <div className="flex flex-wrap gap-2 md:justify-between justify-center">

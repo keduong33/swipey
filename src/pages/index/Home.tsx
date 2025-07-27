@@ -7,15 +7,13 @@ import { useTheme } from '~/components/ThemeProvider';
 import Page from '../../components/Page';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
-import { useLocalGetLists } from '../../hooks/useGetList';
 import { createNewList } from '../list/edit/edit.api';
-import { getListsByUserOptions } from '../list/list.queries';
+import { getListsOptions } from '../list/list.queries';
 import { ListCard } from '../list/ListCard';
 
 export default function Home({ userId }: { userId?: string }) {
     const { theme } = useTheme();
-    const { lists: localList, fetch } = useLocalGetLists();
-    const { data: lists, status } = useQuery(getListsByUserOptions(userId));
+    const { data: allLists } = useQuery(getListsOptions(!!userId));
 
     const newList = useMutation({
         mutationFn: createNewList,
@@ -24,9 +22,8 @@ export default function Home({ userId }: { userId?: string }) {
         },
     });
 
-    // const refresh = async () => {
-    //     await fetch();
-    // };
+    const userLists = allLists?.filter((list) => list.userId === userId);
+    const nonUserLists = allLists?.filter((list) => list.userId !== userId);
 
     const navigate = useNavigate();
 
@@ -54,7 +51,6 @@ export default function Home({ userId }: { userId?: string }) {
                             })
                         }
                     />
-                    {/* <JsonImportDialog refresh={refresh} /> */}
                 </div>
 
                 {/* Your Lists Section */}
@@ -69,7 +65,7 @@ export default function Home({ userId }: { userId?: string }) {
                             View all lists
                         </Button>
                     </div>
-                    {lists?.length === 0 ? (
+                    {userLists?.length === 0 ? (
                         <Card className="text-center py-12">
                             <CardContent>
                                 <div className="text-gray-500 mb-4">
@@ -86,7 +82,7 @@ export default function Home({ userId }: { userId?: string }) {
                         </Card>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {lists
+                            {userLists
                                 ?.slice(0, 3)
                                 .map((list) => (
                                     <ListCard key={list.id} list={list} />

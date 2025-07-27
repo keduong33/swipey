@@ -3,13 +3,16 @@ import { ChangeEvent, useRef } from 'react';
 import { v4 } from 'uuid';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { ItemInsert } from '../../integrations/supabase/typescript.types';
 import { Item } from './ListItem';
 
 export function MultipleUploads({
+    listId,
     handleImageUpload,
     setItems,
 }: {
-    handleImageUpload: (id: string, file: File | undefined) => void;
+    listId: string;
+    handleImageUpload: (item: Item, file: File | undefined) => void;
     setItems: (updater: (prev: Item[]) => Item[]) => void;
 }) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -17,16 +20,22 @@ export function MultipleUploads({
         const files = Array.from(event.target.files || []);
         if (files.length === 0) return;
 
-        const newItemsWithIds = files.map((file) => ({
-            id: v4(),
-            name: getDefaultName(file.name),
-            image: null,
-        }));
+        const newItemsWithIds = files.map(
+            (file) =>
+                ({
+                    id: v4(),
+                    name: getDefaultName(file.name),
+                    imageUrl: null,
+                    createdAt: new Date().toUTCString(),
+                    editedAt: new Date().toUTCString(),
+                    listId,
+                }) satisfies ItemInsert
+        );
 
         setItems((prev) => [...prev, ...newItemsWithIds]);
 
         newItemsWithIds.map((item, index) => {
-            handleImageUpload(item.id, files[index]);
+            handleImageUpload(item, files[index]);
         });
     };
 

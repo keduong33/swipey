@@ -1,33 +1,47 @@
-import { ImageIcon, Loader2, X } from 'lucide-react';
+import { CircleX, ImageIcon, Loader2, X } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Database } from '../../integrations/supabase/database.types';
+import { ImageUploadStatus } from './edit/hooks/useImageUpload';
+import { useEditItem } from './edit/hooks/useItem';
 
 export type Item = Database['public']['Tables']['Item']['Row'];
 
 export const ListItem = ({
     item,
-    showDeleteItemButton,
     handleImageUpload,
-    updateItemName,
-    removeItem,
-    isLoading,
+    imageUploadStatus,
+    setItems,
+    isOnline,
+    saveItemLocally,
+    deleteItemLocally,
 }: {
     item: Item;
-    showDeleteItemButton: boolean;
-    handleImageUpload: (id: string, file: File | undefined) => void;
-    updateItemName: (id: string, name: string) => void;
-    removeItem: (id: string) => void;
-    isLoading?: boolean;
+    handleImageUpload: (item: Item, file: File | undefined) => void;
+    imageUploadStatus?: ImageUploadStatus;
+    setItems: (updater: (prev: Item[]) => Item[]) => void;
+    isOnline: boolean;
+    saveItemLocally: (item: Item) => void;
+    deleteItemLocally: (id: string) => void;
 }) => {
+    const { removeItem, updateItemName } = useEditItem({
+        isOnline,
+        setItems,
+        saveItemLocally,
+        deleteItemLocally,
+    });
     return (
         <div key={item.id} className="relative space-y-1">
             <div
                 className={`aspect-square border ${item.imageUrl ?? 'border-dashed border-2'} rounded-lg flex flex-col items-center justify-center bg-card shadow-sm hover:border-border-hover transition-colors`}
             >
-                {isLoading ? (
+                {imageUploadStatus === 'uploading' ? (
                     <div className="w-full h-full flex items-center justify-center">
                         <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                    </div>
+                ) : imageUploadStatus === 'error' ? (
+                    <div className="w-full h-full flex items-center justify-center">
+                        <CircleX className="w-6 h-6 text-red-500" />
                     </div>
                 ) : item.imageUrl ? (
                     <img
@@ -45,7 +59,7 @@ export const ListItem = ({
                             type="file"
                             accept="image/*"
                             onChange={(e) =>
-                                handleImageUpload(item.id, e.target.files?.[0])
+                                handleImageUpload(item, e.target.files?.[0])
                             }
                             className="hidden"
                             id={`image-upload-${item.id}`}
@@ -56,19 +70,18 @@ export const ListItem = ({
             </div>
             <Input
                 placeholder="Item name"
-                value={item.name}
-                onChange={(e) => updateItemName(item.id, e.target.value)}
+                defaultValue={item.name}
+                onBlur={(e) => updateItemName(e.target.value, item)}
             />
-            {showDeleteItemButton && (
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeItem(item.id)}
-                    className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-destructive hover:bg-destructive-hover dark:hover:bg-destructive-hover hover:text-white text-white rounded-full"
-                >
-                    <X className="w-3 h-3" />
-                </Button>
-            )}
+
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => removeItem(item.id)}
+                className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-destructive hover:bg-destructive-hover dark:hover:bg-destructive-hover hover:text-white text-white rounded-full"
+            >
+                <X className="w-3 h-3" />
+            </Button>
         </div>
     );
 };

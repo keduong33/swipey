@@ -74,6 +74,28 @@ export const getListByUserSupabaseClient = async (userId?: string) => {
     return [];
 };
 
+export const getListsSupabaseClient = async () => {
+    const { data, error } = await supabaseClient
+        .from('List')
+        .select(`*, Item(count)`);
+
+    if (error) {
+        console.error('getListsSupabaseClient:', error);
+        return [];
+    }
+
+    if (data) {
+        return data.map((list) => {
+            return {
+                ...list,
+                itemCount: list.Item[0].count,
+            } satisfies ListWithItemCount;
+        });
+    }
+
+    return [];
+};
+
 const getWithItemsSchema = z.object({
     listId: z.string(),
 });
