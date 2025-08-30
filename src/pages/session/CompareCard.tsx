@@ -62,9 +62,9 @@ export const CompareCard = ({
             >
                 <CardContent className="pointer-events-none ">
                     <div className="w-full aspect-square border-2 rounded-lg flex flex-col items-center justify-center transition-colors bg-card dark:bg-gray-200">
-                        {item.image ? (
+                        {item.imageUrl ? (
                             <img
-                                src={item.image}
+                                src={item.imageUrl}
                                 alt={item.name}
                                 className="w-full h-full object-cover rounded-lg"
                             />

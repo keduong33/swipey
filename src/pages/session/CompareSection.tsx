@@ -2,11 +2,11 @@ import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Result } from '~/hooks/useGetResult';
 import { localDb } from '../../storage/indexedDbStorage';
-import { List } from '../list/ListCard';
+import { ListWithItems } from '../list/ListCard';
 import { CompareCard } from './CompareCard';
 import { useHumanMergeSort } from './useHumanChoiceMergeSort';
 
-export default function CompareSection({ list }: { list: List }) {
+export default function CompareSection({ list }: { list: ListWithItems }) {
     const { name, description, items } = list;
 
     const { choose, step, currentArray, getNextStep, sortState, progress } =

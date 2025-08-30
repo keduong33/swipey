@@ -8,6 +8,7 @@ export type Result = z.infer<typeof ResultSchema>;
  * If we go online, need to use this hook less since it refetching every time
  */
 export const useLocalGetResult = (id: string) => {
+    console.log(id);
     const [result, setResult] = useState<Result>();
     const [isLoading, setIsLoading] = useState(true);
 

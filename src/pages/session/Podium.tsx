@@ -56,9 +56,9 @@ export const Podium = ({ item, place }: { item: Item; place: 1 | 2 | 3 }) => {
             <div
                 className={`bg-gradient-to-t ${config.topGradient} text-white p-3 rounded-t-lg ${config.shadowIntensity} w-full`}
             >
-                {item?.image ? (
+                {item?.imageUrl ? (
                     <img
-                        src={item.image}
+                        src={item.imageUrl}
                         alt={item.name}
                         className={`${config.imageSize} object-cover rounded-lg mx-auto mb-3 border-2 border-card bg-card dark:bg-gray-200`}
                     />
@@ -98,9 +98,9 @@ export const RemainingRanking = ({ items }: { items: Item[] }) => (
 
                 {/* Item Image */}
                 <div className="flex-shrink-0">
-                    {item.image ? (
+                    {item.imageUrl ? (
                         <img
-                            src={item.image}
+                            src={item.imageUrl}
                             alt={item.name}
                             className="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:bg-gray-200"
                         />

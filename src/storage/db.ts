@@ -1,6 +1,6 @@
 import { DBSchema, IDBPDatabase, openDB } from 'idb';
 import { Result } from '../hooks/useGetResult';
-import { List } from '../pages/list/ListCard';
+import { BaseList } from '../pages/list/ListCard';
 import { Item } from '../pages/list/ListItem';
 
 // ---------------- Schema ----------------
@@ -8,7 +8,7 @@ import { Item } from '../pages/list/ListItem';
 interface SwipeyDB extends DBSchema {
     lists: {
         key: string;
-        value: List;
+        value: BaseList;
     };
     items: {
         key: string;
@@ -34,6 +34,8 @@ export function getDb() {
             upgrade(db) {
                 db.createObjectStore('lists', { keyPath: 'id' });
                 db.createObjectStore('results', { keyPath: 'id' });
+                db.createObjectStore('items', { keyPath: 'id' }) // keyPath = item.id
+                    .createIndex('listId', 'listId', { unique: false });
             },
         });
     }

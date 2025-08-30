@@ -1,60 +1,64 @@
+import { useMutation } from '@tanstack/react-query';
 import {
     createFileRoute,
-    redirect,
+    notFound,
     SearchSchemaInput,
 } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
 import { AlertCircleIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { useMutation } from '../../hooks/useMutation';
 import { AuthForm } from '../../pages/auth/AuthForm';
-import { signupFunction } from '../../pages/auth/signup/signup_service';
+import { signUp } from '../../pages/auth/signup/signup.api';
 
 export const Route = createFileRoute('/(auth)/signup')({
     component: Signup,
-    beforeLoad: ({ context }) => {
-        if (context.user) {
-            throw redirect({
-                to: '/',
-            });
-        }
+    beforeLoad: ({ context, search }) => {
+        // Remove notfound if want to enable login
+        throw notFound();
+        // if (context.user?.isAuthenticated) {
+        //     throw redirect({
+        //         to: search?.redirectUrl || '/',
+        //     });
+        // }
     },
     validateSearch: ({
         redirectUrl,
     }: { redirectUrl?: string } & SearchSchemaInput) => {
-        if (redirectUrl)
-            return {
-                redirectUrl,
-            };
+        return {
+            redirectUrl,
+        };
     },
 });
 
 export default function Signup() {
+    const { queryClient } = Route.useRouteContext();
     const search = Route.useSearch();
-    const signupMutation = useMutation({
-        fn: useServerFn(signupFunction),
-    });
+    const { redirectUrl } = Route.useSearch();
+
+    const signupMutation = useMutation(
+        {
+            mutationFn: signUp,
+        },
+        queryClient
+    );
 
     return (
         <AuthForm
             redirectUrl={search?.redirectUrl}
             actionText="Sign Up"
             status={signupMutation.status}
-            onSubmit={async ({ username, password }) => {
-                await signupMutation.mutate({
-                    data: {
-                        email: username,
-                        password,
-                        redirectUrl: search?.redirectUrl,
-                    },
+            onSubmit={({ username, password }) => {
+                signupMutation.mutate({
+                    email: username,
+                    password,
+                    redirectUrl,
                 });
             }}
             afterSubmit={
-                signupMutation.data?.error ? (
+                signupMutation.error ? (
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertDescription>
-                            {signupMutation.data.message}
+                            {signupMutation.error.message}
                         </AlertDescription>
                     </Alert>
                 ) : null

@@ -1,42 +1,45 @@
+import { useMutation } from '@tanstack/react-query';
 import {
     createFileRoute,
-    redirect,
+    notFound,
     SearchSchemaInput,
-    useRouter,
 } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
 import { AlertCircleIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { useMutation } from '../../hooks/useMutation';
 import { AuthForm } from '../../pages/auth/AuthForm';
-import { loginFunction } from '../../pages/auth/login/login_service';
+import { login } from '../../pages/auth/login.api';
 
 export const Route = createFileRoute('/(auth)/login')({
     component: Login,
-    beforeLoad: ({ context }) => {
-        if (context.user) {
-            throw redirect({
-                to: '/',
-            });
-        }
+    beforeLoad: ({ context, search }) => {
+        // Remove notfound if want to enable login
+        throw notFound();
+
+        // if (context.user?.isAuthenticated) {
+        //     throw redirect({
+        //         to: search?.redirectUrl || '/',
+        //     });
+        // }
     },
     validateSearch: ({
         redirectUrl,
     }: { redirectUrl?: string } & SearchSchemaInput) => {
-        if (redirectUrl)
-            return {
-                redirectUrl: redirectUrl,
-            };
+        return {
+            redirectUrl,
+        };
     },
 });
 
 export function Login() {
-    const router = useRouter();
+    const { queryClient } = Route.useRouteContext();
     const search = Route.useSearch();
 
-    const loginMutation = useMutation({
-        fn: useServerFn(loginFunction),
-    });
+    const loginMutation = useMutation(
+        {
+            mutationFn: login,
+        },
+        queryClient
+    );
 
     return (
         <AuthForm
@@ -45,20 +48,18 @@ export function Login() {
             actionText="Login"
             status={loginMutation.status}
             onSubmit={async ({ username, password }) => {
-                await loginMutation.mutate({
-                    data: {
-                        email: username,
-                        password,
-                        redirectUrl: search?.redirectUrl,
-                    },
+                loginMutation.mutate({
+                    email: username,
+                    password,
+                    redirectUrl: search?.redirectUrl,
                 });
             }}
             afterSubmit={
-                loginMutation.data?.error ? (
+                loginMutation.error ? (
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertDescription>
-                            {loginMutation.data.message}
+                            {loginMutation.error.message}
                         </AlertDescription>
                     </Alert>
                 ) : null

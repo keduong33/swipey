@@ -1,16 +1,22 @@
 // storage/indexedDbStorage.ts
 
 import { Result } from '../hooks/useGetResult';
-import { List } from '../pages/list/ListCard';
+import { BaseList } from '../pages/list/ListCard';
+import { Item } from '../pages/list/ListItem';
 import { getDb } from './db';
 
 export interface IndexedDbStorage {
     // Lists
-    getLists(): Promise<List[] | undefined>;
-    getList(id: string): Promise<List | undefined>;
-    saveList(list: List): Promise<void>;
-    saveLists(lists: List[]): Promise<void>;
+    getLists(): Promise<BaseList[] | undefined>;
+    getList(id: string): Promise<BaseList | undefined>;
+    saveList(list: BaseList): Promise<void>;
+    saveLists(lists: BaseList[]): Promise<void>;
     deleteList(id: string): Promise<void>;
+
+    // Items
+    getItems(id: string): Promise<Item[]>;
+    saveItem(item: Item): Promise<void>;
+    deleteItem(id: string): Promise<void>;
 
     // Rankings
     saveResult(result: Result): Promise<void>;
@@ -18,6 +24,8 @@ export interface IndexedDbStorage {
     getResults(): Promise<Result[] | undefined>;
     getResult(id: string): Promise<Result | undefined>;
     deleteResult(id: string): Promise<void>;
+
+    deleteListWithItems(listId: string): Promise<void>;
 }
 
 export const localDb: IndexedDbStorage = {
@@ -40,7 +48,7 @@ export const localDb: IndexedDbStorage = {
         }
     },
 
-    async saveList(list: List) {
+    async saveList(list) {
         try {
             const db = await getDb();
             await db.put('lists', list);
@@ -49,7 +57,7 @@ export const localDb: IndexedDbStorage = {
         }
     },
 
-    async saveLists(lists: List[]) {
+    async saveLists(lists) {
         try {
             const db = await getDb();
             const tx = db.transaction('lists', 'readwrite');
@@ -66,6 +74,37 @@ export const localDb: IndexedDbStorage = {
         try {
             const db = await getDb();
             await db.delete('lists', id);
+        } catch (error) {
+            handleError(error);
+        }
+    },
+
+    async getItems(listId) {
+        try {
+            const db = await getDb();
+            const tx = db.transaction('items');
+            const index = tx.store.index('listId');
+            const items = await index.getAll(listId);
+            return items;
+        } catch (error) {
+            handleError(error);
+            return [];
+        }
+    },
+
+    async saveItem(item) {
+        try {
+            const db = await getDb();
+            await db.put('items', item);
+        } catch (error) {
+            handleError(error);
+        }
+    },
+
+    async deleteItem(id) {
+        try {
+            const db = await getDb();
+            await db.delete('items', id);
         } catch (error) {
             handleError(error);
         }
@@ -119,6 +158,33 @@ export const localDb: IndexedDbStorage = {
             handleError(error);
         }
     },
+
+    async deleteListWithItems(listId) {
+        try {
+            const db = await getDb();
+            const tx = db.transaction(['lists', 'items'], 'readwrite');
+
+            // Delete the list
+            await tx.objectStore('lists').delete(listId);
+
+            // Get all item keys by index (listId)
+            const index = tx.objectStore('items').index('listId');
+            const itemKeys = await index.getAllKeys(listId);
+
+            // Schedule all deletes (don't await individually inside loop)
+            const deletePromises = itemKeys.map((key) =>
+                tx.objectStore('items').delete(key)
+            );
+
+            // Wait for all deletes to complete
+            await Promise.all(deletePromises);
+
+            // Finish the transaction
+            await tx.done;
+        } catch (error) {
+            handleError(error);
+        }
+    },
 };
 
 function handleError(error: unknown) {
@@ -138,9 +204,9 @@ function handleError(error: unknown) {
                 );
                 break;
             default:
-                console.error('IndexedDB error:', error);
                 alert('Something went wrong with local storage.');
         }
+        console.error('DOMException', error);
     } else {
         console.error('Unknown error:', error);
         alert('An unexpected error occurred.');

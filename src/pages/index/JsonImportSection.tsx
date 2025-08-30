@@ -16,7 +16,6 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group';
 import { localDb } from '../../storage/indexedDbStorage';
-import { ListsSchema, ResultsSchema } from '../list/zodSchema';
 
 type ImportType = 'results' | 'lists';
 
@@ -44,11 +43,9 @@ export function JsonImportDialog({ refresh }: { refresh: () => void }) {
             const jsonData = JSON.parse(text);
 
             if (importType === 'lists') {
-                const lists = ListsSchema.parse(jsonData);
-                await localDb.saveLists(lists);
+                await localDb.saveLists(jsonData);
             } else {
-                const results = ResultsSchema.parse(jsonData);
-                await localDb.saveResults(results);
+                await localDb.saveResults(jsonData);
             }
 
             refresh();

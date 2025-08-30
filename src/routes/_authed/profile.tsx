@@ -1,28 +1,36 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
+import { useMutation } from '@tanstack/react-query';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { Button } from '../../components/ui/button';
-import { useMutation } from '../../hooks/useMutation';
+import { logout } from '../../pages/auth/logout.api';
 import { ProfileMessages } from '../../pages/profile/profile.messages';
-import { logoutFunction } from '../../pages/profile/profile_server_functions';
 
 export const Route = createFileRoute('/_authed/profile')({
     component: Profile,
-    loader: ({ context }) => {
-        return context.user;
+    loader: ({ context: { user } }) => {
+        return user;
+    },
+    beforeLoad: () => {
+        // Remove notfound if want to enable login
+        throw notFound();
     },
 });
 
 function Profile() {
     const user = Route.useLoaderData();
-    const logoutMutation = useMutation({
-        fn: useServerFn(logoutFunction),
-    });
+    const { queryClient } = Route.useRouteContext();
+
+    const logoutMutation = useMutation(
+        {
+            mutationFn: logout,
+        },
+        queryClient
+    );
 
     return (
         <>
             {/* <>Hello {user?.email}</> */}
-            <Button onClick={() => logoutMutation.mutate({})}>
+            <Button onClick={() => logoutMutation.mutate()}>
                 {ProfileMessages.LogOutButton()}
             </Button>
             {logoutMutation.error && (

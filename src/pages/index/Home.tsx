@@ -1,4 +1,6 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/react-start';
 import { Plus, Users } from 'lucide-react';
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { v4 } from 'uuid';
@@ -6,17 +8,30 @@ import { useTheme } from '~/components/ThemeProvider';
 import Page from '../../components/Page';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
-import { useLocalGetLists } from '../../hooks/useGetList';
+import { createNewListServerFn } from '../list/edit/edit.api';
+import { CustomErrorCause } from '../list/edit/edit_item.api';
+import { getListsOptions } from '../list/list.queries';
 import { ListCard } from '../list/ListCard';
-import { JsonImportDialog } from './JsonImportSection';
 
-export default function Home() {
+export default function Home({ userId }: { userId?: string }) {
     const { theme } = useTheme();
-    const { lists, fetch } = useLocalGetLists();
+    const { data: allLists } = useQuery(getListsOptions(!!userId));
 
-    const refresh = async () => {
-        await fetch();
-    };
+    const newList = useMutation({
+        mutationFn: useServerFn(createNewListServerFn),
+        onError: (error) => {
+            if (error.cause === CustomErrorCause.UPGRADE_REQUIRED) {
+                console.log('Upgrade required');
+            }
+            alert(error.message);
+        },
+        onSuccess: (listId) => {
+            navigate({ to: `/list/edit/${listId}` });
+        },
+    });
+
+    const userLists = allLists?.filter((list) => list.userId === userId);
+    const nonUserLists = allLists?.filter((list) => list.userId !== userId);
 
     const navigate = useNavigate();
 
@@ -36,9 +51,19 @@ export default function Home() {
                 <div className="mb-8 gap-4 flex justify-center flex-wrap">
                     {/* Create New List Button */}
                     <CreateNewListButton
-                        onClick={() => navigate({ to: `/list/edit/${v4()}` })}
+                        onClick={async () => {
+                            const newId = v4();
+                            if (userId) {
+                                newList.mutate({
+                                    data: {
+                                        listId: newId,
+                                    },
+                                });
+                            } else {
+                                navigate({ to: `/list/edit/${newId}` });
+                            }
+                        }}
                     />
-                    <JsonImportDialog refresh={refresh} />
                 </div>
 
                 {/* Your Lists Section */}
@@ -53,7 +78,7 @@ export default function Home() {
                             View all lists
                         </Button>
                     </div>
-                    {lists?.length === 0 ? (
+                    {userLists?.length === 0 ? (
                         <Card className="text-center py-12">
                             <CardContent>
                                 <div className="text-gray-500 mb-4">
@@ -70,7 +95,7 @@ export default function Home() {
                         </Card>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {lists
+                            {userLists
                                 ?.slice(0, 3)
                                 .map((list) => (
                                     <ListCard key={list.id} list={list} />

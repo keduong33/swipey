@@ -8,6 +8,9 @@ import { useLocalGetLists } from '../hooks/useGetList';
 import { ListCard } from '../pages/list/ListCard';
 
 export const Route = createFileRoute('/all-lists')({
+    beforeLoad(ctx) {
+        console.log('all list', ctx.context.user);
+    },
     component: RouteComponent,
 });
 

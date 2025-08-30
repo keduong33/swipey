@@ -1,4 +1,5 @@
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import viteReact from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
@@ -11,10 +12,9 @@ export default defineConfig({
             projects: ['./tsconfig.json'],
         }),
         tanstackStart({
-            spa: {
-                enabled: true,
-            },
+            customViteReactPlugin: true,
         }),
+        viteReact(),
     ],
     test: {
         environment: 'jsdom',
