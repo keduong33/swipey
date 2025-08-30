@@ -22,7 +22,6 @@ import {
 } from '../../../components/ui/dropdown-menu';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { Switch } from '../../../components/ui/switch';
 import { Textarea } from '../../../components/ui/textarea';
 import { ListWithItems } from '../ListCard';
 import { ListItems } from '../ListItems';
@@ -95,7 +94,7 @@ export function EditList({
                             Edit List
                         </h2>
                     </div>
-                    <div className="flex gap-2">
+                    {/* <div className="flex gap-2">
                         <Label
                             htmlFor="mode-toggle"
                             className="text-muted-foreground text-sm"
@@ -110,7 +109,7 @@ export function EditList({
                                 updateList({ isOnline })
                             }
                         />
-                    </div>
+                    </div> */}
                 </div>
 
                 <Card className="mb-6 dark:bg-[#0e0e0e]">

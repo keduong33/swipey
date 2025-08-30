@@ -1,9 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import { localDb } from '../../storage/indexedDbStorage';
-import {
-    getListsSupabaseClient,
-    getListWithItemsSupabaseClient,
-} from './list.api';
+import { getListsSupabaseClient } from './list.api';
 import { ListWithItemCount, ListWithItems } from './ListCard';
 
 export const getListsOptions = (isOnline: boolean) => {
@@ -34,14 +31,18 @@ export function getListWithItemsOptions(listId: string) {
         queryFn: async (): Promise<ListWithItems | null> => {
             const localList = await localDb.getList(listId);
 
-            if (!localList) {
-                return await getListWithItemsSupabaseClient(listId);
-            }
+            if (!localList) return null;
 
-            if (localList.isOnline) {
-                localDb.deleteListWithItems(listId);
-                return await getListWithItemsSupabaseClient(listId);
-            }
+            // Online list
+
+            // if (!localList) {
+            //     return await getListWithItemsSupabaseClient(listId);
+            // }
+
+            // if (localList.isOnline) {
+            //     localDb.deleteListWithItems(listId);
+            //     return await getListWithItemsSupabaseClient(listId);
+            // }
 
             const items = await localDb.getItems(listId);
 

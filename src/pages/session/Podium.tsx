@@ -56,7 +56,7 @@ export const Podium = ({ item, place }: { item: Item; place: 1 | 2 | 3 }) => {
             <div
                 className={`bg-gradient-to-t ${config.topGradient} text-white p-3 rounded-t-lg ${config.shadowIntensity} w-full`}
             >
-                {item?.image ? (
+                {item?.imageUrl ? (
                     <img
                         src={item.imageUrl}
                         alt={item.name}

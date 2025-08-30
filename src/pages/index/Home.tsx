@@ -51,13 +51,18 @@ export default function Home({ userId }: { userId?: string }) {
                 <div className="mb-8 gap-4 flex justify-center flex-wrap">
                     {/* Create New List Button */}
                     <CreateNewListButton
-                        onClick={() =>
-                            newList.mutate({
-                                data: {
-                                    listId: v4(),
-                                },
-                            })
-                        }
+                        onClick={async () => {
+                            const newId = v4();
+                            if (userId) {
+                                newList.mutate({
+                                    data: {
+                                        listId: newId,
+                                    },
+                                });
+                            } else {
+                                navigate({ to: `/list/edit/${newId}` });
+                            }
+                        }}
                     />
                 </div>
 
