@@ -1,6 +1,5 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useTheme } from './ThemeProvider';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { ModeToggle } from './ui/theme-toggle';
 
 export type HeaderProps = {
@@ -9,21 +8,21 @@ export type HeaderProps = {
     hideLogo?: boolean;
 };
 
-function UserAvatar() {
-    const navigate = useNavigate();
-    return (
-        <Avatar
-            className="cursor-pointer"
-            onClick={() => navigate({ to: '/profile' })}
-        >
-            <AvatarImage
-                src="https://github.com/evilrabbit.png"
-                alt="@evilrabbit"
-            />
-            <AvatarFallback>ER</AvatarFallback>
-        </Avatar>
-    );
-}
+// function UserAvatar() {
+//     const navigate = useNavigate();
+//     return (
+//         <Avatar
+//             className="cursor-pointer"
+//             onClick={() => navigate({ to: '/profile' })}
+//         >
+//             <AvatarImage
+//                 src="https://github.com/evilrabbit.png"
+//                 alt="@evilrabbit"
+//             />
+//             <AvatarFallback>ER</AvatarFallback>
+//         </Avatar>
+//     );
+// }
 
 export function Header({ hideLogo, withProfile, sessionId }: HeaderProps) {
     const { theme } = useTheme();
@@ -39,7 +38,7 @@ export function Header({ hideLogo, withProfile, sessionId }: HeaderProps) {
                 </Link>
             )}
             {sessionId && <p>Session: {sessionId}</p>}
-            {withProfile && <UserAvatar />}
+            {/* {withProfile && <UserAvatar />} */}
             <ModeToggle />
         </header>
     );

@@ -11,6 +11,7 @@ export default defineConfig({
             projects: ['./tsconfig.json'],
         }),
         tanstackStart({
+            customViteReactPlugin: true,
             spa: {
                 enabled: true,
             },

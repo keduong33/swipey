@@ -5,7 +5,7 @@ import { useHumanMergeSort } from '../useHumanChoiceMergeSort';
 
 function fakeItem(name: string): Item {
     return {
-        id: 1,
+        id: '1',
         name,
         image: null,
     };
