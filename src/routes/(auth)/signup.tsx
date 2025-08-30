@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import {
     createFileRoute,
-    redirect,
+    notFound,
     SearchSchemaInput,
 } from '@tanstack/react-router';
 import { AlertCircleIcon } from 'lucide-react';
@@ -12,11 +12,13 @@ import { signUp } from '../../pages/auth/signup/signup.api';
 export const Route = createFileRoute('/(auth)/signup')({
     component: Signup,
     beforeLoad: ({ context, search }) => {
-        if (context.user?.isAuthenticated) {
-            throw redirect({
-                to: search?.redirectUrl || '/',
-            });
-        }
+        // Remove notfound if want to enable login
+        throw notFound();
+        // if (context.user?.isAuthenticated) {
+        //     throw redirect({
+        //         to: search?.redirectUrl || '/',
+        //     });
+        // }
     },
     validateSearch: ({
         redirectUrl,

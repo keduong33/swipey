@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { Button } from '../../components/ui/button';
 import { logout } from '../../pages/auth/logout.api';
@@ -9,6 +9,10 @@ export const Route = createFileRoute('/_authed/profile')({
     component: Profile,
     loader: ({ context: { user } }) => {
         return user;
+    },
+    beforeLoad: () => {
+        // Remove notfound if want to enable login
+        throw notFound();
     },
 });
 
