@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Result } from '~/hooks/useGetResult';
@@ -24,6 +24,17 @@ export default function ResultsSection({ result }: { result: Result }) {
 
         URL.revokeObjectURL(url);
     };
+
+    if (currentArray.length === 0) {
+        return (
+            <div>
+                <div>Your list has no items</div>
+                <Link to="/">
+                    <Button> Go Back</Button>
+                </Link>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-4 justify-items-center">
