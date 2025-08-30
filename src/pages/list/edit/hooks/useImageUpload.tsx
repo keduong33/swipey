@@ -5,18 +5,20 @@ import { Item } from '../../ListItem';
 export type ImageUploadStatus = 'uploading' | 'error';
 export type ImageUploadStatusMap = Map<string, ImageUploadStatus>;
 export const useImageUpload = ({
-    isOnline,
     setItems,
     saveItemLocally,
 }: {
-    isOnline: boolean;
     setItems: (updater: (prev: Item[]) => Item[]) => void;
     saveItemLocally: (item: Item) => void;
 }) => {
     const [imageUploadStatusMap, setImageUploadStatusMap] =
         useState<ImageUploadStatusMap>(new Map());
 
-    const handleImageUpload = async (item: Item, file: File | undefined) => {
+    const handleImageUpload = async (
+        item: Item,
+        file: File | undefined,
+        isOnline: boolean
+    ) => {
         if (!file) return;
 
         try {

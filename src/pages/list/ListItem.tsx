@@ -17,7 +17,11 @@ export const ListItem = ({
     deleteItemLocally,
 }: {
     item: Item;
-    handleImageUpload: (item: Item, file: File | undefined) => void;
+    handleImageUpload: (
+        item: Item,
+        file: File | undefined,
+        isOnline: boolean
+    ) => void;
     imageUploadStatus?: ImageUploadStatus;
     setItems: (updater: (prev: Item[]) => Item[]) => void;
     isOnline: boolean;
@@ -59,7 +63,11 @@ export const ListItem = ({
                             type="file"
                             accept="image/*"
                             onChange={(e) =>
-                                handleImageUpload(item, e.target.files?.[0])
+                                handleImageUpload(
+                                    item,
+                                    e.target.files?.[0],
+                                    isOnline
+                                )
                             }
                             className="hidden"
                             id={`image-upload-${item.id}`}

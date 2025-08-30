@@ -24,6 +24,8 @@ export interface IndexedDbStorage {
     getResults(): Promise<Result[] | undefined>;
     getResult(id: string): Promise<Result | undefined>;
     deleteResult(id: string): Promise<void>;
+
+    deleteListWithItems(listId: string): Promise<void>;
 }
 
 export const localDb: IndexedDbStorage = {
@@ -152,6 +154,33 @@ export const localDb: IndexedDbStorage = {
         try {
             const db = await getDb();
             await db.delete('results', id);
+        } catch (error) {
+            handleError(error);
+        }
+    },
+
+    async deleteListWithItems(listId) {
+        try {
+            const db = await getDb();
+            const tx = db.transaction(['lists', 'items'], 'readwrite');
+
+            // Delete the list
+            await tx.objectStore('lists').delete(listId);
+
+            // Get all item keys by index (listId)
+            const index = tx.objectStore('items').index('listId');
+            const itemKeys = await index.getAllKeys(listId);
+
+            // Schedule all deletes (don't await individually inside loop)
+            const deletePromises = itemKeys.map((key) =>
+                tx.objectStore('items').delete(key)
+            );
+
+            // Wait for all deletes to complete
+            await Promise.all(deletePromises);
+
+            // Finish the transaction
+            await tx.done;
         } catch (error) {
             handleError(error);
         }

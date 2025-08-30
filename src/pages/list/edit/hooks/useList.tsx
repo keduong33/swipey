@@ -7,7 +7,6 @@ import { UpdateListOpts } from './useListState';
 
 export function useEditList(
     updateList: (update: UpdateListOpts) => void,
-    isOnline: boolean,
     saveListLocally: (list: BaseList) => void,
     saveItemLocally: (item: Item) => void
 ) {
@@ -18,7 +17,7 @@ export function useEditList(
         if (!list || list.name === name) return;
         updateList({ name });
 
-        if (isOnline) {
+        if (list.isOnline) {
             listNameMutation.mutate({ data: { name, listId: list.id } });
         } else {
             saveListLocally({ ...list, name });
@@ -33,7 +32,7 @@ export function useEditList(
 
         updateList({ description });
 
-        if (isOnline) {
+        if (list.isOnline) {
             listDescriptionMutation.mutate({
                 data: { description, listId: list.id },
             });
@@ -60,7 +59,7 @@ export function useEditList(
 
         updateList(updatedList);
 
-        if (isOnline) {
+        if (list.isOnline) {
             addNewItem.mutate(
                 {
                     data: {

@@ -51,6 +51,7 @@ const emptyList: EditingList = {
     category: [],
     items: [],
     userId: '',
+    isOnline: false,
 };
 
 // export type Status = 'completed' | 'in-progress' | 'new';

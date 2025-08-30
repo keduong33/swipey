@@ -28,22 +28,27 @@ export const getListsOptions = (isOnline: boolean) => {
     });
 };
 
-export function getListWithItemsOptions(listId: string, isOnline: boolean) {
+export function getListWithItemsOptions(listId: string) {
     return queryOptions({
         queryKey: ['list', listId],
         queryFn: async (): Promise<ListWithItems | null> => {
-            if (isOnline) {
-                return await getListWithItemsSupabaseClient(listId);
-            } else {
-                const list = await localDb.getList(listId);
-                if (!list) return null;
-                const items = await localDb.getItems(listId);
+            const localList = await localDb.getList(listId);
 
-                return {
-                    ...list,
-                    items: items ?? [],
-                } satisfies ListWithItems;
+            if (!localList) {
+                return await getListWithItemsSupabaseClient(listId);
             }
+
+            if (localList.isOnline) {
+                localDb.deleteListWithItems(listId);
+                return await getListWithItemsSupabaseClient(listId);
+            }
+
+            const items = await localDb.getItems(listId);
+
+            return {
+                ...localList,
+                items: items ?? [],
+            } satisfies ListWithItems;
         },
     });
 }

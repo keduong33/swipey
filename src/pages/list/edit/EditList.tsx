@@ -1,7 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, Loader2, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ArrowLeft, Plus } from 'lucide-react';
+import { useState } from 'react';
 import Page from '../../../components/Page';
 import { Button } from '../../../components/ui/button';
 import { Card, CardContent } from '../../../components/ui/card';
@@ -23,69 +22,44 @@ import {
 } from '../../../components/ui/dropdown-menu';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
+import { Switch } from '../../../components/ui/switch';
 import { Textarea } from '../../../components/ui/textarea';
-import { getListWithItemsOptions } from '../list.queries';
-import { createNewList, ListWithItems } from '../ListCard';
+import { ListWithItems } from '../ListCard';
 import { ListItems } from '../ListItems';
-import { MultipleUploads } from '../MultipleUploads';
 import { useImageUpload } from './hooks/useImageUpload';
 import { useEditList } from './hooks/useList';
 import { useEditListState } from './hooks/useListState';
 import { useOfflineEdit } from './hooks/useOffline';
 
 export function EditList({
+    initialList,
     listId,
-    isOnline,
 }: {
+    initialList: ListWithItems | null;
     listId: string;
-    isOnline: boolean;
 }) {
     const navigate = useNavigate();
 
     const { saveItemLocally, deleteListLocally, saveListLocally } =
         useOfflineEdit();
 
-    const {
-        data: retrievedList,
-        isLoading,
-        error: getListError,
-    } = useQuery(getListWithItemsOptions(listId, isOnline));
-
-    useEffect(() => {
-        if (getListError) {
-            alert(getListError.message);
-        }
-    }, [getListError]);
-
-    const { list, setList, updateList, setItems } = useEditListState();
+    const { list, updateList, setItems } = useEditListState({
+        initialList,
+        listId,
+    });
     const { saveListName, saveListDescription, addBlankItem } = useEditList(
         updateList,
-        isOnline,
         saveListLocally,
         saveItemLocally
     );
 
     const { handleImageUpload, imageUploadStatusMap } = useImageUpload({
-        isOnline,
         setItems,
         saveItemLocally,
     });
 
-    useEffect(() => {
-        if (isLoading) return;
-        if (retrievedList) {
-            setList(retrievedList);
-        } else {
-            setList(createNewList({ id: listId }));
-        }
-    }, [isLoading, retrievedList]);
-
     const [dialogOpen, setDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
-    if (isLoading || !list) {
-        return <Loader2 className="animate-spin" />;
-    }
 
     const use = async () => {
         navigate({ to: `/list/use/${listId}` });
@@ -120,6 +94,22 @@ export function EditList({
                                 : 'Create New List'} */}
                             Edit List
                         </h2>
+                    </div>
+                    <div className="flex gap-2">
+                        <Label
+                            htmlFor="mode-toggle"
+                            className="text-muted-foreground text-sm"
+                        >
+                            {list.isOnline
+                                ? 'Online mode'
+                                : 'Offline mode (local only)'}
+                        </Label>
+                        <Switch
+                            checked={list.isOnline}
+                            onCheckedChange={(isOnline) =>
+                                updateList({ isOnline })
+                            }
+                        />
                     </div>
                 </div>
 
@@ -172,7 +162,7 @@ export function EditList({
                                     setItems={setItems}
                                     handleImageUpload={handleImageUpload}
                                     imageUploadStatusMap={imageUploadStatusMap}
-                                    isOnline={isOnline}
+                                    isOnline={list.isOnline}
                                 />
                             </div>
                             <div className="w-full flex flex-col md:flex-row gap-2 justify-center">
@@ -187,11 +177,11 @@ export function EditList({
                                     </p>
                                 </Button>
 
-                                <MultipleUploads
+                                {/* <MultipleUploads
                                     setItems={setItems}
                                     handleImageUpload={handleImageUpload}
                                     listId={listId}
-                                />
+                                /> */}
                             </div>
                         </div>
 

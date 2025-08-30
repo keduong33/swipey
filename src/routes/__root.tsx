@@ -61,8 +61,12 @@ export const Route = createRootRouteWithContext<{
         ],
     }),
     async beforeLoad({ context: { user } }) {
-        if (user === null) {
-            user = await getUser();
+        try {
+            if (user === null) {
+                user = await getUser();
+            }
+        } catch (e) {
+            console.error('Failed to fetch');
         }
 
         return {

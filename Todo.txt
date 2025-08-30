@@ -5,3 +5,5 @@
 [] Better loading state for list
 [] Save result & Delete result
 [] Sort list
+[] Add Image
+[] Default local storage

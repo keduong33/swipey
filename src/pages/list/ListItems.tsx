@@ -12,11 +12,16 @@ export const ListItems = ({
 }: {
     list: ListWithItems;
     setItems: (updater: (prev: Item[]) => Item[]) => void;
-    handleImageUpload: (item: Item, file: File | undefined) => void;
+    handleImageUpload: (
+        item: Item,
+        file: File | undefined,
+        isOnline: boolean
+    ) => void;
     imageUploadStatusMap: ImageUploadStatusMap;
     isOnline: boolean;
 }) => {
     const { saveItemLocally, deleteItemLocally } = useOfflineEdit();
+
     return (
         <>
             {list.items.sort(byLatestUpdate).map((item) => (
