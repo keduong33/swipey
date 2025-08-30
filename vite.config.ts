@@ -14,10 +14,12 @@ export default defineConfig({
             spa: {
                 enabled: true,
             },
+            target: 'github-pages',
         }),
     ],
     test: {
         environment: 'jsdom',
         setupFiles: ['./vitest-setup.ts'],
     },
+    base: '/swipey/',
 });
