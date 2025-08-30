@@ -9,29 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as AllListsRouteImport } from './routes/all-lists'
-import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultResultIdRouteImport } from './routes/result/$resultId'
-import { Route as AuthedProfileRouteImport } from './routes/_authed/profile'
-import { Route as authSignupRouteImport } from './routes/(auth)/signup'
-import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as ListUseListIdRouteImport } from './routes/list/use/$listId'
 import { Route as ListEditListIdRouteImport } from './routes/list/edit/$listId'
 
-const LogoutRoute = LogoutRouteImport.update({
-  id: '/logout',
-  path: '/logout',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AllListsRoute = AllListsRouteImport.update({
   id: '/all-lists',
   path: '/all-lists',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthedRoute = AuthedRouteImport.update({
-  id: '/_authed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -42,21 +28,6 @@ const IndexRoute = IndexRouteImport.update({
 const ResultResultIdRoute = ResultResultIdRouteImport.update({
   id: '/result/$resultId',
   path: '/result/$resultId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthedProfileRoute = AuthedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthedRoute,
-} as any)
-const authSignupRoute = authSignupRouteImport.update({
-  id: '/(auth)/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authLoginRoute = authLoginRouteImport.update({
-  id: '/(auth)/login',
-  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ListUseListIdRoute = ListUseListIdRouteImport.update({
@@ -73,10 +44,6 @@ const ListEditListIdRoute = ListEditListIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/all-lists': typeof AllListsRoute
-  '/logout': typeof LogoutRoute
-  '/login': typeof authLoginRoute
-  '/signup': typeof authSignupRoute
-  '/profile': typeof AuthedProfileRoute
   '/result/$resultId': typeof ResultResultIdRoute
   '/list/edit/$listId': typeof ListEditListIdRoute
   '/list/use/$listId': typeof ListUseListIdRoute
@@ -84,10 +51,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/all-lists': typeof AllListsRoute
-  '/logout': typeof LogoutRoute
-  '/login': typeof authLoginRoute
-  '/signup': typeof authSignupRoute
-  '/profile': typeof AuthedProfileRoute
   '/result/$resultId': typeof ResultResultIdRoute
   '/list/edit/$listId': typeof ListEditListIdRoute
   '/list/use/$listId': typeof ListUseListIdRoute
@@ -95,12 +58,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authed': typeof AuthedRouteWithChildren
   '/all-lists': typeof AllListsRoute
-  '/logout': typeof LogoutRoute
-  '/(auth)/login': typeof authLoginRoute
-  '/(auth)/signup': typeof authSignupRoute
-  '/_authed/profile': typeof AuthedProfileRoute
   '/result/$resultId': typeof ResultResultIdRoute
   '/list/edit/$listId': typeof ListEditListIdRoute
   '/list/use/$listId': typeof ListUseListIdRoute
@@ -110,10 +68,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/all-lists'
-    | '/logout'
-    | '/login'
-    | '/signup'
-    | '/profile'
     | '/result/$resultId'
     | '/list/edit/$listId'
     | '/list/use/$listId'
@@ -121,22 +75,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/all-lists'
-    | '/logout'
-    | '/login'
-    | '/signup'
-    | '/profile'
     | '/result/$resultId'
     | '/list/edit/$listId'
     | '/list/use/$listId'
   id:
     | '__root__'
     | '/'
-    | '/_authed'
     | '/all-lists'
-    | '/logout'
-    | '/(auth)/login'
-    | '/(auth)/signup'
-    | '/_authed/profile'
     | '/result/$resultId'
     | '/list/edit/$listId'
     | '/list/use/$listId'
@@ -144,11 +89,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthedRoute: typeof AuthedRouteWithChildren
   AllListsRoute: typeof AllListsRoute
-  LogoutRoute: typeof LogoutRoute
-  authLoginRoute: typeof authLoginRoute
-  authSignupRoute: typeof authSignupRoute
   ResultResultIdRoute: typeof ResultResultIdRoute
   ListEditListIdRoute: typeof ListEditListIdRoute
   ListUseListIdRoute: typeof ListUseListIdRoute
@@ -156,25 +97,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/logout': {
-      id: '/logout'
-      path: '/logout'
-      fullPath: '/logout'
-      preLoaderRoute: typeof LogoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/all-lists': {
       id: '/all-lists'
       path: '/all-lists'
       fullPath: '/all-lists'
       preLoaderRoute: typeof AllListsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authed': {
-      id: '/_authed'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -189,27 +116,6 @@ declare module '@tanstack/react-router' {
       path: '/result/$resultId'
       fullPath: '/result/$resultId'
       preLoaderRoute: typeof ResultResultIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authed/profile': {
-      id: '/_authed/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthedProfileRouteImport
-      parentRoute: typeof AuthedRoute
-    }
-    '/(auth)/signup': {
-      id: '/(auth)/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof authSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/login': {
-      id: '/(auth)/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/list/use/$listId': {
@@ -229,24 +135,9 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthedRouteChildren {
-  AuthedProfileRoute: typeof AuthedProfileRoute
-}
-
-const AuthedRouteChildren: AuthedRouteChildren = {
-  AuthedProfileRoute: AuthedProfileRoute,
-}
-
-const AuthedRouteWithChildren =
-  AuthedRoute._addFileChildren(AuthedRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthedRoute: AuthedRouteWithChildren,
   AllListsRoute: AllListsRoute,
-  LogoutRoute: LogoutRoute,
-  authLoginRoute: authLoginRoute,
-  authSignupRoute: authSignupRoute,
   ResultResultIdRoute: ResultResultIdRoute,
   ListEditListIdRoute: ListEditListIdRoute,
   ListUseListIdRoute: ListUseListIdRoute,
