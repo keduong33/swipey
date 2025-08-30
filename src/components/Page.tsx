@@ -14,6 +14,11 @@ export default function Page({
             <main className="flex-1 flex-col bg-background p-4">
                 {children}
             </main>
+            <footer className="text-center p-4 text-gray-600 dark:text-gray-400">
+                All data is stored locally on your device. We do not access your
+                content and are not responsible for any illegal or inappropriate
+                material.
+            </footer>
         </div>
     );
 }
