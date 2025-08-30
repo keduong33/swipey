@@ -12,9 +12,7 @@
         "test:watch": "vitest watch",
         "coverage": "vitest run --coverage",
         "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build",
-        "predeploy": "npm run build",
-        "deploy": "gh-pages -d .output/public"
+        "build-storybook": "storybook build"
     },
     "keywords": [],
     "author": "",
@@ -37,7 +35,6 @@
         "browser-image-compression": "^2.0.2",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
-        "gh-pages": "^6.3.0",
         "idb": "^8.0.3",
         "lucide-react": "^0.515.0",
         "motion": "^12.19.3",
